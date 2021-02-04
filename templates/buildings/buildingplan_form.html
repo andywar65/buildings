@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% translate "Add building plan" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% include "buildings/includes/buildingplan_alerts.html" %}
+    <h4><strong>{% translate "Add building plan" %}</strong></h4>
+    {% if perms.buildings.add_buildingplan %}
+    {% include "buildings/includes/hello_formula.html" %}
+    <hr class="mb-4">
+    {% include "buildings/includes/form_errors.html" %}
+    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+        {{ form|crispy }}
+        <hr class="mb-4">
+          {% include "buildings/includes/add_buttons.html" %}
+        <hr class="mb-4">
+      {% csrf_token %}
+    </form>
+    {% else %}
+    {% translate "You don't have permissions to add building plans" %}.
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
