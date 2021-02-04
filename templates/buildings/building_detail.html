@@ -12,7 +12,7 @@
 
 {% block content %}
 {% include "buildings/includes/building_alerts.html" %}
-{% include "buildings/includes/buildingplan_alerts.html" %}
+{% include "buildings/includes/plan_alerts.html" %}
 {% include "buildings/includes/photostation_alerts.html" %}
 {% include "buildings/includes/discipline_alerts.html" %}
 <div class="row">
@@ -41,8 +41,8 @@
         <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
   </div>
   <div class="col-md-4 text-right">
-    {% if perms.buildings.add_buildingplan %}
-      <a class="btn btn-success" href="{% url 'buildings:buildingplan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
+    {% if perms.buildings.add_plan %}
+      <a class="btn btn-success" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
         + <i class="fa fa-map-o"></i></a>
     {% endif %}
     {% if perms.buildings.add_photostation %}

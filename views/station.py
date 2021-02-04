@@ -9,7 +9,7 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from buildings.models import Building, BuildingPlan, PhotoStation, StationImage
+from buildings.models import Building, Plan, PhotoStation, StationImage
 from buildings.forms import ( PhotoStationCreateForm,
     BuildingDeleteForm, StationImageCreateForm, StationImageUpdateForm, )
 from buildings.views.building import AlertMixin, MapMixin

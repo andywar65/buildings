@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 
 from django.db import models
@@ -13,35 +12,36 @@ from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
 from treebeard.mp_tree import MP_Node
 
-from project.utils import generate_unique_slug
 from .map_utils import workflow
 
-class PlanSet(MP_Node):
-    parent = models.ForeignKey('self', verbose_name = _('Parent discipline'),
-        null=True, blank=True,
-        help_text = _('Can be changed only by staff in admin'),
-        on_delete = models.SET_NULL)
-    title = models.CharField(_('Title'),
-        help_text=_("Discipline name"),
-        max_length = 50, )
-    intro = models.CharField(_('Description'),
-        null=True, blank=True,
-        help_text = _('Few words to describe the discipline'),
-        max_length = 100)
+from django.utils.text import slugify
 
-    def __str__(self):
-        return self.title
+def generate_unique_slug(klass, field, id):
+    """
+    return unique slug if origin slug exists.
+    eg: `foo-bar` => `foo-bar-1`
 
-    class Meta:
-        verbose_name = _('Discipline')
-        verbose_name_plural = _('Disciplines')
-        #ordering = ('title', )
+    :param `klass` is Class model.
+    :param `field` is specific field for title.
+    Thanks to djangosnippets.org!
+    """
+    origin_slug = slugify(field)
+    unique_slug = origin_slug
+    numb = 1
+    if klass == Building:
+        while klass.objects.filter(slug=unique_slug).exists():
+            unique_slug = '%s-%d' % (origin_slug, numb)
+            numb += 1
+    else:
+        while klass.objects.filter(slug=unique_slug, build_id=id).exists():
+            unique_slug = '%s-%d' % (origin_slug, numb)
+            numb += 1
+    return unique_slug
 
 def building_default_intro():
     return _('Another Building by %(website)s!') % {'website': settings.WEBSITE_NAME}
 
 class Building(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slug = models.SlugField(max_length=100, editable=False, null=True)
     image = models.ImageField(_("Image"), max_length=200,
         null=True, blank=True, upload_to='uploads/buildings/images/')
@@ -64,11 +64,7 @@ class Building(models.Model):
     long = models.FloatField(_("Longitude"), default = settings.CITY_LONG,
         help_text=_("Coordinates from Google Maps or https://openstreetmap.org"))
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
-        help_text=_("Maximum should be 21"))
-    disciplinesn = models.ManyToManyField(PlanSet,
-        blank = True, verbose_name = _('Disciplines'),
-        help_text=_("Show only plans belonging to chosen disciplines") )
-
+        help_text=_("Maximum should be 23"))
 
     def __str__(self):
         return self.title
@@ -80,7 +76,7 @@ class Building(models.Model):
         if not self.title:
             self.title = _('Building-%(date)s') % {'date': self.date.strftime("%d-%m-%y")}
         if not self.slug:
-            self.slug = generate_unique_slug(Building, self.title)
+            self.slug = generate_unique_slug(Building, self.title, 0)
         self.last_updated = now()
         super(Building, self).save(*args, **kwargs)
         if self.image:
@@ -88,19 +84,52 @@ class Building(models.Model):
             #image is saved on the front end, passed to fb_image and deleted
             Building.objects.filter(id=self.id).update(image=None,
                 fb_image=FileObject(str(self.image)))
+        try:
+            PlanSet.objects.get(slug='base', build_id=self.id)
+        except:
+            PlanSet.add_root(title=_('Base'), build=self)
 
     class Meta:
         verbose_name = _('Building')
         verbose_name_plural = _('Buildings')
         ordering = ('-date', )
 
-class BuildingPlan(models.Model):
+class PlanSet(MP_Node):
+    build = models.ForeignKey(Building, on_delete = models.CASCADE,
+        related_name='building_planset', verbose_name = _('Building'))
+    parent = models.ForeignKey('self', verbose_name = _('Parent set'),
+        null=True, blank=True,
+        help_text = _('Can be changed only by staff in admin'),
+        on_delete = models.SET_NULL)
+    title = models.CharField(_('Title'),
+        help_text=_("Set name"),
+        max_length = 50, )
+    intro = models.CharField(_('Description'),
+        null=True, blank=True,
+        help_text = _('Few words to describe the set'),
+        max_length = 100)
+    slug = models.SlugField(max_length=100, editable=False, null=True)
+    plans = models.ManyToManyField(Plan,
+        blank = True, verbose_name = _('Plans'),
+        help_text=_("Show only plans belonging to chosen set") )
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(Planset, self.title, self.build.id)
+        self.last_updated = now()
+        super(Planset, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Plan set')
+        verbose_name_plural = _('Plan sets')
+
+class Plan(models.Model):
 
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_plan', verbose_name = _('Building'))
-    discn = models.ForeignKey(PlanSet, on_delete = models.SET_NULL,
-        related_name='disciplinen_plan', verbose_name = _('Discipline'),
-        null=True, blank=True)
     title = models.CharField(_('Name'),
         help_text=_("Name of the building plan"), max_length = 50, )
     slug = models.SlugField(max_length=100, editable=False, null=True)
@@ -119,15 +148,15 @@ class BuildingPlan(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(BuildingPlan,
-                self.title + ' ' + str(self.elev))
+            self.slug = generate_unique_slug(Plan,
+                self.title + ' ' + str(self.elev), self.build.id)
         #upload file
-        super(BuildingPlan, self).save(*args, **kwargs)
+        super(Plan, self).save(*args, **kwargs)
         if self.refresh:
             geometry = workflow(self.file, self.build.lat, self.build.long)
             #this is a sloppy workaround to make working test
             #geometry refreshed
-            BuildingPlan.objects.filter(id=self.id).update(geometry=geometry,
+            Plan.objects.filter(id=self.id).update(geometry=geometry,
                 refresh=False)
 
     class Meta:
@@ -143,8 +172,8 @@ class PhotoStation(models.Model):
 
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_station', verbose_name = _('Building'))
-    plan = models.ForeignKey(BuildingPlan, on_delete = models.SET_NULL,
-        related_name='buildingplan_station', verbose_name = _('Building plan'),
+    plan = models.ForeignKey(Plan, on_delete = models.SET_NULL,
+        related_name='plan_station', verbose_name = _('Building plan'),
         null=True, blank=True)
     title = models.CharField(_('Title'),
         help_text=_("Title of the photo station"), max_length = 50, )
@@ -160,7 +189,8 @@ class PhotoStation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(PhotoStation, self.title)
+            self.slug = generate_unique_slug(PhotoStation, self.title,
+                self.build.id)
         if not self.lat:
             self.lat = self.build.lat
         if not self.long:

@@ -4,18 +4,18 @@ from django.utils.translation import gettext as _
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
-from .models import (Building, BuildingPlan, PhotoStation, StationImage,
+from .models import (Building, Plan, PhotoStation, StationImage,
     PlanSet)
 
-class BuildingPlanInline(admin.TabularInline):
-    model = BuildingPlan
+class PlanInline(admin.TabularInline):
+    model = Plan
     fields = ('title', 'elev', 'file', 'refresh', 'geometry', 'visible')
     extra = 0
 
 @admin.register(Building)
 class BuildingAdmin(admin.ModelAdmin):
     list_display = ('title', 'address', )
-    inlines = [ BuildingPlanInline,  ]
+    inlines = [ PlanInline,  ]
 
     fieldsets = (
         (_('Image'), {

@@ -8,8 +8,8 @@ def create_buildings_group(sender, **kwargs):
     if created:
         permissions = Permission.objects.filter(codename__in=('view_building',
             'add_building', 'change_building', 'delete_building',
-            'view_buildingplan', 'add_buildingplan', 'change_buildingplan',
-            'delete_buildingplan',
+            'view_plan', 'add_plan', 'change_plan',
+            'delete_plan',
             'view_photostation', 'add_photostation', 'change_photostation',
             'delete_photostation',
             'view_stationimage', 'add_stationimage', 'change_stationimage',
@@ -19,7 +19,7 @@ def create_buildings_group(sender, **kwargs):
             'delete_planset',))
         grp.permissions.set(permissions)
 
-def create_disciplines(sender, **kwargs):
+def create_plansets(sender, **kwargs):
     from buildings.models import PlanSet
     try:
         PlanSet.objects.get(title=_('Architecture'))
@@ -39,4 +39,4 @@ class buildingsConfig(AppConfig):
 
     def ready(self):
         post_migrate.connect(create_buildings_group, sender=self)
-        post_migrate.connect(create_disciplines, sender=self)
+        #post_migrate.connect(create_plansets, sender=self)

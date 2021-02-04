@@ -11,10 +11,10 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from buildings.models import (Building, BuildingPlan, PhotoStation, StationImage,
+from buildings.models import (Building, Plan, PhotoStation, StationImage,
     PlanSet)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
-    BuildingDeleteForm, BuildingPlanCreateForm,
+    BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm)
 
 class MapMixin:
@@ -142,7 +142,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         #building data
         build = self.prepare_build_data( context['build'] )
         #plan data
-        disc_list = context['build'].disciplinesn.all().values_list('id',
+        disc_list = context['build'].plansets.all().values_list('id',
             flat=True)
         disc_plans = context['plans'].filter(Q(discn=None)|
             Q(discn_id__in=disc_list))
@@ -222,17 +222,17 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
                 kwargs={'slug': self.build.slug })
         return reverse('buildings:building_list') + f'?deleted={self.build.title}'
 
-class BuildingPlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
-    model = BuildingPlan
-    permission_required = 'buildings.add_buildingplan'
-    form_class = BuildingPlanCreateForm
+class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+    model = Plan
+    permission_required = 'buildings.add_plan'
+    form_class = PlanCreateForm
 
     def setup(self, request, *args, **kwargs):
-        super(BuildingPlanCreateView, self).setup(request, *args, **kwargs)
+        super(PlanCreateView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
 
     def get_initial(self):
-        initial = super( BuildingPlanCreateView, self ).get_initial()
+        initial = super( PlanCreateView, self ).get_initial()
         initial['build'] = self.build.id
         return initial
 
@@ -243,7 +243,7 @@ class BuildingPlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('buildings:buildingplan_create',
+            return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_created={self.object.title}')
         else:
@@ -251,17 +251,17 @@ class BuildingPlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_created={self.object.title}')
 
-class BuildingPlanUpdateView( PermissionRequiredMixin, UpdateView ):
-    model = BuildingPlan
-    permission_required = 'buildings.change_buildingplan'
-    form_class = BuildingPlanCreateForm
-    template_name = 'buildings/buildingplan_form_update.html'
+class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
+    model = Plan
+    permission_required = 'buildings.change_plan'
+    form_class = PlanCreateForm
+    template_name = 'buildings/plan_form_update.html'
     #we have two slugs, so we need to override next attribute
     slug_url_kwarg = 'plan_slug'
 
     def get_object(self, queryset=None):
         #elsewhere we get the parent in setup, but here we also need object
-        plan = super(BuildingPlanUpdateView, self).get_object(queryset=None)
+        plan = super(PlanUpdateView, self).get_object(queryset=None)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
         if not self.build == plan.build:
@@ -270,7 +270,7 @@ class BuildingPlanUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('buildings:buildingplan_create',
+            return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_modified={self.object.title}')
         else:
@@ -278,17 +278,17 @@ class BuildingPlanUpdateView( PermissionRequiredMixin, UpdateView ):
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_modified={self.object.title}')
 
-class BuildingPlanDeleteView(PermissionRequiredMixin, FormView):
-    #model = BuildingPlan
-    permission_required = 'buildings.delete_buildingplan'
+class PlanDeleteView(PermissionRequiredMixin, FormView):
+    #model = Plan
+    permission_required = 'buildings.delete_plan'
     form_class = BuildingDeleteForm
-    template_name = 'buildings/buildingplan_form_delete.html'
+    template_name = 'buildings/plan_form_delete.html'
 
     def setup(self, request, *args, **kwargs):
-        super(BuildingPlanDeleteView, self).setup(request, *args, **kwargs)
+        super(PlanDeleteView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        self.plan = get_object_or_404( BuildingPlan,
+        self.plan = get_object_or_404( Plan,
             slug = self.kwargs['plan_slug'] )
         if not self.build == self.plan.build:
             raise Http404(_("Plan does not belong to Building"))
@@ -301,7 +301,7 @@ class BuildingPlanDeleteView(PermissionRequiredMixin, FormView):
     def form_valid(self, form):
         if not 'cancel' in self.request.POST:
             self.plan.delete()
-        return super(BuildingPlanDeleteView, self).form_valid(form)
+        return super(PlanDeleteView, self).form_valid(form)
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:

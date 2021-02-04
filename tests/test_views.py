@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 
-from buildings.models import Building, BuildingPlan, PhotoStation, StationImage
+from buildings.models import Building, Plan, PhotoStation, StationImage
 from users.models import User
 
 @override_settings(USE_I18N=False)#not working
@@ -24,7 +24,7 @@ class BuildingViewsTest(TestCase):
         adder = User.objects.create_user(username='adder',
             password='P4s5W0r6')
         permissions = Permission.objects.filter(
-            codename__in=['view_building', 'view_buildingplan',
+            codename__in=['view_building', 'view_plan',
             'view_photostation', 'view_stationimage'])
         for p in permissions:
             viewer.user_permissions.add(p)
@@ -44,7 +44,7 @@ class BuildingViewsTest(TestCase):
             'buildings/dxf/sample.dxf')
         with open(dxf_path, 'rb') as d:
             content_d = d.read()
-        BuildingPlan.objects.create(build=build, title='Plan 1',
+        Plan.objects.create(build=build, title='Plan 1',
             file=SimpleUploadedFile('plan1.dxf', content_d, 'text/dxf'))
         stat = PhotoStation.objects.create(build=build, title='Station')
         PhotoStation.objects.create(build=build2, title='Station 2')
@@ -113,8 +113,8 @@ class BuildingViewsTest(TestCase):
         print("--Test building create forbidden")
         response = self.client.get(reverse('buildings:building_create'))
         self.assertEqual(response.status_code, 403)
-        print("--Test buildingplan create forbidden")
-        response = self.client.get(reverse('buildings:buildingplan_create',
+        print("--Test plan create forbidden")
+        response = self.client.get(reverse('buildings:plan_create',
             kwargs={'slug': 'building'}))
         self.assertEqual(response.status_code, 403)
         print("--Test photo station create forbidden")
@@ -133,8 +133,8 @@ class BuildingViewsTest(TestCase):
         print("--Test building create ok")
         response = self.client.get(reverse('buildings:building_create'))
         self.assertEqual(response.status_code, 200)
-        print("--Test buildingplan create ok")
-        response = self.client.get(reverse('buildings:buildingplan_create',
+        print("--Test plan create ok")
+        response = self.client.get(reverse('buildings:plan_create',
             kwargs={'slug': 'building'}))
         self.assertEqual(response.status_code, 200)
         print("--Test station create ok")
@@ -157,7 +157,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'slug': 'building' }))
         self.assertEqual(response.status_code, 403)
         print("--Test building plan update forbidden")
-        response = self.client.get(reverse('buildings:buildingplan_change',
+        response = self.client.get(reverse('buildings:plan_change',
             kwargs={'build_slug': 'building', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 403)
         print("--Test station update forbidden")
@@ -181,7 +181,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'slug': 'building' }))
         self.assertEqual(response.status_code, 200)
         print("--Test building plan update ok")
-        response = self.client.get(reverse('buildings:buildingplan_change',
+        response = self.client.get(reverse('buildings:plan_change',
             kwargs={'build_slug': 'building', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 200)
         print("--Test station update ok")
@@ -205,7 +205,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'slug': 'building' }))
         self.assertEqual(response.status_code, 403)
         print("--Test building plan delete forbidden")
-        response = self.client.get(reverse('buildings:buildingplan_delete',
+        response = self.client.get(reverse('buildings:plan_delete',
             kwargs={'build_slug': 'building', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 403)
         print("--Test station delete forbidden")
@@ -234,7 +234,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'build_slug': 'building', 'stat_slug': 'station'}))
         self.assertEqual(response.status_code, 200)
         print("--Test station delete ok")
-        response = self.client.get(reverse('buildings:buildingplan_delete',
+        response = self.client.get(reverse('buildings:plan_delete',
             kwargs={'build_slug': 'building', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 200)
         print("--Test image delete ok")
@@ -258,7 +258,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'build_slug': 'building-2', 'stat_slug': 'station'}))
         self.assertEqual(response.status_code, 404)
         print("--Test building plan wrong parent")
-        response = self.client.get(reverse('buildings:buildingplan_change',
+        response = self.client.get(reverse('buildings:plan_change',
             kwargs={'build_slug': 'building-2', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 404)
         print("--Test station change wrong parent")
@@ -271,7 +271,7 @@ class BuildingViewsTest(TestCase):
             'pk': image.id}))
         self.assertEqual(response.status_code, 404)
         print("--Test plan delete wrong parent")
-        response = self.client.get(reverse('buildings:buildingplan_delete',
+        response = self.client.get(reverse('buildings:plan_delete',
             kwargs={'build_slug': 'building-2', 'plan_slug': 'plan-1-0'}))
         self.assertEqual(response.status_code, 404)
         print("--Test station delete wrong parent")
@@ -361,8 +361,8 @@ class BuildingViewsTest(TestCase):
             status_code=302,
             target_status_code = 200)
 
-    def test_buildingplan_crud_redirect(self):
-        print("\n-Test BuildingPlan CrUD correct redirection")
+    def test_plan_crud_redirect(self):
+        print("\n-Test Plan CrUD correct redirection")
         self.client.post(reverse('front_login'), {'username':'adder',
             'password':'P4s5W0r6'})
         build = Building.objects.get(slug='building')
@@ -371,7 +371,7 @@ class BuildingViewsTest(TestCase):
         with open(dxf_path, 'rb') as d:
             content_d = d.read()
         print("--Create building plan")
-        response = self.client.post(reverse('buildings:buildingplan_create',
+        response = self.client.post(reverse('buildings:plan_create',
             kwargs={'slug': 'building'}),
             {'build': build.id, 'title': 'Created plan', 'elev': 3.0,
             'file': SimpleUploadedFile('plan2.dxf', content_d, 'txt/dxf'),
@@ -383,7 +383,7 @@ class BuildingViewsTest(TestCase):
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
         print("--Create building plan and add another")
-        response = self.client.post(reverse('buildings:buildingplan_create',
+        response = self.client.post(reverse('buildings:plan_create',
             kwargs={'slug': 'building'}),
             {'build': build.id, 'title': 'Created plan add', 'elev': 6.0,
             'file': SimpleUploadedFile('plan3.dxf', content_d, 'txt/dxf'),
@@ -391,12 +391,12 @@ class BuildingViewsTest(TestCase):
             'add_another': '' },
             follow = True)
         self.assertRedirects(response,
-            reverse('buildings:buildingplan_create',
+            reverse('buildings:plan_create',
                 kwargs={'slug': 'building'})+'?plan_created=Created plan add',
             status_code=302,
             target_status_code = 200)
         print("--Modify building plan")
-        response = self.client.post(reverse('buildings:buildingplan_change',
+        response = self.client.post(reverse('buildings:plan_change',
             kwargs={'build_slug': 'building', 'plan_slug': 'created-plan-30'}),
             {'build': build.id, 'title': 'Created plan', 'elev': 3.0,
             'file': SimpleUploadedFile('plan4.dxf', content_d, 'txt/dxf'),
@@ -408,7 +408,7 @@ class BuildingViewsTest(TestCase):
             status_code=302,
             target_status_code = 200)
         print("--Modify building plan and add another")
-        response = self.client.post(reverse('buildings:buildingplan_change',
+        response = self.client.post(reverse('buildings:plan_change',
             kwargs={'build_slug': 'building',
             'plan_slug': 'created-plan-add-60'}),
             {'build': build.id, 'title': 'Created plan add', 'elev': 6.0,
@@ -421,7 +421,7 @@ class BuildingViewsTest(TestCase):
             status_code=302,
             target_status_code = 200)
         print("--Delete building plan")
-        response = self.client.post(reverse('buildings:buildingplan_delete',
+        response = self.client.post(reverse('buildings:plan_delete',
             kwargs={'build_slug': 'building', 'plan_slug': 'created-plan-30'}),
             {'delete': True},
             follow = True)
@@ -436,7 +436,7 @@ class BuildingViewsTest(TestCase):
         self.client.post(reverse('front_login'), {'username':'adder',
             'password':'P4s5W0r6'})
         build = Building.objects.get(slug='building')
-        plan = BuildingPlan.objects.get(slug='plan-1-0')
+        plan = Plan.objects.get(slug='plan-1-0')
         print("--Create photo station")
         response = self.client.post(reverse('buildings:station_create',
             kwargs={'slug': 'building'}),

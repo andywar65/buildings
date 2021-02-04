@@ -12,7 +12,7 @@
     <tbody>
       {% for plan in plans.all %}
       <tr>
-        <td><a href="{% url 'buildings:buildingplan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+        <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
         <td>{{ plan.elev }}</td>
         <td>{{ plan.discn.title }}</td>
       </tr>

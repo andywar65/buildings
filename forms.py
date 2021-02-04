@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 from django.utils.translation import gettext as _
 
-from .models import (Building, BuildingPlan, PhotoStation, StationImage,
+from .models import (Building, Plan, PhotoStation, StationImage,
     PlanSet)
 
 class NodeMultipleChoiceField(ModelMultipleChoiceField):
@@ -14,36 +14,36 @@ class NodeMultipleChoiceField(ModelMultipleChoiceField):
 
 class BuildingCreateForm(ModelForm):
     image = forms.ImageField(label=_('Image'), required=True)
-    disciplinesn = NodeMultipleChoiceField(label=_('Disciplines'),
+    plansets = NodeMultipleChoiceField(label=_('Disciplines'),
         queryset=PlanSet.objects.all(), required=False,
         help_text=_("Show only plans belonging to chosen disciplines"))
 
     class Meta:
         model = Building
         fields = ( 'image', 'title', 'intro', 'date', 'address', 'lat', 'long',
-            'zoom', 'disciplinesn')
+            'zoom', 'plansets')
 
 class BuildingUpdateForm(ModelForm):
-    disciplinesn = NodeMultipleChoiceField(label=_('Disciplines'),
+    plansets = NodeMultipleChoiceField(label=_('Disciplines'),
         queryset=PlanSet.objects.all(), required=False,
         help_text=_("Show only plans belonging to chosen disciplines"))
 
     class Meta:
         model = Building
         fields = ( 'image', 'title', 'intro', 'date', 'address', 'lat', 'long',
-            'zoom', 'disciplinesn')
+            'zoom', 'plansets')
 
 class BuildingDeleteForm(forms.Form):
     delete = forms.BooleanField( label=_("Delete the building"),
         required = False,
         help_text = _("""Caution, can't undo this."""))
 
-class BuildingPlanCreateForm(ModelForm):
+class PlanCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
         queryset=Building.objects.all(), disabled = True )
 
     class Meta:
-        model = BuildingPlan
+        model = Plan
         fields = '__all__'
 
 class PhotoStationCreateForm(ModelForm):
@@ -53,7 +53,7 @@ class PhotoStationCreateForm(ModelForm):
     def __init__(self, **kwargs):
         super(PhotoStationCreateForm, self).__init__(**kwargs)
         #filter plan queryset
-        self.fields['plan'].queryset = BuildingPlan.objects.filter(build_id=self.initial['build'])
+        self.fields['plan'].queryset = Plan.objects.filter(build_id=self.initial['build'])
 
     class Meta:
         model = PhotoStation

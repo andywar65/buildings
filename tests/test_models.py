@@ -5,7 +5,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from buildings.models import Building, BuildingPlan, PhotoStation, StationImage
+from buildings.models import Building, Plan, PhotoStation, StationImage
 
 @override_settings(USE_I18N=False)
 class BuildingModelTest(TestCase):
@@ -67,7 +67,7 @@ class StationImageTest(TestCase):
             content_d = d.read()
         build = Building.objects.create(title='Building',
             image=SimpleUploadedFile('image.jpg', content, 'image/jpg'))
-        BuildingPlan.objects.create(build=build, title='Plan 1',
+        Plan.objects.create(build=build, title='Plan 1',
             file=SimpleUploadedFile('plan1.dxf', content_d, 'text/dxf'))
         stat = PhotoStation.objects.create(build=build, title='Station')
         #we get the same content, but name the image differently
@@ -93,12 +93,12 @@ class StationImageTest(TestCase):
             os.remove(os.path.join(settings.MEDIA_ROOT,
                 f'uploads/buildings/plans/dxf/{file}'))
 
-    def test_buildingplan_str_method(self):
-        plan = BuildingPlan.objects.get(slug='plan-1-0')
+    def test_plan_str_method(self):
+        plan = Plan.objects.get(slug='plan-1-0')
         self.assertEquals(plan.__str__(), 'Plan 1 | 0.0')
 
-    def test_buildingplan_geometry(self):
-        plan = BuildingPlan.objects.get(slug='plan-1-0')
+    def test_plan_geometry(self):
+        plan = Plan.objects.get(slug='plan-1-0')
         geometry = [{'type': 'polygon', 'color': '#999999',
         'popup': 'Porticato',
         'coords': [[41.89830800279919, 12.545726001278254],
