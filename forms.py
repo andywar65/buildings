@@ -95,9 +95,17 @@ class PlanSetCreateForm(ModelForm):
         fields = ('build', 'parent', 'title', 'intro', 'plans')
 
 class PlanSetUpdateForm(ModelForm):
-    parent = NodeChoiceField( label=_('Parent discipline'),
-        queryset=PlanSet.objects.all(), disabled = True,
+    build = forms.ModelChoiceField( label=_('Building'),
+        queryset=Building.objects.all(), disabled = True )
+    parent = ModelChoiceField( label=_('Parent set'),
+        queryset=PlanSet.objects.all(), disabled = True, required = False,
         help_text = _('Can be changed only by staff in admin'))
+
+    def __init__(self, **kwargs):
+        super(PlanSetUpdateForm, self).__init__(**kwargs)
+        #filter plan queryset
+        self.fields['plans'].queryset = Plan.objects.filter(build_id=self.initial['build'])
+
     class Meta:
         model = PlanSet
-        fields = ('parent', 'title', 'intro')
+        fields = ('build', 'parent', 'title', 'intro', 'plans')

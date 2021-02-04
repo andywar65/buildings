@@ -325,7 +325,7 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin,
     model = PlanSet
     permission_required = 'buildings.add_planset'
     form_class = PlanSetCreateForm
-    template_name = 'buildings/planset_create.html'
+    template_name = 'buildings/planset_form.html'
 
     def setup(self, request, *args, **kwargs):
         super(PlanSetCreateView, self).setup(request, *args, **kwargs)
@@ -368,19 +368,19 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin,
                 'set_slug': self.object.slug}) +
                 f'?set_created={self.object.title}')
 
-class DisciplineUpdateView( PermissionRequiredMixin, UpdateView ):
+class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
     model = PlanSet
     permission_required = 'buildings.change_planset'
     form_class = PlanSetUpdateForm
-    template_name = 'buildings/discipline_form_update.html'
+    template_name = 'buildings/planset_form_update.html'
 
     def setup(self, request, *args, **kwargs):
-        super(DisciplineUpdateView, self).setup(request, *args, **kwargs)
+        super(PlanSetUpdateView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
 
     def get_initial(self):
-        initial = super( DisciplineUpdateView, self ).get_initial()
+        initial = super( PlanSetUpdateView, self ).get_initial()
         initial['parent'] = self.object.get_parent()
         return initial
 
@@ -391,13 +391,14 @@ class DisciplineUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('buildings:discipline_list_create',
+            return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?disc_modified={self.object.title}')
+                f'?set_modified={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug}) +
-                f'?disc_modified={self.object.title}')
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.object.slug}) +
+                f'?set_modified={self.object.title}')
 
 class DisciplineDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_planset'

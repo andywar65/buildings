@@ -2,13 +2,13 @@
 {% load crispy_forms_tags %}
 {% load i18n %}
 
-{% block title %}{{ website.acro }} | {% translate "Modify discipline" %}{% endblock title %}
+{% block title %}{{ website.acro }} | {% translate "Modify Plan set" %}{% endblock title %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    <h4><strong>{% translate "Modify discipline: " %}</strong>{{ object.title }}</h4>
+    <h4><strong>{% translate "Modify Plan set: " %}</strong>{{ object.title }}</h4>
     {% if perms.buildings.change_planset %}
     <div class="row">
       <div class="col col-md-8">
@@ -28,7 +28,7 @@
       {% csrf_token %}
     </form>
     {% else %}
-    {% translate "You don't have permissions to modify disciplines" %}.
+    {% translate "You don't have permissions to modify plan sets" %}.
     {% endif %}
   </div>
 </div>

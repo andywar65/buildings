@@ -33,7 +33,7 @@ urlpatterns = [
     path(_('<slug>/sets/add/'), PlanSetCreateView.as_view(),
         name = 'planset_create'),
     path(_('<slug>/sets/<pk>/change/'),
-        DisciplineUpdateView.as_view(), name = 'planset_change'),
+        PlanSetUpdateView.as_view(), name = 'planset_change'),
     path(_('<slug>/sets/<pk>/delete/'),
         DisciplineDeleteView.as_view(), name = 'discipline_delete'),
     ]

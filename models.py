@@ -138,7 +138,7 @@ class PlanSet(MP_Node):
         related_name='building_planset', verbose_name = _('Building'))
     parent = models.ForeignKey('self', verbose_name = _('Parent set'),
         null=True, blank=True,
-        help_text = _('Can be changed only by staff in admin'),
+        help_text = _('Choose carefully, can be changed only by staff in admin'),
         on_delete = models.SET_NULL)
     title = models.CharField(_('Title'),
         help_text=_("Set name"),
