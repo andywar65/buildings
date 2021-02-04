@@ -21,14 +21,11 @@ class BuildingCreateForm(ModelForm):
             'zoom', )
 
 class BuildingUpdateForm(ModelForm):
-    plansets = NodeMultipleChoiceField(label=_('Disciplines'),
-        queryset=PlanSet.objects.all(), required=False,
-        help_text=_("Show only plans belonging to chosen disciplines"))
 
     class Meta:
         model = Building
         fields = ( 'image', 'title', 'intro', 'date', 'address', 'lat', 'long',
-            'zoom', 'plansets')
+            'zoom', )
 
 class BuildingDeleteForm(forms.Form):
     delete = forms.BooleanField( label=_("Delete the building"),
