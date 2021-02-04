@@ -67,7 +67,7 @@
           {% else %}
               </li><li>
           {% endif %}
-              <a href="{% url 'buildings:planset_change' build_slug=build.slug set_slug=set.slug %}">{{ set.title }}</a>
+              <a href="{% url 'buildings:planset_change' build_slug=build.slug set_slug=set.slug %}" title="{% trans "Modify plan set" %}">{{ set.title }}</a>
               {% if set.intro %}<em>- {{ set.intro }}</em>{% endif %}
               {% if set.slug != planset.slug %}
               <a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=set.slug %}">
