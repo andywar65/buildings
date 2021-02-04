@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load fb_versions %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ website.acro }} | {% translate "Add photo station" %}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'bimblog/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% include "bimblog/includes/photostation_alerts.html" %}
+    {% include "bimblog/includes/stationimage_alerts.html" %}
+    <h4><strong>{% translate "Add photo station" %}</strong></h4>
+    {% if perms.bimblog.add_photostation %}
+    {% include "bimblog/includes/hello_formula.html" %}
+    <hr class="mb-4">
+    {% include "bimblog/includes/form_errors.html" %}
+    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+        {{ form|crispy }}
+        <hr class="mb-4">
+        <div class="row">
+          <div class="col" id="mapid" style="height: 480px;"></div>
+        </div>
+        <hr class="mb-4">
+          {% include "bimblog/includes/add_buttons.html" %}
+        <hr class="mb-4">
+      {% csrf_token %}
+    </form>
+    {% else %}
+    {% translate "You don't have permissions to add photo stations" %}.
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'bimblog/js/photostation_form_update.js'%}"></script>
+{% endblock extra-js %}

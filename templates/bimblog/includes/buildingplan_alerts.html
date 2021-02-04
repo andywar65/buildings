@@ -1,0 +1,30 @@
+{% load i18n %}
+
+{% if plan_created %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=plan_created %}
+    Building plan <strong>{{ link }}</strong> successfully created!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% elif plan_modified %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=plan_modified %}
+    Building plan <strong>{{ link }}</strong> successfully modified!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% elif plan_deleted %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=plan_deleted %}
+    Building plan <strong>{{ link }}</strong> successfully deleted!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endif %}

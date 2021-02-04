@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% translate 'Delete photo station' %}{%endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <h4><strong>{% translate 'Delete photo station:' %} {{ title }}</strong></h4>
+    {% if perms.bimblog.delete_photostation %}
+    {% include 'bimblog/includes/delete_buttons.html' %}
+    {% else %}
+    <p>{% translate "You don't have permissions to delete photo stations" %}.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

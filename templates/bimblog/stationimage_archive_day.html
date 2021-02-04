@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {{ build.title }} {{ day }}{% endblock title %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h4><strong>{% translate "Images by day" %}: {{ day }} @ <a href="{% url 'bimblog:building_detail' slug=build.slug %}">{{ build.title }}</a>
+      </strong></h4>
+      <p><em>{{ build.intro }}</em></p>
+    </div>
+  </div>
+    {% if images %}
+      {% include 'bimblog/includes/station_gallery.html' %}
+    {% else %}
+    <p>{% translate "No images today" %}.</p>
+    {% endif %}
+    <hr class="mb-4">
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'bimblog:image_day' slug=build.slug year=previous_day.year month=previous_day.month day=previous_day.day %}" class="btn btn-secondary">&laquo; {% translate "PREVIOUS" %} </a>
+      </div>
+      <div class="col-md-6 text-right">
+        <a href="{% url 'bimblog:image_day' slug=build.slug year=next_day.year month=next_day.month day=next_day.day %}" class="btn btn-secondary"> {% translate "NEXT" %} &raquo;</a>
+      </div>
+    </div>
+    <hr class="mb-4">
+{% endblock content %}

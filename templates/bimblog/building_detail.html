@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fb_versions %}
+{% load i18n %}
+{% load l10n %}
+
+{% block title %}{{ website.acro }} | {{ build.title }}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'bimblog/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+{% include "bimblog/includes/building_alerts.html" %}
+{% include "bimblog/includes/buildingplan_alerts.html" %}
+{% include "bimblog/includes/photostation_alerts.html" %}
+{% include "bimblog/includes/discipline_alerts.html" %}
+<div class="row">
+  <div class="col col-md-8">
+    <h4><strong>{% translate "Building" %}: {{ build.title }}
+    </strong></h4>
+    <p><em>{{ build.intro }}</em></p>
+  </div>
+  <div class="col col-md-4 text-right">
+    <a class="btn btn-secondary" data-toggle="collapse" href="#map-container" title="{% translate "Modify features" %}">
+      <i class="fa fa-pencil"></i></a>
+  </div>
+</div>
+<div class="collapse show" id="map-container">
+  <div id="mapid" style="height: 800px"></div>
+</div>
+<hr class="mb-4">
+<div class="row" id="edit-features">
+  <div class="col-md-2"></div>
+  <div class="col-md-4 ">
+    {% if perms.bimblog.change_building %}
+      <a class="btn btn-primary" href="{% url 'bimblog:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
+        <i class="fa fa-pencil"></i> <i class="fa fa-building"></i></a>
+    {% endif %}
+      <a class="btn btn-secondary" href="{% url 'bimblog:building_list' %}" title="{% translate "Back to all buildings" %}">
+        <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
+  </div>
+  <div class="col-md-4 text-right">
+    {% if perms.bimblog.add_buildingplan %}
+      <a class="btn btn-success" href="{% url 'bimblog:buildingplan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
+        + <i class="fa fa-map-o"></i></a>
+    {% endif %}
+    {% if perms.bimblog.add_photostation %}
+      <a class="btn btn-success" href="{% url 'bimblog:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
+        + <i class="fa fa-camera"></i></a>
+    {% endif %}
+    {% if perms.bimblog.add_disciplinenode %}
+      <a class="btn btn-secondary" href="{% url 'bimblog:discipline_list_create' slug=build.slug %}" title="{% translate "Add discipline" %}">
+        + <i class="fa fa-graduation-cap"></i></a>
+    {% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% if plans %}
+      <hr class="mb-4">
+      {% include 'bimblog/includes/building_detail_plans.html' %}
+    {% endif %}
+  </div>
+</div>
+{% if dates %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col col-md-8">
+    <h5 id="dates"><strong>{% translate "Images by date" %}:</strong></h5>
+      <ul>
+        {% for date in dates %}
+        <li><a href="{% url 'bimblog:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
+        {% endfor %}
+      </ul>
+  </div>
+</div>
+{% endif %}
+
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'bimblog/js/building_detail.js'%}"></script>
+{% endblock extra-js %}

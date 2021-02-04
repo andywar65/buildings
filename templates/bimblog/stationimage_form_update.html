@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load fb_versions %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% translate "Modify image" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% include "bimblog/includes/stationimage_alerts.html" %}
+    <h4><strong>{% translate "Modify image" %}</strong></h4>
+    {% if perms.bimblog.change_stationimage %}
+    <div class="row">
+      <div class="col col-md-8">
+        {% include "bimblog/includes/hello_formula.html" %}
+      </div>
+      <div class="col col-md-4 text-right">
+        <a class="btn btn-danger" href="{% url 'bimblog:image_delete' build_slug=object.stat.build.slug stat_slug=object.stat.slug pk=object.id %}">{% translate 'Delete' %}</a>
+      </div>
+    </div>
+    <hr class="mb-4">
+    {% include "bimblog/includes/form_errors.html" %}
+    <div class="row"><div class="col">
+        <a href="{{ object.fb_image.url }}"><img src="{% version object.fb_image 'small' %}"
+          alt="{{ object.caption }}"></a>
+    </div></div>
+    <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+        {{ form|crispy }}
+        <hr class="mb-4">
+          {% include "bimblog/includes/add_buttons.html" %}
+        <hr class="mb-4">
+      {% csrf_token %}
+    </form>
+    {% else %}
+    {% translate "You don't have permissions to modify images" %}.
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

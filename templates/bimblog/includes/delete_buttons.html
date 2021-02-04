@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<p>{% translate "WARNING, we can't undo this!" %}</p>
+<hr class="mb-4">
+<form action="" method="post" novalidate>
+  <div class="row">
+    <div class="col col-md-6">
+      <button class="btn btn-danger btn-lg btn-block" type="submit">{% translate "Delete" %}</button>
+    </div>
+    <div class="col col-md-6">
+      <button class="btn btn-light btn-lg btn-block" type="submit" name="cancel">
+        {% translate "Cancel" %}</button>
+    </div>
+  </div>
+  {% csrf_token %}
+</form>
+<hr class="mb-4">

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load fb_versions %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ website.acro }} | {% translate "Buildings" %}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'bimblog/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+{% include "bimblog/includes/building_alerts.html" %}
+<div class="row">
+  <div class="col col-md-8">
+    <h4><strong>{% translate "Map of all buildings" %}</strong></h4>
+  </div>
+  <div class="col col-md-4 text-right">
+    {% if perms.bimblog.add_building %}
+      <a class="btn btn-secondary" href="#building-create" title="{% translate "Add building" %}">
+        + <i class="fa fa-building"></i></a>
+    {% endif %}
+  </div>
+</div>
+<hr class="mb-4">
+<div class="row">
+  <div class="col" id="mapid" style="height: 600px;"></div>
+</div>
+<div class="row" id="building-create">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <hr class="mb-4">
+    <h4><strong>{% translate "Add building" %}</strong></h4>
+    {% if perms.bimblog.add_building %}
+    {% include "bimblog/includes/hello_formula.html" %}
+    <p>{% translate "Click on the map above to set Latitude, Longitude and Zoom factor." %}</p>
+    <hr class="mb-4">
+    {% include "bimblog/includes/form_errors.html" %}
+    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+        {{ form|crispy }}
+        <hr class="mb-4">
+          {% include "bimblog/includes/add_buttons.html" %}
+        <hr class="mb-4">
+      {% csrf_token %}
+    </form>
+    {% else %}
+    {% translate "You don't have permissions to add buildings" %}.
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'bimblog/js/building_list_create.js'%}"></script>
+{% endblock extra-js %}

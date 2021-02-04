@@ -1,0 +1,43 @@
+{% load fb_versions %}
+{% load i18n %}
+
+<div class="row">
+  <div id="gallery-{{ main_gal_slug }}" class="carousel slide" data-ride="carousel">
+    {% if images|length > 1 %}
+      <ol class="carousel-indicators">
+      {% for image in images %}
+        <li data-target="#gallery-{{ main_gal_slug }}" data-slide-to="{{ forloop.counter0 }}"
+        {% if forloop.first %}class="active"{% endif %}></li>
+      {% endfor %}
+      </ol>
+      <a class="carousel-control-prev" href="#gallery-{{ main_gal_slug }}" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">{% translate 'Previous' %}</span>
+      </a>
+      <a class="carousel-control-next" href="#gallery-{{ main_gal_slug }}" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">{% translate 'Next' %}</span>
+      </a>
+    {% endif %}
+    <div class="carousel-inner">
+      {% for image in images %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <img src="{% version image.fb_image 'wide_landscape' %}"
+            class="d-block w-100">
+          {% if image.caption or forloop.first %}
+            <div class="gradient-mask"></div>
+            <div class="carousel-caption d-none d-md-block">
+              {% if day %}
+                <p><a class="text-light" href="{% url 'bimblog:station_detail' build_slug=build.slug stat_slug=image.stat.slug %}">{{ image.stat.title }}</a> -
+              {% else %}
+                <p><a class="text-light" href="{% url 'bimblog:image_day' slug=stat.build.slug year=image.date.year month=image.date.month day=image.date.day %}">{{ image.date|date:"d/m/Y" }}</a> -
+              {% endif %}
+              {% translate "No description" as default %}
+                <a class="text-light" href="{% url 'bimblog:image_change' build_slug=image.stat.build.slug stat_slug=image.stat.slug pk=image.id %}"> {{ image.caption|default_if_none:default }}</a></p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

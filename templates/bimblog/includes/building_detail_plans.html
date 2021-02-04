@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">{% translate 'Modify plans' %}</th>
+        <th scope="col">{% translate 'Elevation (mt)' %}</th>
+        <th scope="col">{% translate 'Discipline' %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for plan in plans.all %}
+      <tr>
+        <td><a href="{% url 'bimblog:buildingplan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+        <td>{{ plan.elev }}</td>
+        <td>{{ plan.discn.title }}</td>
+      </tr>
+      {% endfor %}
+    <tbody>
+  </table>
+</div>
