@@ -153,7 +153,10 @@ class PlanSet(MP_Node):
         help_text=_("Show only plans belonging to chosen set") )
 
     def __str__(self):
-        return self.title
+        prefix = ''
+        for i in range( self.depth -1 ):
+            prefix = prefix + '-'
+        return prefix + self.title
 
     def save(self, *args, **kwargs):
         if not self.slug:

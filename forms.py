@@ -70,19 +70,9 @@ class StationImageUpdateForm(ModelForm):
         model = StationImage
         fields = ( 'image', 'stat', 'date', 'caption')
 
-class NodeChoiceField(ModelChoiceField):
-    def label_from_instance(self, obj):
-        prefix = ''
-        for i in range( obj.depth -1 ):
-            prefix = prefix + '-'
-        return prefix + obj.title
-
 class PlanSetCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
         queryset=Building.objects.all(), disabled = True )
-    #parent = NodeChoiceField( label=_('Parent set'),
-        #queryset=PlanSet.objects.all(), required=False,
-        #help_text = _('Choose carefully: can be changed only by staff in admin'))
 
     def __init__(self, **kwargs):
         super(PlanSetCreateForm, self).__init__(**kwargs)
