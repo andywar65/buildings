@@ -202,7 +202,7 @@ class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
                 f'?modified={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.object.slug }) +
+                kwargs={'build_slug': self.object.slug, 'set_slug': 'base' }) +
                 f'?modified={self.object.title}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
