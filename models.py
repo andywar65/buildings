@@ -164,6 +164,7 @@ class PlanSet(MP_Node):
     class Meta:
         verbose_name = _('Plan set')
         verbose_name_plural = _('Plan sets')
+        ordering = ('build', 'path')
 
 def photo_station_default_intro():
     return (_('Another photo station by %(sitename)s!') %
