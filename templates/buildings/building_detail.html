@@ -57,7 +57,7 @@
 <div class="card-deck">
   <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
     <div class="card-header">
-      <h4 class="card-title">{% trans "Active Plan set: "%}{{ planset.title }}</h4>
+      <h5 class="card-title">{% trans "Active Plan set: "%}<strong>{{ planset.title }}</strong></h5>
     </div>
     <div class="card-body">
       {% for list in annotated_lists %}
@@ -88,7 +88,7 @@
   </div>
   <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
     <div class="card-header">
-      <h4 class="card-title">{% trans "Plans"%}</h4>
+      <h5 class="card-title">{% trans "Plans"%}</h5>
     </div>
     <div class="card-body">
       {% if plans %}
@@ -100,7 +100,7 @@
   </div>
   <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
     <div class="card-header">
-      <h4 class="card-title">{% trans "Images by date"%}</h4>
+      <h5 class="card-title">{% trans "Images by date"%}</h5>
     </div>
     <div class="card-body">
       {% if dates %}
