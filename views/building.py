@@ -71,12 +71,12 @@ class AlertMixin:
             context['img_modified'] = self.request.GET['img_modified']
         elif 'img_deleted' in self.request.GET:
             context['img_deleted'] = self.request.GET['img_deleted']
-        elif 'disc_created' in self.request.GET:
-            context['disc_created'] = self.request.GET['disc_created']
-        elif 'disc_modified' in self.request.GET:
-            context['disc_modified'] = self.request.GET['disc_modified']
-        elif 'disc_deleted' in self.request.GET:
-            context['disc_deleted'] = self.request.GET['disc_deleted']
+        elif 'set_created' in self.request.GET:
+            context['set_created'] = self.request.GET['set_created']
+        elif 'set_modified' in self.request.GET:
+            context['set_modified'] = self.request.GET['set_modified']
+        elif 'set_deleted' in self.request.GET:
+            context['set_deleted'] = self.request.GET['set_deleted']
         return context
 
 class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
@@ -117,7 +117,7 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
                 f'?created={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.object.slug }) +
+                kwargs={'build_slug': self.object.slug, 'set_slug': 'base' }) +
                 f'?created={self.object.title}')
 
 class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
@@ -156,7 +156,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( context['build'] )
+        build = self.prepare_build_data( self.object )
         #plan data
         plans = []
         for plan in context['plans'].reverse():
@@ -320,53 +320,53 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'slug': self.build.slug}) +
             f'?plan_deleted={self.plan.title}')
 
-class DisciplineListCreateView( PermissionRequiredMixin, AlertMixin,
+class PlanSetCreateView( PermissionRequiredMixin, AlertMixin,
     CreateView ):
     model = PlanSet
-    permission_required = 'buildings.view_planset'
+    permission_required = 'buildings.add_planset'
     form_class = PlanSetCreateForm
-    template_name = 'buildings/discipline_list_create.html'
+    template_name = 'buildings/planset_create.html'
 
     def setup(self, request, *args, **kwargs):
-        super(DisciplineListCreateView, self).setup(request, *args, **kwargs)
+        super(PlanSetCreateView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
 
+    def get_initial(self):
+        initial = super( PlanSetCreateView, self ).get_initial()
+        initial['build'] = self.build.id
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['build'] = self.build
-        #list all disciplines as tree
-        context['annotated_lists'] = []
-        root_pages = PlanSet.get_root_nodes()
-        for root_page in root_pages:
-            context['annotated_lists'].append(PlanSet.get_annotated_list(parent=root_page))
-        #discipline alerts
+        #planset alerts
         context = self.add_alerts_to_context(context)
         return context
 
     def form_valid(self, form):
-        if not self.request.user.has_perm('buildings.add_planset'):
-            raise Http404(_("User has no permission to add disciplines"))
         #can't use save method because dealing with MP_Node
         if form.instance.parent:
             self.object = form.instance.parent.add_child(
+                build=self.build,
                 title=form.instance.title,
                 intro=form.instance.intro)
         else:
             self.object = PlanSet.add_root(
+                build=self.build,
                 title=form.instance.title,
                 intro=form.instance.intro)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('buildings:discipline_list_create',
+            return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?disc_created={self.object.title}')
+                f'?set_created={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug}) +
-                f'?disc_created={self.object.title}')
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.object.slug}) +
+                f'?set_created={self.object.title}')
 
 class DisciplineUpdateView( PermissionRequiredMixin, UpdateView ):
     model = PlanSet

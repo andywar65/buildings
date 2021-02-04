@@ -1,14 +1,7 @@
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
 
-from .views import (BuildingDetailView,
-    BuildingUpdateView, BuildingDeleteView, PlanCreateView,
-    PlanUpdateView, PlanDeleteView, PhotoStationCreateView,
-    PhotoStationUpdateView, PhotoStationDeleteView,
-    StationImageUpdateView, StationImageDeleteView,
-    StationImageDayArchiveView, BuildingListCreateView,
-    StationImageListCreateView, DisciplineListCreateView, DisciplineUpdateView,
-    DisciplineDeleteView)
+from .views import *
 
 app_name = 'buildings'
 urlpatterns = [
@@ -37,8 +30,8 @@ urlpatterns = [
         StationImageDeleteView.as_view(), name = 'image_delete'),
     path(_('<slug>/stations/<int:year>/<int:month>/<int:day>/'),
         StationImageDayArchiveView.as_view(), name = 'image_day'),
-    path(_('<slug>/sets/add/'), DisciplineListCreateView.as_view(),
-        name = 'planset_list_create'),
+    path(_('<slug>/sets/add/'), PlanSetCreateView.as_view(),
+        name = 'planset_create'),
     path(_('<slug>/sets/<pk>/change/'),
         DisciplineUpdateView.as_view(), name = 'planset_change'),
     path(_('<slug>/sets/<pk>/delete/'),

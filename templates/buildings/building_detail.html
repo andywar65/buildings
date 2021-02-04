@@ -14,7 +14,7 @@
 {% include "buildings/includes/building_alerts.html" %}
 {% include "buildings/includes/plan_alerts.html" %}
 {% include "buildings/includes/photostation_alerts.html" %}
-{% include "buildings/includes/discipline_alerts.html" %}
+{% include "buildings/includes/planset_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
     <h4><strong>{% translate "Building" %}: {{ build.title }}
@@ -40,7 +40,7 @@
   </div>
   <div class="col-md-6 text-right">
     {% if perms.buildings.add_planset %}
-      <a class="btn btn-secondary" href="{% url 'buildings:planset_list_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
+      <a class="btn btn-secondary" href="{% url 'buildings:planset_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
         + <i class="fa fa-sitemap"></i></a>
     {% endif %}
     {% if perms.buildings.add_plan %}

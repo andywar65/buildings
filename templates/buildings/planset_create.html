@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% translate "Create Plan set" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% include "buildings/includes/planset_alerts.html" %}
+    <div class="row">
+      <div class="col">
+        <h4><strong>{% translate "Add plan set" %}</strong></h4>
+        {% if perms.buildings.add_planset %}
+        {% include "buildings/includes/hello_formula.html" %}
+        <hr class="mb-4">
+        {% include "buildings/includes/form_errors.html" %}
+        <form action="" method="post" class="needs-validation" novalidate>
+            {{ form|crispy }}
+            <hr class="mb-4">
+              {% include "buildings/includes/add_buttons.html" %}
+            <hr class="mb-4">
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to add plan sets" %}.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,27 +1,27 @@
 {% load i18n %}
 
-{% if disc_created %}
+{% if set_created %}
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=disc_created %}
-    Discipline <strong>{{ link }}</strong> successfully created!
+    {% blocktranslate with link=set_created %}
+    Plan set <strong>{{ link }}</strong> successfully created!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-{% elif disc_modified %}
+{% elif set_modified %}
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=disc_modified %}
-    Discipline <strong>{{ link }}</strong> successfully modified!
+    {% blocktranslate with link=set_modified %}
+    Plan set <strong>{{ link }}</strong> successfully modified!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-{% elif disc_deleted %}
+{% elif set_deleted %}
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=disc_deleted %}
-    Discipline <strong>{{ link }}</strong> successfully deleted!
+    {% blocktranslate with link=set_deleted %}
+    Plan set <strong>{{ link }}</strong> successfully deleted!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
