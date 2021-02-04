@@ -9,21 +9,21 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     <h4><strong>{% translate "Modify discipline: " %}</strong>{{ object.title }}</h4>
-    {% if perms.bimblog.change_disciplinenode %}
+    {% if perms.buildings.change_planset %}
     <div class="row">
       <div class="col col-md-8">
-        {% include "bimblog/includes/hello_formula.html" %}
+        {% include "buildings/includes/hello_formula.html" %}
       </div>
       <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'bimblog:discipline_delete' slug=build.slug pk=object.id %}">{% translate 'Delete' %}</a>
+        <a class="btn btn-danger" href="{% url 'buildings:discipline_delete' slug=build.slug pk=object.id %}">{% translate 'Delete' %}</a>
       </div>
     </div>
     <hr class="mb-4">
-    {% include "bimblog/includes/form_errors.html" %}
+    {% include "buildings/includes/form_errors.html" %}
     <form action="" method="post" class="needs-validation" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
-          {% include "bimblog/includes/add_buttons.html" %}
+          {% include "buildings/includes/add_buttons.html" %}
         <hr class="mb-4">
       {% csrf_token %}
     </form>

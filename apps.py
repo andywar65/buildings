@@ -2,7 +2,7 @@ from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 from django.utils.translation import gettext as _
 
-def create_bimblog_group(sender, **kwargs):
+def create_buildings_group(sender, **kwargs):
     from django.contrib.auth.models import Permission, Group
     grp, created = Group.objects.get_or_create(name=_('Building Manager'))
     if created:
@@ -14,29 +14,29 @@ def create_bimblog_group(sender, **kwargs):
             'delete_photostation',
             'view_stationimage', 'add_stationimage', 'change_stationimage',
             'delete_stationimage', 'view_discipline', 'add_discipline',
-            'change_discipline', 'delete_discipline', 'view_disciplinenode',
-            'add_disciplinenode', 'change_disciplinenode',
-            'delete_disciplinenode',))
+            'change_discipline', 'delete_discipline', 'view_planset',
+            'add_planset', 'change_planset',
+            'delete_planset',))
         grp.permissions.set(permissions)
 
 def create_disciplines(sender, **kwargs):
-    from bimblog.models import DisciplineNode
+    from buildings.models import PlanSet
     try:
-        DisciplineNode.objects.get(title=_('Architecture'))
+        PlanSet.objects.get(title=_('Architecture'))
     except:
-        DisciplineNode.add_root(title=_('Architecture'))
+        PlanSet.add_root(title=_('Architecture'))
     try:
-        DisciplineNode.objects.get(title=_('MEP'))
+        PlanSet.objects.get(title=_('MEP'))
     except:
-        DisciplineNode.add_root(title=_('MEP'))
+        PlanSet.add_root(title=_('MEP'))
     try:
-        DisciplineNode.objects.get(title=_('Structure'))
+        PlanSet.objects.get(title=_('Structure'))
     except:
-        DisciplineNode.add_root(title=_('Structure'))
+        PlanSet.add_root(title=_('Structure'))
 
-class BimblogConfig(AppConfig):
-    name = 'bimblog'
+class buildingsConfig(AppConfig):
+    name = 'buildings'
 
     def ready(self):
-        post_migrate.connect(create_bimblog_group, sender=self)
+        post_migrate.connect(create_buildings_group, sender=self)
         post_migrate.connect(create_disciplines, sender=self)

@@ -8,26 +8,26 @@
 {% block title %}{{ website.acro }} | {% translate "Modify photo station" %}{% endblock title %}
 
 {% block extra-head %}
-  {% include 'bimblog/includes/leaflet_extra_head.html' %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
 {% endblock extra-head %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    {% include "bimblog/includes/photostation_alerts.html" %}
+    {% include "buildings/includes/photostation_alerts.html" %}
     <h4><strong>{% translate "Modify photo station" %}: {{ object.title }}</strong></h4>
-    {% if perms.bimblog.change_photostation %}
+    {% if perms.buildings.change_photostation %}
     <div class="row">
       <div class="col col-md-8">
-        {% include "bimblog/includes/hello_formula.html" %}
+        {% include "buildings/includes/hello_formula.html" %}
       </div>
       <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'bimblog:station_delete' build_slug=object.build.slug stat_slug=object.slug %}">{% translate 'Delete' %}</a>
+        <a class="btn btn-danger" href="{% url 'buildings:station_delete' build_slug=object.build.slug stat_slug=object.slug %}">{% translate 'Delete' %}</a>
       </div>
     </div>
     <hr class="mb-4">
-    {% include "bimblog/includes/form_errors.html" %}
+    {% include "buildings/includes/form_errors.html" %}
     <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
@@ -35,7 +35,7 @@
           <div class="col" id="mapid" style="height: 480px;"></div>
         </div>
         <hr class="mb-4">
-          {% include "bimblog/includes/add_buttons.html" %}
+          {% include "buildings/includes/add_buttons.html" %}
         <hr class="mb-4">
       {% csrf_token %}
     </form>
@@ -47,5 +47,5 @@
 {% endblock content %}
 {% block extra-js %}
   {{ map_data|json_script:"map_data"}}
-  <script src="{% static 'bimblog/js/photostation_form_update.js'%}"></script>
+  <script src="{% static 'buildings/js/photostation_form_update.js'%}"></script>
 {% endblock extra-js %}

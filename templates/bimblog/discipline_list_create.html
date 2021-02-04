@@ -8,7 +8,7 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    {% include "bimblog/includes/discipline_alerts.html" %}
+    {% include "buildings/includes/discipline_alerts.html" %}
     <div class="row">
       <div class="col">
         <h4><strong>{% translate "List of disciplines" %}</strong></h4>
@@ -28,15 +28,15 @@
             {% else %}
                 </li><li>
             {% endif %}
-                <a href="{% url 'bimblog:discipline_change' slug=build.slug pk=disc.id %}">{{ disc.title }}</a>
+                <a href="{% url 'buildings:discipline_change' slug=build.slug pk=disc.id %}">{{ disc.title }}</a>
                 {% if disc.intro %}<em>- {{ disc.intro }}</em>{% endif %}
             {% for close in info.close %}
                 </li></ul>
             {% endfor %}
           {% endfor %}
         {% endfor %}
-        {% if perms.bimblog.change_disciplinenode and user.is_staff %}
-        <p class="text-right"><a class="btn btn-primary" href="/admin/bimblog/disciplinenode"
+        {% if perms.buildings.change_planset and user.is_staff %}
+        <p class="text-right"><a class="btn btn-primary" href="/admin/buildings/planset"
           title="{% trans "Modify directory (in admin)" %}"><i class="fa fa-pencil"></i>
           <i class="fa fa-list-ul"></i></a></p>
         {% endif %}
@@ -48,14 +48,14 @@
     <div class="row">
       <div class="col">
         <h4><strong>{% translate "Add discipline" %}</strong></h4>
-        {% if perms.bimblog.add_disciplinenode %}
-        {% include "bimblog/includes/hello_formula.html" %}
+        {% if perms.buildings.add_planset %}
+        {% include "buildings/includes/hello_formula.html" %}
         <hr class="mb-4">
-        {% include "bimblog/includes/form_errors.html" %}
+        {% include "buildings/includes/form_errors.html" %}
         <form action="" method="post" class="needs-validation" novalidate>
             {{ form|crispy }}
             <hr class="mb-4">
-              {% include "bimblog/includes/add_buttons.html" %}
+              {% include "buildings/includes/add_buttons.html" %}
             <hr class="mb-4">
           {% csrf_token %}
         </form>

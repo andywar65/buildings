@@ -9,23 +9,23 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    {% include "bimblog/includes/buildingplan_alerts.html" %}
+    {% include "buildings/includes/buildingplan_alerts.html" %}
     <h4><strong>{% translate "Modify building plan" %}</strong></h4>
-    {% if perms.bimblog.change_buildingplan %}
+    {% if perms.buildings.change_buildingplan %}
     <div class="row">
       <div class="col col-md-8">
-        {% include "bimblog/includes/hello_formula.html" %}
+        {% include "buildings/includes/hello_formula.html" %}
       </div>
       <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'bimblog:buildingplan_delete' build_slug=object.build.slug plan_slug=object.slug %}">{% translate 'Delete' %}</a>
+        <a class="btn btn-danger" href="{% url 'buildings:buildingplan_delete' build_slug=object.build.slug plan_slug=object.slug %}">{% translate 'Delete' %}</a>
       </div>
     </div>
     <hr class="mb-4">
-    {% include "bimblog/includes/form_errors.html" %}
+    {% include "buildings/includes/form_errors.html" %}
     <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
-          {% include "bimblog/includes/add_buttons.html" %}
+          {% include "buildings/includes/add_buttons.html" %}
         <hr class="mb-4">
       {% csrf_token %}
     </form>

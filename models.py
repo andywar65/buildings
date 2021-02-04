@@ -16,7 +16,7 @@ from treebeard.mp_tree import MP_Node
 from project.utils import generate_unique_slug
 from .map_utils import workflow
 
-class DisciplineNode(MP_Node):
+class PlanSet(MP_Node):
     parent = models.ForeignKey('self', verbose_name = _('Parent discipline'),
         null=True, blank=True,
         help_text = _('Can be changed only by staff in admin'),
@@ -65,7 +65,7 @@ class Building(models.Model):
         help_text=_("Coordinates from Google Maps or https://openstreetmap.org"))
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 21"))
-    disciplinesn = models.ManyToManyField(DisciplineNode,
+    disciplinesn = models.ManyToManyField(PlanSet,
         blank = True, verbose_name = _('Disciplines'),
         help_text=_("Show only plans belonging to chosen disciplines") )
 
@@ -74,7 +74,7 @@ class Building(models.Model):
         return self.title
 
     def get_full_path(self):
-        return reverse('bimblog:building_detail', kwargs={'slug': self.slug})
+        return reverse('buildings:building_detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         if not self.title:
@@ -98,7 +98,7 @@ class BuildingPlan(models.Model):
 
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_plan', verbose_name = _('Building'))
-    discn = models.ForeignKey(DisciplineNode, on_delete = models.SET_NULL,
+    discn = models.ForeignKey(PlanSet, on_delete = models.SET_NULL,
         related_name='disciplinen_plan', verbose_name = _('Discipline'),
         null=True, blank=True)
     title = models.CharField(_('Name'),

@@ -5,30 +5,30 @@
 {% block title %}{{ website.acro }} | {{ stat.title }}{% endblock title %}
 
 {% block content %}
-{% include "bimblog/includes/photostation_alerts.html" %}
-{% include "bimblog/includes/stationimage_alerts.html" %}
+{% include "buildings/includes/photostation_alerts.html" %}
+{% include "buildings/includes/stationimage_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
-    <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @ <a href="{% url 'bimblog:building_detail' slug=stat.build.slug %}">{{ stat.build.title }}</a>
+    <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @ <a href="{% url 'buildings:building_detail' slug=stat.build.slug %}">{{ stat.build.title }}</a>
     </strong></h4>
     <p><em>{{ stat.intro }}</em></p>
   </div>
   <div class="col col-md-4 text-right">
     {% if reverse %}
-      <a class="btn btn-secondary" href="{% url 'bimblog:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}" title="{% translate "Bakcwards in time" %}">
+      <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}" title="{% translate "Bakcwards in time" %}">
         <i class="fa fa-sort-numeric-desc"></i></a>
     {% else %}
-      <a class="btn btn-secondary" href="{% url 'bimblog:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}?reverse=True" title="{% translate "Forwards in time" %}">
+      <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}?reverse=True" title="{% translate "Forwards in time" %}">
         <i class="fa fa-sort-numeric-asc"></i></a>
     {% endif %}
-    {% if perms.bimblog.add_stationimage %}
+    {% if perms.buildings.add_stationimage %}
       <a class="btn btn-success" href="#stationimage-create" title="{% translate "Add image" %}">
        + <i class="fa fa-picture-o"></i></a>
     {% endif %}
   </div>
 </div>
 {% if images %}
-  {% include 'bimblog/includes/station_gallery.html' %}
+  {% include 'buildings/includes/station_gallery.html' %}
 {% else %}
   <p>{% translate "There are no images available for this station" %}.</p>
 {% endif %}
@@ -36,13 +36,13 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-4">
-    {% if perms.bimblog.change_photostation %}
-      <a class="btn btn-primary" href="{% url 'bimblog:station_change' build_slug=stat.build.slug stat_slug=stat.slug%}" title="{% translate "Modify photo station" %}">
+    {% if perms.buildings.change_photostation %}
+      <a class="btn btn-primary" href="{% url 'buildings:station_change' build_slug=stat.build.slug stat_slug=stat.slug%}" title="{% translate "Modify photo station" %}">
         <i class="fa fa-pencil"></i> <i class="fa fa-camera"></i></a>
     {% endif %}
   </div>
   <div class="col-md-4 text-right">
-    <a class="btn btn-secondary" href="{% url 'bimblog:building_detail' slug=stat.build.slug %}" title="{% translate "Back to building" %}">
+    <a class="btn btn-secondary" href="{% url 'buildings:building_detail' slug=stat.build.slug %}" title="{% translate "Back to building" %}">
       <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
   </div>
 </div>
@@ -51,14 +51,14 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     <h4><strong>{% translate "Add an image" %}</strong></h4>
-    {% if perms.bimblog.add_stationimage %}
-    {% include "bimblog/includes/hello_formula.html" %}
+    {% if perms.buildings.add_stationimage %}
+    {% include "buildings/includes/hello_formula.html" %}
     <hr class="mb-4">
-    {% include "bimblog/includes/form_errors.html" %}
+    {% include "buildings/includes/form_errors.html" %}
     <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
-          {% include "bimblog/includes/add_buttons.html" %}
+          {% include "buildings/includes/add_buttons.html" %}
         <hr class="mb-4">
       {% csrf_token %}
     </form>

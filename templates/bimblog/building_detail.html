@@ -7,14 +7,14 @@
 {% block title %}{{ website.acro }} | {{ build.title }}{% endblock title %}
 
 {% block extra-head %}
-  {% include 'bimblog/includes/leaflet_extra_head.html' %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
 {% endblock extra-head %}
 
 {% block content %}
-{% include "bimblog/includes/building_alerts.html" %}
-{% include "bimblog/includes/buildingplan_alerts.html" %}
-{% include "bimblog/includes/photostation_alerts.html" %}
-{% include "bimblog/includes/discipline_alerts.html" %}
+{% include "buildings/includes/building_alerts.html" %}
+{% include "buildings/includes/buildingplan_alerts.html" %}
+{% include "buildings/includes/photostation_alerts.html" %}
+{% include "buildings/includes/discipline_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
     <h4><strong>{% translate "Building" %}: {{ build.title }}
@@ -33,24 +33,24 @@
 <div class="row" id="edit-features">
   <div class="col-md-2"></div>
   <div class="col-md-4 ">
-    {% if perms.bimblog.change_building %}
-      <a class="btn btn-primary" href="{% url 'bimblog:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
+    {% if perms.buildings.change_building %}
+      <a class="btn btn-primary" href="{% url 'buildings:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
         <i class="fa fa-pencil"></i> <i class="fa fa-building"></i></a>
     {% endif %}
-      <a class="btn btn-secondary" href="{% url 'bimblog:building_list' %}" title="{% translate "Back to all buildings" %}">
+      <a class="btn btn-secondary" href="{% url 'buildings:building_list' %}" title="{% translate "Back to all buildings" %}">
         <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
   </div>
   <div class="col-md-4 text-right">
-    {% if perms.bimblog.add_buildingplan %}
-      <a class="btn btn-success" href="{% url 'bimblog:buildingplan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
+    {% if perms.buildings.add_buildingplan %}
+      <a class="btn btn-success" href="{% url 'buildings:buildingplan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
         + <i class="fa fa-map-o"></i></a>
     {% endif %}
-    {% if perms.bimblog.add_photostation %}
-      <a class="btn btn-success" href="{% url 'bimblog:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
+    {% if perms.buildings.add_photostation %}
+      <a class="btn btn-success" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
         + <i class="fa fa-camera"></i></a>
     {% endif %}
-    {% if perms.bimblog.add_disciplinenode %}
-      <a class="btn btn-secondary" href="{% url 'bimblog:discipline_list_create' slug=build.slug %}" title="{% translate "Add discipline" %}">
+    {% if perms.buildings.add_planset %}
+      <a class="btn btn-secondary" href="{% url 'buildings:discipline_list_create' slug=build.slug %}" title="{% translate "Add discipline" %}">
         + <i class="fa fa-graduation-cap"></i></a>
     {% endif %}
   </div>
@@ -60,7 +60,7 @@
   <div class="col-md-8">
     {% if plans %}
       <hr class="mb-4">
-      {% include 'bimblog/includes/building_detail_plans.html' %}
+      {% include 'buildings/includes/building_detail_plans.html' %}
     {% endif %}
   </div>
 </div>
@@ -71,7 +71,7 @@
     <h5 id="dates"><strong>{% translate "Images by date" %}:</strong></h5>
       <ul>
         {% for date in dates %}
-        <li><a href="{% url 'bimblog:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
+        <li><a href="{% url 'buildings:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
         {% endfor %}
       </ul>
   </div>
@@ -81,5 +81,5 @@
 {% endblock content %}
 {% block extra-js %}
   {{ map_data|json_script:"map_data"}}
-  <script src="{% static 'bimblog/js/building_detail.js'%}"></script>
+  <script src="{% static 'buildings/js/building_detail.js'%}"></script>
 {% endblock extra-js %}

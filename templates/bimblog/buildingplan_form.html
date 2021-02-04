@@ -8,16 +8,16 @@
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    {% include "bimblog/includes/buildingplan_alerts.html" %}
+    {% include "buildings/includes/buildingplan_alerts.html" %}
     <h4><strong>{% translate "Add building plan" %}</strong></h4>
-    {% if perms.bimblog.add_buildingplan %}
-    {% include "bimblog/includes/hello_formula.html" %}
+    {% if perms.buildings.add_buildingplan %}
+    {% include "buildings/includes/hello_formula.html" %}
     <hr class="mb-4">
-    {% include "bimblog/includes/form_errors.html" %}
+    {% include "buildings/includes/form_errors.html" %}
     <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
-          {% include "bimblog/includes/add_buttons.html" %}
+          {% include "buildings/includes/add_buttons.html" %}
         <hr class="mb-4">
       {% csrf_token %}
     </form>

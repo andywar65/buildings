@@ -3,7 +3,7 @@ from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 from django.utils.translation import gettext as _
 
 from .models import (Building, BuildingPlan, PhotoStation, StationImage,
-    DisciplineNode)
+    PlanSet)
 
 class NodeMultipleChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):
@@ -15,7 +15,7 @@ class NodeMultipleChoiceField(ModelMultipleChoiceField):
 class BuildingCreateForm(ModelForm):
     image = forms.ImageField(label=_('Image'), required=True)
     disciplinesn = NodeMultipleChoiceField(label=_('Disciplines'),
-        queryset=DisciplineNode.objects.all(), required=False,
+        queryset=PlanSet.objects.all(), required=False,
         help_text=_("Show only plans belonging to chosen disciplines"))
 
     class Meta:
@@ -25,7 +25,7 @@ class BuildingCreateForm(ModelForm):
 
 class BuildingUpdateForm(ModelForm):
     disciplinesn = NodeMultipleChoiceField(label=_('Disciplines'),
-        queryset=DisciplineNode.objects.all(), required=False,
+        queryset=PlanSet.objects.all(), required=False,
         help_text=_("Show only plans belonging to chosen disciplines"))
 
     class Meta:
@@ -83,18 +83,18 @@ class NodeChoiceField(ModelChoiceField):
             prefix = prefix + '-'
         return prefix + obj.title
 
-class DisciplineNodeCreateForm(ModelForm):
+class PlanSetCreateForm(ModelForm):
     parent = NodeChoiceField( label=_('Parent discipline'),
-        queryset=DisciplineNode.objects.all(), required=False,
+        queryset=PlanSet.objects.all(), required=False,
         help_text = _('Choose carefully: can be changed only by staff in admin'))
     class Meta:
-        model = DisciplineNode
+        model = PlanSet
         fields = ('parent', 'title', 'intro')
 
-class DisciplineNodeUpdateForm(ModelForm):
+class PlanSetUpdateForm(ModelForm):
     parent = NodeChoiceField( label=_('Parent discipline'),
-        queryset=DisciplineNode.objects.all(), disabled = True,
+        queryset=PlanSet.objects.all(), disabled = True,
         help_text = _('Can be changed only by staff in admin'))
     class Meta:
-        model = DisciplineNode
+        model = PlanSet
         fields = ('parent', 'title', 'intro')

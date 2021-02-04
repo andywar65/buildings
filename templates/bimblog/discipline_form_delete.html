@@ -9,8 +9,8 @@
   <div class="col-md-8">
     <h4><strong>{% translate 'Delete discipline:' %} </strong>{{ title }}</h4>
     <p>{% trans "Remember that disciplines are shared among buildings."%}</p>
-    {% if perms.bimblog.delete_discipline %}
-    {% include 'bimblog/includes/delete_buttons.html' %}
+    {% if perms.buildings.delete_discipline %}
+    {% include 'buildings/includes/delete_buttons.html' %}
     {% else %}
     <p>{% translate "You don't have permissions to delete disciplines" %}.</p>
     {% endif %}

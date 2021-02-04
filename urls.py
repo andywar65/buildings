@@ -10,7 +10,7 @@ from .views import (BuildingDetailView,
     StationImageListCreateView, DisciplineListCreateView, DisciplineUpdateView,
     DisciplineDeleteView)
 
-app_name = 'bimblog'
+app_name = 'buildings'
 urlpatterns = [
     path('', BuildingListCreateView.as_view(), name = 'building_list'),
     path('<slug>/', BuildingDetailView.as_view(), name = 'building_detail'),

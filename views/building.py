@@ -11,11 +11,11 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from bimblog.models import (Building, BuildingPlan, PhotoStation, StationImage,
-    DisciplineNode)
-from bimblog.forms import ( BuildingCreateForm, BuildingUpdateForm,
+from buildings.models import (Building, BuildingPlan, PhotoStation, StationImage,
+    PlanSet)
+from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, BuildingPlanCreateForm,
-    DisciplineNodeCreateForm, DisciplineNodeUpdateForm)
+    PlanSetCreateForm, PlanSetUpdateForm)
 
 class MapMixin:
 
@@ -38,7 +38,7 @@ class MapMixin:
                 stat.station_image.first().fb_image.version_path("medium"))
         else:
             fb_path = ''
-        path = reverse('bimblog:station_detail',
+        path = reverse('buildings:station_detail',
             kwargs={'build_slug': stat.build.slug,
             'stat_slug': stat.slug})
         return {'id': stat.id, 'title': stat.title, 'path': path,
@@ -82,9 +82,9 @@ class AlertMixin:
 class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
     CreateView ):
     model = Building
-    permission_required = 'bimblog.view_building'
+    permission_required = 'buildings.view_building'
     form_class = BuildingCreateForm
-    template_name = 'bimblog/building_list_create.html'
+    template_name = 'buildings/building_list_create.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,23 +107,23 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
         return context
 
     def form_valid(self, form):
-        if not self.request.user.has_perm('bimblog.add_building'):
+        if not self.request.user.has_perm('buildings.add_building'):
             raise Http404(_("User has no permission to add buildings"))
         return super(BuildingListCreateView, self).form_valid(form)
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:building_list') +
+            return (reverse('buildings:building_list') +
                 f'?created={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.object.slug }) +
                 f'?created={self.object.title}')
 
 class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
     DetailView):
     model = Building
-    permission_required = 'bimblog.view_building'
+    permission_required = 'buildings.view_building'
     context_object_name = 'build'
     slug_field = 'slug'
 
@@ -172,9 +172,9 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
 
 class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
     model = Building
-    permission_required = 'bimblog.change_building'
+    permission_required = 'buildings.change_building'
     form_class = BuildingUpdateForm
-    template_name = 'bimblog/building_form_update.html'
+    template_name = 'buildings/building_form_update.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -189,18 +189,18 @@ class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:building_list') +
+            return (reverse('buildings:building_list') +
                 f'?modified={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.object.slug }) +
                 f'?modified={self.object.title}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
     #model = Building
-    permission_required = 'bimblog.delete_building'
+    permission_required = 'buildings.delete_building'
     form_class = BuildingDeleteForm
-    template_name = 'bimblog/building_form_delete.html'
+    template_name = 'buildings/building_form_delete.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDeleteView, self).setup(request, *args, **kwargs)
@@ -218,13 +218,13 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:
-            return reverse('bimblog:building_detail',
+            return reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug })
-        return reverse('bimblog:building_list') + f'?deleted={self.build.title}'
+        return reverse('buildings:building_list') + f'?deleted={self.build.title}'
 
 class BuildingPlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = BuildingPlan
-    permission_required = 'bimblog.add_buildingplan'
+    permission_required = 'buildings.add_buildingplan'
     form_class = BuildingPlanCreateForm
 
     def setup(self, request, *args, **kwargs):
@@ -243,19 +243,19 @@ class BuildingPlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:buildingplan_create',
+            return (reverse('buildings:buildingplan_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_created={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_created={self.object.title}')
 
 class BuildingPlanUpdateView( PermissionRequiredMixin, UpdateView ):
     model = BuildingPlan
-    permission_required = 'bimblog.change_buildingplan'
+    permission_required = 'buildings.change_buildingplan'
     form_class = BuildingPlanCreateForm
-    template_name = 'bimblog/buildingplan_form_update.html'
+    template_name = 'buildings/buildingplan_form_update.html'
     #we have two slugs, so we need to override next attribute
     slug_url_kwarg = 'plan_slug'
 
@@ -270,19 +270,19 @@ class BuildingPlanUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:buildingplan_create',
+            return (reverse('buildings:buildingplan_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_modified={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_modified={self.object.title}')
 
 class BuildingPlanDeleteView(PermissionRequiredMixin, FormView):
     #model = BuildingPlan
-    permission_required = 'bimblog.delete_buildingplan'
+    permission_required = 'buildings.delete_buildingplan'
     form_class = BuildingDeleteForm
-    template_name = 'bimblog/buildingplan_form_delete.html'
+    template_name = 'buildings/buildingplan_form_delete.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingPlanDeleteView, self).setup(request, *args, **kwargs)
@@ -305,18 +305,18 @@ class BuildingPlanDeleteView(PermissionRequiredMixin, FormView):
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:
-            return reverse('bimblog:building_detail',
+            return reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug})
-        return (reverse('bimblog:building_detail',
+        return (reverse('buildings:building_detail',
             kwargs={'slug': self.build.slug}) +
             f'?plan_deleted={self.plan.title}')
 
 class DisciplineListCreateView( PermissionRequiredMixin, AlertMixin,
     CreateView ):
-    model = DisciplineNode
-    permission_required = 'bimblog.view_disciplinenode'
-    form_class = DisciplineNodeCreateForm
-    template_name = 'bimblog/discipline_list_create.html'
+    model = PlanSet
+    permission_required = 'buildings.view_planset'
+    form_class = PlanSetCreateForm
+    template_name = 'buildings/discipline_list_create.html'
 
     def setup(self, request, *args, **kwargs):
         super(DisciplineListCreateView, self).setup(request, *args, **kwargs)
@@ -328,15 +328,15 @@ class DisciplineListCreateView( PermissionRequiredMixin, AlertMixin,
         context['build'] = self.build
         #list all disciplines as tree
         context['annotated_lists'] = []
-        root_pages = DisciplineNode.get_root_nodes()
+        root_pages = PlanSet.get_root_nodes()
         for root_page in root_pages:
-            context['annotated_lists'].append(DisciplineNode.get_annotated_list(parent=root_page))
+            context['annotated_lists'].append(PlanSet.get_annotated_list(parent=root_page))
         #discipline alerts
         context = self.add_alerts_to_context(context)
         return context
 
     def form_valid(self, form):
-        if not self.request.user.has_perm('bimblog.add_disciplinenode'):
+        if not self.request.user.has_perm('buildings.add_planset'):
             raise Http404(_("User has no permission to add disciplines"))
         #can't use save method because dealing with MP_Node
         if form.instance.parent:
@@ -344,26 +344,26 @@ class DisciplineListCreateView( PermissionRequiredMixin, AlertMixin,
                 title=form.instance.title,
                 intro=form.instance.intro)
         else:
-            self.object = DisciplineNode.add_root(
+            self.object = PlanSet.add_root(
                 title=form.instance.title,
                 intro=form.instance.intro)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:discipline_list_create',
+            return (reverse('buildings:discipline_list_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?disc_created={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug}) +
                 f'?disc_created={self.object.title}')
 
 class DisciplineUpdateView( PermissionRequiredMixin, UpdateView ):
-    model = DisciplineNode
-    permission_required = 'bimblog.change_disciplinenode'
-    form_class = DisciplineNodeUpdateForm
-    template_name = 'bimblog/discipline_form_update.html'
+    model = PlanSet
+    permission_required = 'buildings.change_planset'
+    form_class = PlanSetUpdateForm
+    template_name = 'buildings/discipline_form_update.html'
 
     def setup(self, request, *args, **kwargs):
         super(DisciplineUpdateView, self).setup(request, *args, **kwargs)
@@ -382,24 +382,24 @@ class DisciplineUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('bimblog:discipline_list_create',
+            return (reverse('buildings:discipline_list_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?disc_modified={self.object.title}')
         else:
-            return (reverse('bimblog:building_detail',
+            return (reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug}) +
                 f'?disc_modified={self.object.title}')
 
 class DisciplineDeleteView(PermissionRequiredMixin, FormView):
-    permission_required = 'bimblog.delete_disciplinenode'
+    permission_required = 'buildings.delete_planset'
     form_class = BuildingDeleteForm
-    template_name = 'bimblog/discipline_form_delete.html'
+    template_name = 'buildings/discipline_form_delete.html'
 
     def setup(self, request, *args, **kwargs):
         super(DisciplineDeleteView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
-        self.disc = get_object_or_404( DisciplineNode,
+        self.disc = get_object_or_404( PlanSet,
             id = self.kwargs['pk'] )
 
     def get_context_data(self, **kwargs):
@@ -414,8 +414,8 @@ class DisciplineDeleteView(PermissionRequiredMixin, FormView):
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:
-            return reverse('bimblog:discipline_change',
+            return reverse('buildings:discipline_change',
                 kwargs={'slug': self.build.slug, 'pk': self.disc.id})
-        return (reverse('bimblog:building_detail',
+        return (reverse('buildings:building_detail',
             kwargs={'slug': self.build.slug}) +
             f'?disc_deleted={self.disc.title}')

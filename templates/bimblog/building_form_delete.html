@@ -8,8 +8,8 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     <h4><strong>{% translate 'Delete building:' %} {{ title }}</strong></h4>
-    {% if perms.bimblog.delete_building %}
-    {% include 'bimblog/includes/delete_buttons.html' %}
+    {% if perms.buildings.delete_building %}
+    {% include 'buildings/includes/delete_buttons.html' %}
     {% else %}
     <p>{% translate "You don't have permissions to delete buildings" %}.</p>
     {% endif %}

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from bimblog.models import Building, BuildingPlan, PhotoStation, StationImage
+from buildings.models import Building, BuildingPlan, PhotoStation, StationImage
 
 @override_settings(USE_I18N=False)
 class BuildingModelTest(TestCase):
@@ -58,11 +58,11 @@ class StationImageTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         img_path = os.path.join(settings.STATIC_ROOT,
-            'bimblog/images/image.jpg')
+            'buildings/images/image.jpg')
         with open(img_path, 'rb') as f:
             content = f.read()
         dxf_path = os.path.join(settings.STATIC_ROOT,
-            'bimblog/dxf/sample.dxf')
+            'buildings/dxf/sample.dxf')
         with open(dxf_path, 'rb') as d:
             content_d = d.read()
         build = Building.objects.create(title='Building',

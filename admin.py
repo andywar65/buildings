@@ -5,7 +5,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, BuildingPlan, PhotoStation, StationImage,
-    DisciplineNode)
+    PlanSet)
 
 class BuildingPlanInline(admin.TabularInline):
     model = BuildingPlan
@@ -44,8 +44,8 @@ class PhotoStationAdmin(admin.ModelAdmin):
 #class DisciplineAdmin(admin.ModelAdmin):
     #list_display = ( 'title', 'intro', )
 
-class DisciplineNodeAdmin(TreeAdmin):
-    form = movenodeform_factory(DisciplineNode)
+class PlanSetAdmin(TreeAdmin):
+    form = movenodeform_factory(PlanSet)
     
     fieldsets = (
         (None, {
@@ -56,4 +56,4 @@ class DisciplineNodeAdmin(TreeAdmin):
         }),
         )
 
-admin.site.register(DisciplineNode, DisciplineNodeAdmin)
+admin.site.register(PlanSet, PlanSetAdmin)
