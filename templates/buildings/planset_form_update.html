@@ -15,7 +15,7 @@
         {% include "buildings/includes/hello_formula.html" %}
       </div>
       <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:discipline_delete' slug=build.slug pk=object.id %}">{% translate 'Delete' %}</a>
+        <a class="btn btn-danger" href="{% url 'buildings:planset_delete' build_slug=build.slug set_slug=object.slug %}">{% translate 'Delete' %}</a>
       </div>
     </div>
     <hr class="mb-4">

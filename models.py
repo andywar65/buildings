@@ -150,7 +150,7 @@ class PlanSet(MP_Node):
     slug = models.SlugField(max_length=100, editable=False, null=True)
     plans = models.ManyToManyField(Plan,
         blank = True, verbose_name = _('Plans'),
-        help_text=_("Show only plans belonging to chosen set") )
+        help_text=_("Choose plans to show in this set") )
 
     def __str__(self):
         prefix = ''

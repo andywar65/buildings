@@ -373,11 +373,16 @@ class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
     permission_required = 'buildings.change_planset'
     form_class = PlanSetUpdateForm
     template_name = 'buildings/planset_form_update.html'
+    slug_url_kwarg = 'set_slug'
 
-    def setup(self, request, *args, **kwargs):
-        super(PlanSetUpdateView, self).setup(request, *args, **kwargs)
+    def get_object(self, queryset=None):
+        #elsewhere we get the parent in setup, but here we also need object
+        set = super(PlanSetUpdateView, self).get_object(queryset=None)
         self.build = get_object_or_404( Building,
-            slug = self.kwargs['slug'] )
+            slug = self.kwargs['build_slug'] )
+        if not self.build == set.build:
+            raise Http404(_("Plan set does not belong to Building"))
+        return set
 
     def get_initial(self):
         initial = super( PlanSetUpdateView, self ).get_initial()
@@ -400,32 +405,34 @@ class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
                 'set_slug': self.object.slug}) +
                 f'?set_modified={self.object.title}')
 
-class DisciplineDeleteView(PermissionRequiredMixin, FormView):
+class PlanSetDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_planset'
     form_class = BuildingDeleteForm
-    template_name = 'buildings/discipline_form_delete.html'
+    template_name = 'buildings/planset_form_delete.html'
 
     def setup(self, request, *args, **kwargs):
-        super(DisciplineDeleteView, self).setup(request, *args, **kwargs)
+        super(PlanSetDeleteView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
-            slug = self.kwargs['slug'] )
-        self.disc = get_object_or_404( PlanSet,
-            id = self.kwargs['pk'] )
+            slug = self.kwargs['build_slug'] )
+        self.set = get_object_or_404( PlanSet,
+            slug = self.kwargs['set_slug'] )
+        if not self.build == self.set.build:
+            raise Http404(_("Plan set does not belong to Building"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.disc.title
+        context['title'] = self.set.title
         return context
 
     def form_valid(self, form):
-        if not 'cancel' in self.request.POST:
-            self.disc.delete()
-        return super(DisciplineDeleteView, self).form_valid(form)
+        if not 'cancel' in self.request.POST and not self.set.slug=='base':
+            self.set.delete()
+        return super(PlanSetDeleteView, self).form_valid(form)
 
     def get_success_url(self):
-        if 'cancel' in self.request.POST:
-            return reverse('buildings:discipline_change',
-                kwargs={'slug': self.build.slug, 'pk': self.disc.id})
+        if 'cancel' in self.request.POST or self.set.slug=='base':
+            return reverse('buildings:planset_change',
+                kwargs={'build_slug': self.build.slug, 'set_slug': self.set.slug})
         return (reverse('buildings:building_detail',
-            kwargs={'slug': self.build.slug}) +
-            f'?disc_deleted={self.disc.title}')
+            kwargs={'build_slug': self.build.slug, 'set_slug': 'base'}) +
+            f'?set_deleted={self.set.title}')
