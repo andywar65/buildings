@@ -70,7 +70,8 @@ class Building(models.Model):
         return self.title
 
     def get_full_path(self):
-        return reverse('buildings:building_detail', kwargs={'slug': self.slug})
+        return reverse('buildings:building_detail',
+            kwargs={'build_slug': self.slug, 'set_slug': 'base'})
 
     def save(self, *args, **kwargs):
         if not self.title:
@@ -93,38 +94,6 @@ class Building(models.Model):
         verbose_name = _('Building')
         verbose_name_plural = _('Buildings')
         ordering = ('-date', )
-
-class PlanSet(MP_Node):
-    build = models.ForeignKey(Building, on_delete = models.CASCADE,
-        related_name='building_planset', verbose_name = _('Building'))
-    parent = models.ForeignKey('self', verbose_name = _('Parent set'),
-        null=True, blank=True,
-        help_text = _('Can be changed only by staff in admin'),
-        on_delete = models.SET_NULL)
-    title = models.CharField(_('Title'),
-        help_text=_("Set name"),
-        max_length = 50, )
-    intro = models.CharField(_('Description'),
-        null=True, blank=True,
-        help_text = _('Few words to describe the set'),
-        max_length = 100)
-    slug = models.SlugField(max_length=100, editable=False, null=True)
-    plans = models.ManyToManyField(Plan,
-        blank = True, verbose_name = _('Plans'),
-        help_text=_("Show only plans belonging to chosen set") )
-
-    def __str__(self):
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = generate_unique_slug(Planset, self.title, self.build.id)
-        self.last_updated = now()
-        super(Planset, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = _('Plan set')
-        verbose_name_plural = _('Plan sets')
 
 class Plan(models.Model):
 
@@ -163,6 +132,38 @@ class Plan(models.Model):
         verbose_name = _('Building plan')
         verbose_name_plural = _('Building plans')
         ordering = ('-elev', )
+
+class PlanSet(MP_Node):
+    build = models.ForeignKey(Building, on_delete = models.CASCADE,
+        related_name='building_planset', verbose_name = _('Building'))
+    parent = models.ForeignKey('self', verbose_name = _('Parent set'),
+        null=True, blank=True,
+        help_text = _('Can be changed only by staff in admin'),
+        on_delete = models.SET_NULL)
+    title = models.CharField(_('Title'),
+        help_text=_("Set name"),
+        max_length = 50, )
+    intro = models.CharField(_('Description'),
+        null=True, blank=True,
+        help_text = _('Few words to describe the set'),
+        max_length = 100)
+    slug = models.SlugField(max_length=100, editable=False, null=True)
+    plans = models.ManyToManyField(Plan,
+        blank = True, verbose_name = _('Plans'),
+        help_text=_("Show only plans belonging to chosen set") )
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(PlanSet, self.title, self.build.id)
+        self.last_updated = now()
+        super(PlanSet, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Plan set')
+        verbose_name_plural = _('Plan sets')
 
 def photo_station_default_intro():
     return (_('Another photo station by %(sitename)s!') %

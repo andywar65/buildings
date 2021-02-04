@@ -125,15 +125,31 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
     model = Building
     permission_required = 'buildings.view_building'
     context_object_name = 'build'
-    slug_field = 'slug'
+    slug_url_kwarg = 'build_slug'
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingDetailView, self).setup(request, *args, **kwargs)
+        self.set = get_object_or_404( PlanSet,
+            slug = self.kwargs['set_slug'] )
+        if not self.set.build.slug == self.kwargs['build_slug']:
+            raise Http404(_("Plan set does not belong to Building"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #add plans and stations
-        context['plans'] = context['build'].building_plan.all()
-        context['stations'] = context['build'].building_station.all()
-        #add station list
-        stat_list = context['stations'].values_list('id', flat=True)
+        #add plansets
+        context['planset'] = self.set
+        plansets = self.object.building_planset.all()
+        context['annotated_lists'] = []
+        for planset in plansets:
+            if planset.is_root():
+                context['annotated_lists'].append(PlanSet.get_annotated_list(parent=planset))
+        #add plans
+        context['plans'] = self.set.plans.all()
+        plan_list = context['plans'].values_list('id', flat=True)
+        #add stations
+        context['stations'] = self.object.building_station.filter(Q(plan=None)|
+            Q(plan_id__in=plan_list))
+        stat_list = PhotoStation.objects.filter(build_id=self.object.id).values_list('id', flat=True)
         #add dates for images by date
         context['dates'] = StationImage.objects.filter(stat_id__in=stat_list).dates('date', 'day')
         #add alerts
@@ -142,19 +158,12 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         #building data
         build = self.prepare_build_data( context['build'] )
         #plan data
-        disc_list = context['build'].plansets.all().values_list('id',
-            flat=True)
-        disc_plans = context['plans'].filter(Q(discn=None)|
-            Q(discn_id__in=disc_list))
         plans = []
-        for plan in disc_plans.reverse():
+        for plan in context['plans'].reverse():
             plans.append(self.prepare_plan_data(plan))
         #station data
-        plan_list = disc_plans.values_list('id', flat=True)
-        disc_stat = context['stations'].filter(Q(plan=None)|
-            Q(plan_id__in=plan_list))
         stations = []
-        for stat in disc_stat:
+        for stat in context['stations']:
             stations.append(self.prepare_stat_data(stat))
         #are there stations that don't belong to plans?
         no_plan_status = False

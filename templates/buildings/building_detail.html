@@ -27,12 +27,10 @@
   </div>
 </div>
 <div class="collapse show" id="map-container">
-  <div id="mapid" style="height: 800px"></div>
+  <div id="mapid" style="height: 800px; margin-bottom: 10px"></div>
 </div>
-<hr class="mb-4">
-<div class="row" id="edit-features">
-  <div class="col-md-2"></div>
-  <div class="col-md-4 ">
+<div class="row">
+  <div class="col-md-6 ">
     {% if perms.buildings.change_building %}
       <a class="btn btn-primary" href="{% url 'buildings:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
         <i class="fa fa-pencil"></i> <i class="fa fa-building"></i></a>
@@ -40,7 +38,11 @@
       <a class="btn btn-secondary" href="{% url 'buildings:building_list' %}" title="{% translate "Back to all buildings" %}">
         <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
   </div>
-  <div class="col-md-4 text-right">
+  <div class="col-md-6 text-right">
+    {% if perms.buildings.add_planset %}
+      <a class="btn btn-secondary" href="{% url 'buildings:planset_list_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
+        + <i class="fa fa-sitemap"></i></a>
+    {% endif %}
     {% if perms.buildings.add_plan %}
       <a class="btn btn-success" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
         + <i class="fa fa-map-o"></i></a>
@@ -49,34 +51,70 @@
       <a class="btn btn-success" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
         + <i class="fa fa-camera"></i></a>
     {% endif %}
-    {% if perms.buildings.add_planset %}
-      <a class="btn btn-secondary" href="{% url 'buildings:discipline_list_create' slug=build.slug %}" title="{% translate "Add discipline" %}">
-        + <i class="fa fa-graduation-cap"></i></a>
-    {% endif %}
   </div>
 </div>
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    {% if plans %}
-      <hr class="mb-4">
-      {% include 'buildings/includes/building_detail_plans.html' %}
-    {% endif %}
+<hr class="mb-4">
+<div class="card-deck">
+  <div class="card" style="margin-bottom: 20px; min-width: 18rem;">
+    <div class="card-header">
+      <h4 class="card-title">{% trans "Active Plan set: "%}{{ planset.title }}</h4>
+    </div>
+    <div class="card-body">
+      {% for list in annotated_lists %}
+        {% for set, info in list %}
+          {% if info.open %}
+              <ul><li>
+          {% else %}
+              </li><li>
+          {% endif %}
+              <a href="{% url 'buildings:planset_change' slug=build.slug pk=set.id %}">{{ set.title }}</a>
+              {% if set.intro %}<em>- {{ set.intro }}</em>{% endif %}
+              {% if set.slug != planset.slug %}
+              <a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=set.slug %}">
+                {% trans "Activate!"%}
+              </a>
+              {% endif %}
+          {% for close in info.close %}
+              </li></ul>
+          {% endfor %}
+        {% endfor %}
+      {% endfor %}
+      {% if perms.buildings.change_planset and user.is_staff %}
+      <p class="text-right"><a class="btn btn-primary" href="/admin/buildings/planset"
+        title="{% trans "Modify directory (in admin)" %}"><i class="fa fa-pencil"></i>
+        <i class="fa fa-list-ul"></i></a></p>
+      {% endif %}
+    </div>
   </div>
-</div>
-{% if dates %}
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col col-md-8">
-    <h5 id="dates"><strong>{% translate "Images by date" %}:</strong></h5>
+  <div class="card" style="margin-bottom: 20px; min-width: 18rem;">
+    <div class="card-header">
+      <h4 class="card-title">{% trans "Plans"%}</h4>
+    </div>
+    <div class="card-body">
+      {% if plans %}
+        {% include 'buildings/includes/building_detail_plans.html' %}
+      {% else %}
+        {% trans "No plans in active set"%}
+      {% endif %}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom: 20px; min-width: 18rem;">
+    <div class="card-header">
+      <h4 class="card-title">{% trans "Images by date"%}</h4>
+    </div>
+    <div class="card-body">
+      {% if dates %}
       <ul>
         {% for date in dates %}
         <li><a href="{% url 'buildings:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
         {% endfor %}
       </ul>
+      {% else %}
+        {% trans "No images available"%}
+      {% endif %}
+    </div>
   </div>
 </div>
-{% endif %}
 
 {% endblock content %}
 {% block extra-js %}
