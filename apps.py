@@ -34,7 +34,7 @@ def create_plansets(sender, **kwargs):
     except:
         PlanSet.add_root(title=_('Structure'))
 
-class buildingsConfig(AppConfig):
+class BuildingsConfig(AppConfig):
     name = 'buildings'
 
     def ready(self):
