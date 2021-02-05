@@ -292,7 +292,8 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
                 f'?plan_modified={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug}) +
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': 'base_'+str(self.build.id)}) +
                 f'?plan_modified={self.object.title}')
 
 class PlanDeleteView(PermissionRequiredMixin, FormView):
