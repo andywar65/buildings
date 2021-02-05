@@ -86,9 +86,10 @@ class Building(models.Model):
             Building.objects.filter(id=self.id).update(image=None,
                 fb_image=FileObject(str(self.image)))
         try:
-            PlanSet.objects.get(slug='base', build_id=self.id)
+            PlanSet.objects.get(slug='base_'+str(self.id), build_id=self.id)
         except:
-            PlanSet.add_root(title=self.title, slug='base', build=self)
+            PlanSet.add_root(title=self.title, slug='base_'+str(self.id),
+                build=self)
 
     class Meta:
         verbose_name = _('Building')
@@ -121,7 +122,7 @@ class Plan(models.Model):
                 self.title + ' ' + str(self.elev), self.build.id)
         #upload file
         super(Plan, self).save(*args, **kwargs)
-        if self.refresh:
+        if self.refresh and self.file:
             geometry = workflow(self.file, self.build.lat, self.build.long)
             #this is a sloppy workaround to make working test
             #geometry refreshed

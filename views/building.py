@@ -117,7 +117,8 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
                 f'?created={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.object.slug, 'set_slug': 'base' }) +
+                kwargs={'build_slug': self.object.slug,
+                'set_slug': 'base_'+str(self.object.id) }) +
                 f'?created={self.object.title}')
 
 class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
@@ -203,7 +204,8 @@ class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
                 f'?modified={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.object.slug, 'set_slug': 'base' }) +
+                kwargs={'build_slug': self.object.slug,
+                'set_slug': 'base_'+str(self.object.id) }) +
                 f'?modified={self.object.title}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
@@ -251,6 +253,10 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         context = self.add_alerts_to_context(context)
         return context
 
+    def form_valid(self, form):
+        return super(PlanCreateView, self).form_valid(form)
+        object = self.object
+
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:plan_create',
@@ -258,7 +264,8 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 f'?plan_created={self.object.title}')
         else:
             return (reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug}) +
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': 'base_'+str(self.build.id)}) +
                 f'?plan_created={self.object.title}')
 
 class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
@@ -426,14 +433,15 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        if not 'cancel' in self.request.POST and not self.set.slug=='base':
+        if not 'cancel' in self.request.POST and not self.set.slug.startswith('base_'):
             self.set.delete()
         return super(PlanSetDeleteView, self).form_valid(form)
 
     def get_success_url(self):
-        if 'cancel' in self.request.POST or self.set.slug=='base':
+        if 'cancel' in self.request.POST or self.set.slug.startswith('base_'):
             return reverse('buildings:planset_change',
                 kwargs={'build_slug': self.build.slug, 'set_slug': self.set.slug})
         return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug, 'set_slug': 'base'}) +
+            kwargs={'build_slug': self.build.slug,
+            'set_slug': 'base_'+str(self.build.id)}) +
             f'?set_deleted={self.set.title}')
