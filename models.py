@@ -88,7 +88,7 @@ class Building(models.Model):
         try:
             PlanSet.objects.get(slug='base', build_id=self.id)
         except:
-            PlanSet.add_root(title=_('Base'), build=self)
+            PlanSet.add_root(title=self.title, slug='base', build=self)
 
     class Meta:
         verbose_name = _('Building')
