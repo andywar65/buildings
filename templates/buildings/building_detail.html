@@ -60,30 +60,7 @@
       <h5 class="card-title">{% trans "Active Plan set: "%}<strong>{{ planset.title }}</strong></h5>
     </div>
     <div class="card-body">
-      {% for list in annotated_lists %}
-        {% for set, info in list %}
-          {% if info.open %}
-              <ul><li>
-          {% else %}
-              </li><li>
-          {% endif %}
-              <a href="{% url 'buildings:planset_change' build_slug=build.slug set_slug=set.slug %}" title="{% trans "Modify plan set" %}">{{ set.title }}</a>
-              {% if set.intro %}<em>- {{ set.intro }}</em>{% endif %}
-              {% if set.slug != planset.slug %}
-              <a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=set.slug %}">
-                {% trans "Activate!"%}
-              </a>
-              {% endif %}
-          {% for close in info.close %}
-              </li></ul>
-          {% endfor %}
-        {% endfor %}
-      {% endfor %}
-      {% if perms.buildings.change_planset and user.is_staff %}
-      <p class="text-right"><a class="btn btn-primary" href="/admin/buildings/planset"
-        title="{% trans "Modify directory (in admin)" %}"><i class="fa fa-pencil"></i>
-        <i class="fa fa-list-ul"></i></a></p>
-      {% endif %}
+      {% include 'buildings/includes/planset_annotated_list.html' %}
     </div>
   </div>
   <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
