@@ -130,7 +130,8 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
         self.set = get_object_or_404( PlanSet,
-            slug = self.kwargs['set_slug'] )
+            slug = self.kwargs['set_slug'],
+            build__slug=self.kwargs['build_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
             raise Http404(_("Plan set does not belong to Building"))
 
