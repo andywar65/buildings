@@ -324,9 +324,11 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
     def get_success_url(self):
         if 'cancel' in self.request.POST:
             return reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug})
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': 'base_'+str(self.build.id)})
         return (reverse('buildings:building_detail',
-            kwargs={'slug': self.build.slug}) +
+            kwargs={'build_slug': self.build.slug,
+            'set_slug': 'base_'+str(self.build.id)}) +
             f'?plan_deleted={self.plan.title}')
 
 class PlanSetCreateView( PermissionRequiredMixin, AlertMixin,
