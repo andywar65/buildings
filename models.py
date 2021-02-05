@@ -71,7 +71,7 @@ class Building(models.Model):
 
     def get_full_path(self):
         return reverse('buildings:building_detail',
-            kwargs={'build_slug': self.slug, 'set_slug': 'base'})
+            kwargs={'build_slug': self.slug, 'set_slug': 'base_'+str(self.id)})
 
     def save(self, *args, **kwargs):
         if not self.title:
