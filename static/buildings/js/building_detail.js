@@ -12,23 +12,25 @@ var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
 if (map_data.plans){
   for (plan of map_data.plans){
     window['plan_' + plan.id ] = L.layerGroup();
-    for (obj of plan.geometry){
-      switch ( obj.type ){
-        case 'polygon':
-          var object = L.polygon( obj.coords, {color: obj.color,
-            fillcolor: obj.color, fillOpacity: 0.5}).bindPopup(obj.popup);
-          break;
-        case 'polyline':
-          var object = L.polyline( obj.coords, {color: obj.color})
-            .bindPopup(obj.popup);
-          break;
-        case 'circle':
-          var object = L.circle( obj.coords, {radius: obj.radius,
-            color: obj.color, fillcolor: obj.color, fillOpacity: 0.5})
-            .bindPopup(obj.popup);
-          break;
+    if (plan.geometry){
+      for (obj of plan.geometry){
+        switch ( obj.type ){
+          case 'polygon':
+            var object = L.polygon( obj.coords, {color: obj.color,
+              fillcolor: obj.color, fillOpacity: 0.5}).bindPopup(obj.popup);
+            break;
+          case 'polyline':
+            var object = L.polyline( obj.coords, {color: obj.color})
+              .bindPopup(obj.popup);
+            break;
+          case 'circle':
+            var object = L.circle( obj.coords, {radius: obj.radius,
+              color: obj.color, fillcolor: obj.color, fillOpacity: 0.5})
+              .bindPopup(obj.popup);
+            break;
+        }
+        object.addTo(window['plan_' + plan.id ]);
       }
-      object.addTo(window['plan_' + plan.id ]);
     }
   }
 }
