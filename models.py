@@ -26,6 +26,8 @@ def generate_unique_slug(klass, field, id):
     Thanks to djangosnippets.org!
     """
     origin_slug = slugify(field)
+    if klass == PlanSet and origin_slug.startswith('base_'):
+        origin_slug = origin_slug.replace('base_', 'bass_')
     unique_slug = origin_slug
     numb = 1
     if klass == Building:
