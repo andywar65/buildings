@@ -263,9 +263,9 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_created={self.object.title}')
         else:
-            return (reverse('buildings:building_detail',
+            return (reverse('buildings:plan_detail',
                 kwargs={'build_slug': self.build.slug,
-                'set_slug': 'base_'+str(self.build.id)}) +
+                'plan_slug': self.object.slug}) +
                 f'?plan_created={self.object.title}')
 
 class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
@@ -291,10 +291,63 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
                 kwargs={'slug': self.build.slug}) +
                 f'?plan_modified={self.object.title}')
         else:
-            return (reverse('buildings:building_detail',
+            return (reverse('buildings:plan_detail',
                 kwargs={'build_slug': self.build.slug,
-                'set_slug': 'base_'+str(self.build.id)}) +
+                'plan_slug': self.object.slug}) +
                 f'?plan_modified={self.object.title}')
+
+class PlanDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
+    DetailView):
+    model = Plan
+    permission_required = 'buildings.view_plan'
+    context_object_name = 'plan'
+    slug_url_kwarg = 'plan_slug'
+
+    def get_object(self, queryset=None):
+        #elsewhere we get the parent in setup, but here we also need object
+        plan = super(PlanDetailView, self).get_object(queryset=None)
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        if not self.build == plan.build:
+            raise Http404(_("Plan does not belong to Building"))
+        return plan
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #add building
+        context['build'] = self.build
+        #add plansets
+        plansets = self.build.building_planset.all()
+        context['annotated_lists'] = []
+        for planset in plansets:
+            if planset.is_root():
+                context['annotated_lists'].append(PlanSet.get_annotated_list(parent=planset))
+        #add plans
+        context['plans'] = self.build.building_plan.all()
+        #add stations
+        context['stations'] = self.build.building_station.all()
+        stat_list = context['stations'].values_list('id', flat=True)
+        #add dates for images by date
+        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list).dates('date', 'day')
+        #add alerts
+        context = self.add_alerts_to_context(context)
+        #we add the following to feed the map
+        #building data
+        build = self.prepare_build_data( self.build )
+        #plan data
+        plans = []
+        plans.append(self.prepare_plan_data(self.object))
+        #are there stations that don't belong to plans?
+        no_plan_status = False
+        context['map_data'] = {
+            'build': build,
+            'plans': plans,
+            'stations': False,
+            'no_plan_status': no_plan_status,
+            'no_plan_trans': _("No plan"),
+            'mapbox_token': settings.MAPBOX_TOKEN
+            }
+        return context
 
 class PlanDeleteView(PermissionRequiredMixin, FormView):
     #model = Plan

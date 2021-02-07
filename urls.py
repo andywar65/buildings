@@ -18,6 +18,8 @@ urlpatterns = [
         PlanSetDeleteView.as_view(), name = 'planset_delete'),
     path(_('<slug>/plan/add/'), PlanCreateView.as_view(),
         name = 'plan_create'),
+    path(_('<slug:build_slug>/plan/<slug:plan_slug>/'),
+        PlanDetailView.as_view(), name = 'plan_detail'),
     path(_('<slug:build_slug>/plan/<slug:plan_slug>/change/'),
         PlanUpdateView.as_view(), name = 'plan_change'),
     path(_('<slug:build_slug>/plan/<slug:plan_slug>/delete/'),
