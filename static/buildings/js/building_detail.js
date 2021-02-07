@@ -67,6 +67,25 @@ if (map_data.hasOwnProperty('stations')){
   }
 }
 
+if (map_data.hasOwnProperty('stat')){
+  const statMarker = L.divIcon({
+    html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
+    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+    className: 'stat-marker'
+  });
+
+  if (map_data.stat.fb_path){
+    var content = "<h5>" + map_data.stat.title +
+      "</h5><img src=\"" + map_data.stat.fb_path + "\"><br><small>" +
+        map_data.stat.intro + "</small>";
+  } else {
+    var content = "<h5>" + map_data.stat.title +
+      "</h5><br><small>" + map_data.stat.intro + "</small>";
+  }
+  L.marker([map_data.stat.lat, map_data.stat.long ], {icon: statMarker})
+    .addTo(mymap).bindPopup( content, {minWidth: 300});
+}
+
 var layers = [ base_map, ];
 if ( map_data.plans ){
   for ( plan of map_data.plans ){
@@ -115,3 +134,14 @@ if (map_data.hasOwnProperty('no_plan_status')){
 }
 
 L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+
+if (map_data.hasOwnProperty('on_map_click')){
+  function onMapClick(e) {
+    var inputlat = document.getElementById("id_lat");
+    var inputlong = document.getElementById("id_long");
+    inputlat.setAttribute('value', e.latlng.lat);
+    inputlong.setAttribute('value', e.latlng.lng);
+  }
+
+  mymap.on('click', onMapClick);
+}
