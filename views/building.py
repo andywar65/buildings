@@ -139,14 +139,18 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #add plansets
-        context['planset'] = self.set
         plansets = self.object.building_planset.all()
         context['annotated_lists'] = []
         for planset in plansets:
             if planset.is_root():
                 context['annotated_lists'].append(PlanSet.get_annotated_list(parent=planset))
         #add plans
+        context['planset'] = self.set
         context['plans'] = self.set.plans.all()
+        for ancestor in context['planset'].get_ancestors():
+            ancestor_plans = ancestor.plans.all()
+            context['plans'] = context['plans'] | ancestor_plans
+        context['plans'] = context['plans'].distinct().order_by('elev')
         plan_list = context['plans'].values_list('id', flat=True)
         #add stations
         context['stations'] = self.object.building_station.filter(Q(plan=None)|
