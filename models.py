@@ -16,7 +16,7 @@ from .map_utils import workflow
 
 from django.utils.text import slugify
 
-def generate_unique_slug(klass, field, id):
+def generate_unique_slug(klass, field):
     """
     return unique slug if origin slug exists.
     eg: `foo-bar` => `foo-bar-1`
@@ -26,18 +26,14 @@ def generate_unique_slug(klass, field, id):
     Thanks to djangosnippets.org!
     """
     origin_slug = slugify(field)
+    #slug 'base_' is reserved for PlanSet model
     if klass == PlanSet and origin_slug.startswith('base_'):
         origin_slug = origin_slug.replace('base_', 'bass_')
     unique_slug = origin_slug
     numb = 1
-    if klass == Building:
-        while klass.objects.filter(slug=unique_slug).exists():
-            unique_slug = '%s-%d' % (origin_slug, numb)
-            numb += 1
-    else:
-        while klass.objects.filter(slug=unique_slug, build_id=id).exists():
-            unique_slug = '%s-%d' % (origin_slug, numb)
-            numb += 1
+    while klass.objects.filter(slug=unique_slug).exists():
+        unique_slug = '%s-%d' % (origin_slug, numb)
+        numb += 1
     return unique_slug
 
 def building_default_intro():
@@ -79,7 +75,7 @@ class Building(models.Model):
         if not self.title:
             self.title = _('Building-%(date)s') % {'date': self.date.strftime("%d-%m-%y")}
         if not self.slug:
-            self.slug = generate_unique_slug(Building, self.title, 0)
+            self.slug = generate_unique_slug(Building, self.title)
         self.last_updated = now()
         super(Building, self).save(*args, **kwargs)
         if self.image:
@@ -121,7 +117,7 @@ class Plan(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
-                self.title + ' ' + str(self.elev), self.build.id)
+                self.title + ' ' + str(self.elev))
         #upload file
         super(Plan, self).save(*args, **kwargs)
         if self.refresh and self.file:
@@ -163,7 +159,7 @@ class PlanSet(MP_Node):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(PlanSet, self.title, self.build.id)
+            self.slug = generate_unique_slug(PlanSet, self.title)
         self.last_updated = now()
         super(PlanSet, self).save(*args, **kwargs)
 
@@ -197,8 +193,7 @@ class PhotoStation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(PhotoStation, self.title,
-                self.build.id)
+            self.slug = generate_unique_slug(PhotoStation, self.title)
         if not self.lat:
             self.lat = self.build.lat
         if not self.long:
