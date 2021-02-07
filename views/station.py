@@ -41,7 +41,9 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
         #plan data
         plans = []
         for plan in self.build.building_plan.all().reverse():
-            plans.append(self.prepare_plan_data(plan))
+            plan_dict = self.prepare_plan_data(plan)
+            plan_dict['visible'] = False
+            plans.append(plan_dict)
         context['map_data'] = {
             'build': build,
             'plans': plans,
@@ -87,7 +89,12 @@ class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
         #plan data
         plans = []
         for plan in self.build.building_plan.all().reverse():
-            plans.append(self.prepare_plan_data(plan))
+            plan_dict = self.prepare_plan_data(plan)
+            if plan == self.object.plan:
+                plan_dict['visible'] = True
+            else:
+                plan_dict['visible'] = False
+            plans.append(plan_dict)
         #station data
         stat = self.prepare_stat_data( self.object )
         context['map_data'] = {
