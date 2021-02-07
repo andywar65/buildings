@@ -35,30 +35,34 @@ if (map_data.plans){
   }
 }
 
-if (map_data.stations){
-  const statMarker = L.divIcon({
-    html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
-    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-    className: 'stat-marker'
-  });
-  if (map_data.no_plan_status){
-    var no_plan = L.layerGroup();
-  }
-  for (stat of map_data.stations){
-    if (stat.fb_path){
-      var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
-        "</a></h5><img src=\"" + stat.fb_path + "\"><br><small>" +
-          stat.intro + "</small>";
-    } else {
-      var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
-        "</a></h5><br><small>" + stat.intro + "</small>";
+if (map_data.hasOwnProperty('stations')){
+  if (map_data.stations){
+    const statMarker = L.divIcon({
+      html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
+      iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+      className: 'stat-marker'
+    });
+    if (map_data.hasOwnProperty('no_plan_status')){
+      if (map_data.no_plan_status){
+        var no_plan = L.layerGroup();
+      }
     }
-    var marker = L.marker([stat.lat, stat.long ], {icon: statMarker})
-      .bindPopup( content, {minWidth: 300});
-    if (stat.plan_id){
-      marker.addTo(window['plan_' + stat.plan_id ]);
-    } else {
-      marker.addTo( no_plan );
+    for (stat of map_data.stations){
+      if (stat.fb_path){
+        var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
+          "</a></h5><img src=\"" + stat.fb_path + "\"><br><small>" +
+            stat.intro + "</small>";
+      } else {
+        var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
+          "</a></h5><br><small>" + stat.intro + "</small>";
+      }
+      var marker = L.marker([stat.lat, stat.long ], {icon: statMarker})
+        .bindPopup( content, {minWidth: 300});
+      if (stat.plan_id){
+        marker.addTo(window['plan_' + stat.plan_id ]);
+      } else {
+        marker.addTo( no_plan );
+      }
     }
   }
 }
@@ -71,8 +75,10 @@ if ( map_data.plans ){
     }
   }
 }
-if ( map_data.no_plan_status ){
-  layers.push( no_plan )
+if (map_data.hasOwnProperty('no_plan_status')){
+  if (map_data.no_plan_status){
+    layers.push( no_plan )
+  }
 }
 
 var mymap = L.map('mapid', {
@@ -102,8 +108,10 @@ if ( map_data.plans ){
     overlayMaps[ plan.title ] = window[ 'plan_' + plan.id ];
   }
 }
-if ( map_data.no_plan_status ){
-  overlayMaps[ map_data.no_plan_trans ] = no_plan;
+if (map_data.hasOwnProperty('no_plan_status')){
+  if (map_data.no_plan_status){
+    overlayMaps[ map_data.no_plan_trans ] = no_plan;
+  }
 }
 
 L.control.layers(baseMaps, overlayMaps).addTo(mymap);
