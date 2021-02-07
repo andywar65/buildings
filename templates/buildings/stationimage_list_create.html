@@ -9,7 +9,8 @@
 {% include "buildings/includes/stationimage_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
-    <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @ <a href="{% url 'buildings:building_detail' slug=stat.build.slug %}">{{ stat.build.title }}</a>
+    <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @
+      <a href="{% url 'buildings:building_detail' build_slug=stat.build.slug set_slug=stat.build.get_base_planset_slug %}">{{ stat.build.title }}</a>
     </strong></h4>
     <p><em>{{ stat.intro }}</em></p>
   </div>
@@ -42,7 +43,7 @@
     {% endif %}
   </div>
   <div class="col-md-4 text-right">
-    <a class="btn btn-secondary" href="{% url 'buildings:building_detail' slug=stat.build.slug %}" title="{% translate "Back to building" %}">
+    <a class="btn btn-secondary" href="{% url 'buildings:building_detail' build_slug=stat.build.slug set_slug=stat.build.get_base_planset_slug %}" title="{% translate "Back to building" %}">
       <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
   </div>
 </div>

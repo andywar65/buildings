@@ -45,6 +45,7 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
         context['map_data'] = {
             'build': build,
             'plans': plans,
+            'on_map_click': True,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
 
@@ -56,8 +57,9 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
                 kwargs={'slug': self.build.slug}) +
                 f'?stat_created={self.object.title}')
         else:
-            return (reverse('buildings:building_detail',
-                kwargs={'slug': self.build.slug}) +
+            return (reverse('buildings:station_detail',
+                kwargs={'build_slug': self.build.slug,
+                'stat_slug': self.object.slug}) +
                 f'?stat_created={self.object.title}')
 
 class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
@@ -92,6 +94,7 @@ class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
             'build': build,
             'plans': plans,
             'stat': stat,
+            'on_map_click': True,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
         return context

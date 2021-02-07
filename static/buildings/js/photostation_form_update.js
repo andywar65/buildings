@@ -92,11 +92,13 @@ if ( map_data.plans ){
 
 L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
-function onMapClick(e) {
-  var inputlat = document.getElementById("id_lat");
-  var inputlong = document.getElementById("id_long");
-  inputlat.setAttribute('value', e.latlng.lat);
-  inputlong.setAttribute('value', e.latlng.lng);
-}
+if (map_data.hasOwnProperty('on_map_click')){
+  function onMapClick(e) {
+    var inputlat = document.getElementById("id_lat");
+    var inputlong = document.getElementById("id_long");
+    inputlat.setAttribute('value', e.latlng.lat);
+    inputlong.setAttribute('value', e.latlng.lng);
+  }
 
-mymap.on('click', onMapClick);
+  mymap.on('click', onMapClick);
+}
