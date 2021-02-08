@@ -12,44 +12,53 @@ class BuildingModelTest(TestCase):
     """Testing all methods that don't need SimpleUploadedFile"""
     @classmethod
     def setUpTestData(cls):
+        print("Test buildings models")
         build = Building.objects.create(title='Building', )
         Building.objects.create(date=datetime.strptime('2020-05-09', '%Y-%m-%d'))
         stat = PhotoStation.objects.create(build=build, title='Station')
 
     def test_building_str_method(self):
+        print("\n-Test building __str__ method")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.__str__(), 'Building')
 
     def test_building_intro(self):
+        print("\n-Test building intro")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.intro,
             f'Another Building by {settings.WEBSITE_NAME}!')
 
     def test_building_maps(self):
+        print("\n-Test building map values")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.lat, settings.CITY_LAT )
         self.assertEquals(build.long, settings.CITY_LONG )
         self.assertEquals(build.zoom, settings.CITY_ZOOM )
 
     def test_building_str_method_no_title(self):
+        print("\n-Test building __str__ method no title")
         build = Building.objects.get(date='2020-05-09')
         self.assertEquals(build.__str__(), 'Building-09-05-20')
 
     def test_building_get_full_path(self):
+        print("\n-Test building get full path")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.get_full_path(),
             f'/buildings/building/sets/base_{build.id}/')
 
     def test_photostation_str_method(self):
+        print("\n-Test photostation __str__ method")
         stat = PhotoStation.objects.get(slug='station')
         self.assertEquals(stat.__str__(), 'Station / Building')
 
     def test_photostation_intro(self):
+        print("\n-Test photostation intro")
         stat = PhotoStation.objects.get(slug='station')
         self.assertEquals(stat.intro,
             f'Another photo station by {settings.WEBSITE_NAME}!')
 
     def test_station_maps(self):
+        print("\n-Test photostation map values")
         stat = PhotoStation.objects.get(slug='station')
         self.assertEquals(stat.lat, stat.build.lat )
         self.assertEquals(stat.long, stat.build.long )
@@ -58,6 +67,7 @@ class BuildingModelTest(TestCase):
 class StationImageTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        print("Test station image models")
         img_path = os.path.join(settings.STATIC_ROOT,
             'buildings/images/image.jpg')
         with open(img_path, 'rb') as f:
@@ -95,10 +105,12 @@ class StationImageTest(TestCase):
                 f'uploads/buildings/plans/dxf/{file}'))
 
     def test_plan_str_method(self):
+        print("\n-Test plan __str__ method")
         plan = Plan.objects.get(slug='plan-1-0')
         self.assertEquals(plan.__str__(), 'Plan 1 | 0.0')
 
     def test_plan_geometry(self):
+        print("\n-Test plan geometry")
         plan = Plan.objects.get(slug='plan-1-0')
         geometry = [{'type': 'polygon', 'color': '#999999',
         'popup': 'Porticato',
@@ -117,11 +129,13 @@ class StationImageTest(TestCase):
         self.assertEquals(plan.geometry, geometry)
 
     def test_building_fb_image(self):
+        print("\n-Test building fb_image")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.image, None)
         self.assertEquals(build.fb_image.path, 'uploads/buildings/images/image.jpg')
 
     def test_stationimage_fb_image(self):
+        print("\n-Test station image fb_image")
         stat = PhotoStation.objects.get(slug='station')
         image = StationImage.objects.filter(stat_id=stat.id).first()
         self.assertEquals(image.image, None)
