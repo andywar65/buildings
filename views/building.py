@@ -17,34 +17,6 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm)
 
-class MapMixin:
-
-    def prepare_build_data(self, build):
-        build.fb_image.version_generate("medium")
-        fb_path = (settings.MEDIA_URL +
-            build.fb_image.version_path("medium"))
-        return {'title': build.title, 'intro': build.intro,
-            'path': build.get_full_path(), 'lat': build.lat,
-            'long': build.long, 'zoom': build.zoom, 'fb_path': fb_path}
-
-    def prepare_plan_data(self, plan):
-        return {'id': plan.id, 'geometry': plan.geometry,
-            'title': plan.title, 'visible': plan.visible}
-
-    def prepare_stat_data(self, stat):
-        if stat.station_image.first():
-            stat.station_image.first().fb_image.version_generate("medium")
-            fb_path = (settings.MEDIA_URL +
-                stat.station_image.first().fb_image.version_path("medium"))
-        else:
-            fb_path = ''
-        path = reverse('buildings:station_detail',
-            kwargs={'build_slug': stat.build.slug,
-            'stat_slug': stat.slug})
-        return {'id': stat.id, 'title': stat.title, 'path': path,
-            'fb_path': fb_path, 'lat': stat.lat, 'long': stat.long,
-            'intro': stat.intro, 'plan_id': stat.plan_id}
-
 class AlertMixin:
     def add_alerts_to_context(self, context):
         if 'created' in self.request.GET:
@@ -121,8 +93,7 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'set_slug': 'base_'+str(self.object.id) }) +
                 f'?created={self.object.title}')
 
-class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
-    DetailView):
+class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     model = Building
     permission_required = 'buildings.view_building'
     context_object_name = 'build'
@@ -162,15 +133,15 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( self.object )
+        build = self.object.map_dictionary()
         #plan data
         plans = []
         for plan in context['plans'].reverse():
-            plans.append(self.prepare_plan_data(plan))
+            plans.append(plan.map_dictionary())
         #station data
         stations = []
         for stat in context['stations']:
-            stations.append(self.prepare_stat_data(stat))
+            stations.append(stat.map_dictionary())
         #are there stations that don't belong to plans?
         no_plan_status = False
         if context['stations'].filter(plan_id=None):
@@ -185,7 +156,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
             }
         return context
 
-class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
+class BuildingUpdateView(PermissionRequiredMixin, UpdateView):
     model = Building
     permission_required = 'buildings.change_building'
     form_class = BuildingUpdateForm
@@ -195,7 +166,7 @@ class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( self.object )
+        build = self.object.map_dictionary()
         context['map_data'] = {
             'build': build,
             'on_map_click': True,
@@ -301,8 +272,7 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
                 'plan_slug': self.object.slug}) +
                 f'?plan_modified={self.object.title}')
 
-class PlanDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
-    DetailView):
+class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     model = Plan
     permission_required = 'buildings.view_plan'
     context_object_name = 'plan'
@@ -338,11 +308,11 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( self.build )
+        build = self.build.map_dictionary()
         #plan data
         plans = []
         for plan in context['plans'].reverse():
-            plan_dict = self.prepare_plan_data(plan)
+            plan_dict = plan.map_dictionary()
             if plan == self.object:
                 plan_dict['visible'] = True
             else:
@@ -395,8 +365,7 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
             'set_slug': 'base_'+str(self.build.id)}) +
             f'?plan_deleted={self.plan.title}')
 
-class PlanSetCreateView( PermissionRequiredMixin, AlertMixin,
-    CreateView ):
+class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = PlanSet
     permission_required = 'buildings.add_planset'
     form_class = PlanSetCreateForm

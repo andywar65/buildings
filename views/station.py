@@ -12,10 +12,9 @@ from django.utils.translation import gettext as _
 from buildings.models import Building, Plan, PhotoStation, StationImage
 from buildings.forms import ( PhotoStationCreateForm,
     BuildingDeleteForm, StationImageCreateForm, StationImageUpdateForm, )
-from buildings.views.building import AlertMixin, MapMixin
+from buildings.views.building import AlertMixin
 
-class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
-    CreateView ):
+class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = PhotoStation
     permission_required = 'buildings.add_photostation'
     form_class = PhotoStationCreateForm
@@ -37,11 +36,11 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( self.build )
+        build = self.build.map_dictionary()
         #plan data
         plans = []
         for plan in self.build.building_plan.all().reverse():
-            plan_dict = self.prepare_plan_data(plan)
+            plan_dict = plan.map_dictionary()
             plan_dict['visible'] = False
             plans.append(plan_dict)
         context['map_data'] = {
@@ -65,7 +64,7 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
                 'stat_slug': self.object.slug}) +
                 f'?stat_created={self.object.title}')
 
-class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
+class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
     model = PhotoStation
     permission_required = 'buildings.change_photostation'
     form_class = PhotoStationCreateForm
@@ -86,18 +85,18 @@ class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
         context = super().get_context_data(**kwargs)
         #we add the following to feed the map
         #building data
-        build = self.prepare_build_data( self.build )
+        build = self.build.map_dictionary()
         #plan data
         plans = []
         for plan in self.build.building_plan.all().reverse():
-            plan_dict = self.prepare_plan_data(plan)
+            plan_dict = plan.map_dictionary()
             if plan == self.object.plan:
                 plan_dict['visible'] = True
             else:
                 plan_dict['visible'] = False
             plans.append(plan_dict)
         #station data
-        stat = self.prepare_stat_data( self.object )
+        stat = self.object.map_dictionary()
         context['map_data'] = {
             'build': build,
             'plans': plans,
