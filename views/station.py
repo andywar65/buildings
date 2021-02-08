@@ -48,6 +48,7 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
             'build': build,
             'plans': plans,
             'on_map_click': True,
+            'no_plan_popup': True,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
 
@@ -102,6 +103,7 @@ class PhotoStationUpdateView( PermissionRequiredMixin, MapMixin, UpdateView ):
             'plans': plans,
             'stat': stat,
             'on_map_click': True,
+            'no_plan_popup': True,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
         return context

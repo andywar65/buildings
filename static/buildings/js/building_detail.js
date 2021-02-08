@@ -17,19 +17,22 @@ if (map_data.plans){
         switch ( obj.type ){
           case 'polygon':
             var object = L.polygon( obj.coords, {color: obj.color,
-              fillcolor: obj.color, fillOpacity: 0.5}).bindPopup(obj.popup);
+              fillcolor: obj.color, fillOpacity: 0.5});
             break;
           case 'polyline':
-            var object = L.polyline( obj.coords, {color: obj.color})
-              .bindPopup(obj.popup);
+            var object = L.polyline( obj.coords, {color: obj.color});
             break;
           case 'circle':
             var object = L.circle( obj.coords, {radius: obj.radius,
-              color: obj.color, fillcolor: obj.color, fillOpacity: 0.5})
-              .bindPopup(obj.popup);
+              color: obj.color, fillcolor: obj.color, fillOpacity: 0.5});
             break;
         }
-        object.addTo(window['plan_' + plan.id ]);
+        if (map_data.hasOwnProperty('no_plan_popup')){
+          object.addTo(window['plan_' + plan.id ]);
+        } else {
+          object.bindPopup(obj.popup).addTo(window['plan_' + plan.id ]);
+        }
+
       }
     }
   }
