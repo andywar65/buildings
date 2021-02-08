@@ -6,7 +6,8 @@
 {% block content %}
   <div class="row">
     <div class="col">
-      <h4><strong>{% translate "Images by day" %}: {{ day }} @ <a href="{% url 'buildings:building_detail' slug=build.slug %}">{{ build.title }}</a>
+      <h4><strong>{% translate "Images by day" %}: {{ day }} @
+        <a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=build.get_base_planset_slug %}">{{ build.title }}</a>
       </strong></h4>
       <p><em>{{ build.intro }}</em></p>
     </div>
