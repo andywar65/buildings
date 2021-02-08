@@ -149,7 +149,8 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
                 kwargs={'build_slug': self.build.slug,
                 'stat_slug': self.stat.slug})
         return (reverse('buildings:building_detail',
-            kwargs={'slug': self.build.slug}) +
+            kwargs={'build_slug': self.build.slug,
+            'set_slug': self.build.get_base_planset_slug()}) +
             f'?stat_deleted={self.stat.title}')
 
 class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,

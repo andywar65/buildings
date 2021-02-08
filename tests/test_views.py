@@ -450,9 +450,11 @@ class BuildingViewsTest(TestCase):
             {'build': build.id, 'plan': plan.id , 'title': 'Created station',
             'intro': 'Foo', 'lat': 40, 'long': 20 },
             follow = True)
+        stat = PhotoStation.objects.get(title='Created station')
         self.assertRedirects(response,
-            reverse('buildings:building_detail',
-                kwargs={'slug': 'building'})+'?stat_created=Created station',
+            reverse('buildings:station_detail',
+                kwargs={'build_slug': 'building', 'stat_slug': stat.slug})+
+                '?stat_created=Created station',
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
         print("--Create photo station and add another")
@@ -496,7 +498,9 @@ class BuildingViewsTest(TestCase):
             follow = True)
         self.assertRedirects(response,
             reverse('buildings:building_detail',
-                kwargs={'slug': 'building'})+'?stat_deleted=Created station',
+                kwargs={'build_slug': 'building',
+                'set_slug': 'base_'+str(build.id)})+
+                '?stat_deleted=Created station',
             status_code=302,
             target_status_code = 200)
 
