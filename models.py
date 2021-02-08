@@ -75,6 +75,14 @@ class Building(models.Model):
             kwargs={'build_slug': self.slug,
             'set_slug': self.get_base_planset_slug()})
 
+    def map_dictionary(self):
+        self.fb_image.version_generate("medium")
+        fb_path = (settings.MEDIA_URL +
+            self.fb_image.version_path("medium"))
+        return {'title': self.title, 'intro': self.intro,
+            'path': self.get_full_path(), 'lat': self.lat,
+            'long': self.long, 'zoom': self.zoom, 'fb_path': fb_path}
+
     def save(self, *args, **kwargs):
         if not self.title:
             self.title = _('Building-%(date)s') % {'date': self.date.strftime("%d-%m-%y")}
@@ -117,6 +125,10 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.title + ' | ' + str(self.elev)
+
+    def map_dictionary(self):
+        return {'id': self.id, 'geometry': self.geometry,
+            'title': self.title, 'visible': self.visible}
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -194,6 +206,20 @@ class PhotoStation(models.Model):
 
     def __str__(self):
         return self.title + ' / ' + self.build.title
+
+    def map_dictionary(self):
+        if self.station_image.first():
+            self.station_image.first().fb_image.version_generate("medium")
+            fb_path = (settings.MEDIA_URL +
+                self.station_image.first().fb_image.version_path("medium"))
+        else:
+            fb_path = ''
+        path = reverse('buildings:station_detail',
+            kwargs={'build_slug': self.build.slug,
+            'stat_slug': self.slug})
+        return {'id': self.id, 'title': self.title, 'path': path,
+            'fb_path': fb_path, 'lat': self.lat, 'long': self.long,
+            'intro': self.intro, 'plan_id': self.plan_id}
 
     def save(self, *args, **kwargs):
         if not self.slug:

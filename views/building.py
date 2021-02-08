@@ -79,8 +79,7 @@ class AlertMixin:
             context['set_deleted'] = self.request.GET['set_deleted']
         return context
 
-class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
-    CreateView ):
+class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
     permission_required = 'buildings.view_building'
     form_class = BuildingCreateForm
@@ -96,7 +95,7 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
         #not using values() because we have to manipulate entries
         builds = []
         for build in context['builds']:
-            builds.append( self.prepare_build_data(build) )
+            builds.append( build.map_dictionary() )
         context['map_data'] = {
             'builds': builds,
             'on_map_click': True,
