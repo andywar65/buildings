@@ -37,7 +37,8 @@ class BuildingModelTest(TestCase):
 
     def test_building_get_full_path(self):
         build = Building.objects.get(slug='building')
-        self.assertEquals(build.get_full_path(), '/buildings/building/')
+        self.assertEquals(build.get_full_path(),
+            f'/buildings/building/sets/base_{build.id}/')
 
     def test_photostation_str_method(self):
         stat = PhotoStation.objects.get(slug='station')
