@@ -340,7 +340,13 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, MapMixin,
         build = self.prepare_build_data( self.build )
         #plan data
         plans = []
-        plans.append(self.prepare_plan_data(self.object))
+        for plan in context['plans'].reverse():
+            plan_dict = self.prepare_plan_data(plan)
+            if plan == self.object:
+                plan_dict['visible'] = True
+            else:
+                plan_dict['visible'] = False
+            plans.append(plan_dict)
         #are there stations that don't belong to plans?
         no_plan_status = False
         context['map_data'] = {
