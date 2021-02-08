@@ -99,6 +99,7 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, MapMixin,
             builds.append( self.prepare_build_data(build) )
         context['map_data'] = {
             'builds': builds,
+            'on_map_click': True,
             'city_lat': settings.CITY_LAT,
             'city_long': settings.CITY_LONG,
             'city_zoom': settings.CITY_ZOOM,
@@ -198,6 +199,7 @@ class BuildingUpdateView(PermissionRequiredMixin, MapMixin, UpdateView):
         build = self.prepare_build_data( self.object )
         context['map_data'] = {
             'build': build,
+            'on_map_click': True,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
         return context
