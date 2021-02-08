@@ -19,36 +19,14 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
-        if 'created' in self.request.GET:
-            context['created'] = self.request.GET['created']
-        elif 'modified' in self.request.GET:
-            context['modified'] = self.request.GET['modified']
-        elif 'deleted' in self.request.GET:
-            context['deleted'] = self.request.GET['deleted']
-        elif 'plan_created' in self.request.GET:
-            context['plan_created'] = self.request.GET['plan_created']
-        elif 'plan_modified' in self.request.GET:
-            context['plan_modified'] = self.request.GET['plan_modified']
-        elif 'plan_deleted' in self.request.GET:
-            context['plan_deleted'] = self.request.GET['plan_deleted']
-        elif 'stat_created' in self.request.GET:
-            context['stat_created'] = self.request.GET['stat_created']
-        elif 'stat_modified' in self.request.GET:
-            context['stat_modified'] = self.request.GET['stat_modified']
-        elif 'stat_deleted' in self.request.GET:
-            context['stat_deleted'] = self.request.GET['stat_deleted']
-        elif 'img_created' in self.request.GET:
-            context['img_created'] = self.request.GET['img_created']
-        elif 'img_modified' in self.request.GET:
-            context['img_modified'] = self.request.GET['img_modified']
-        elif 'img_deleted' in self.request.GET:
-            context['img_deleted'] = self.request.GET['img_deleted']
-        elif 'set_created' in self.request.GET:
-            context['set_created'] = self.request.GET['set_created']
-        elif 'set_modified' in self.request.GET:
-            context['set_modified'] = self.request.GET['set_modified']
-        elif 'set_deleted' in self.request.GET:
-            context['set_deleted'] = self.request.GET['set_deleted']
+        prefix = ['', 'plan_', 'stat_', 'img_', 'set_']
+        action = ['created', 'modified', 'deleted']
+        for pref in prefix:
+            for act in action:
+                param = pref + act
+                if param in self.request.GET:
+                    context[ param ] = self.request.GET[ param ]
+                    return context
         return context
 
 class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
