@@ -9,7 +9,7 @@ var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   accessToken: map_data.mapbox_token
 });
 
-if (map_data.plans){
+if (map_data.hasOwnProperty('plans')){
   for (plan of map_data.plans){
     window['plan_' + plan.id ] = L.layerGroup();
     if (plan.geometry){
@@ -71,7 +71,7 @@ if (map_data.hasOwnProperty('stations')){
 }
 
 var layers = [ base_map, ];
-if ( map_data.plans ){
+if (map_data.hasOwnProperty('plans')){
   for ( plan of map_data.plans ){
     if ( plan.visible ){
       layers.push( window[ 'plan_' + plan.id ]);
@@ -84,11 +84,47 @@ if (map_data.hasOwnProperty('no_plan_status')){
   }
 }
 
-var mymap = L.map('mapid', {
-  center: [ map_data.build.lat , map_data.build.long ],
-  zoom: map_data.build.zoom ,
-  layers: layers
-});
+if (map_data.hasOwnProperty('city_lat')){
+  var mymap = L.map('mapid', {
+    center: [ map_data.city_lat , map_data.city_long ],
+    zoom: map_data.city_zoom,
+    layers: layers
+  });
+} else {
+  var mymap = L.map('mapid', {
+    center: [ map_data.build.lat , map_data.build.long ],
+    zoom: map_data.build.zoom,
+    layers: layers
+  });
+}
+
+if (map_data.hasOwnProperty('builds')){
+  const buildMarker = L.divIcon({
+    html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
+    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+    className: 'build-marker'
+  });
+  for (build of map_data.builds ){
+    var content = "<h5><a href=\"" + build.path + "\">" + build.title +
+      "</a></h5><img src=\"" + build.fb_path + "\"><br><small>" +
+        build.intro + "</small>"
+    L.marker([ build.lat , build.long ], {icon: buildMarker}).addTo(mymap)
+      .bindPopup(content, {minWidth: 300});
+  }
+}
+
+if (map_data.hasOwnProperty('build')){
+  const buildMarker = L.divIcon({
+    html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
+    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+    className: 'build-marker'
+  });
+
+  var content = "<h5>" + map_data.build.title + "</h5><img src=\"" +
+    map_data.build.fb_path + "\">";
+  L.marker([ map_data.build.lat , map_data.build.long ], {icon: buildMarker})
+    .bindPopup(content, {minWidth: 300}).addTo(mymap);
+}
 
 if (map_data.hasOwnProperty('stat')){
   const statMarker = L.divIcon({
@@ -109,23 +145,12 @@ if (map_data.hasOwnProperty('stat')){
     .addTo(mymap).bindPopup( content, {minWidth: 300});
 }
 
-const buildMarker = L.divIcon({
-  html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
-  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-  className: 'build-marker'
-});
-
-var content = "<h5>" + map_data.build.title + "</h5><img src=\"" +
-  map_data.build.fb_path + "\">";
-L.marker([ map_data.build.lat , map_data.build.long ], {icon: buildMarker})
-  .bindPopup(content, {minWidth: 300}).addTo(mymap);
-
 var baseMaps = {
   "Base": base_map
 };
 
 var overlayMaps = {};
-if ( map_data.plans ){
+if (map_data.hasOwnProperty('plans')){
   for ( plan of map_data.plans ){
     overlayMaps[ plan.title ] = window[ 'plan_' + plan.id ];
   }
