@@ -77,7 +77,7 @@ class BuildingViewsTest(TestCase):
         print("--Test building detail forbidden")
         response = self.client.get(reverse('buildings:building_detail',
             kwargs={'build_slug': build.slug,
-            'set_slug': 'base_'+str(build.id)}))
+            'set_slug': build.get_base_planset_slug()}))
         self.assertEqual(response.status_code, 403)
         print("--Test station detail forbidden")
         response = self.client.get(reverse('buildings:station_detail',
@@ -99,7 +99,7 @@ class BuildingViewsTest(TestCase):
         print("--Test building detail ok")
         response = self.client.get(reverse('buildings:building_detail',
             kwargs={'build_slug': build.slug,
-            'set_slug': 'base_'+str(build.id)}))
+            'set_slug': build.get_base_planset_slug()}))
         self.assertEqual(response.status_code, 200)
         print("--Test station detail ok")
         response = self.client.get(reverse('buildings:station_detail',
@@ -317,7 +317,8 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building-4',
-                'set_slug': 'base_'+str(build.id)})+'?created=Building 4',
+                'set_slug': build.get_base_planset_slug()})+
+                '?created=Building 4',
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
         print("--Create building and add another")
@@ -342,7 +343,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building-4',
-                'set_slug': 'base_'+str(build.id)})+'?modified=Building 4',
+                'set_slug': build.get_base_planset_slug()})+'?modified=Building 4',
             status_code=302,
             target_status_code = 200)
         print("--Modify building and add another")
@@ -384,9 +385,12 @@ class BuildingViewsTest(TestCase):
             'file': SimpleUploadedFile('plan2.dxf', content_d, 'txt/dxf'),
             'refresh': True, 'geometry': '', 'visible': True },
             follow = True)
+        plan = Plan.objects.get(title='Created plan')
         self.assertRedirects(response,
-            reverse('buildings:building_detail',
-                kwargs={'slug': 'building'})+'?plan_created=Created plan',
+            reverse('buildings:plan_detail',
+                kwargs={'build_slug': 'building',
+                'plan_slug': plan.slug})+
+                '?plan_created=Created plan',
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
         print("--Create building plan and add another")
@@ -499,7 +503,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building',
-                'set_slug': 'base_'+str(build.id)})+
+                'set_slug': build.get_base_planset_slug()})+
                 '?stat_deleted=Created station',
             status_code=302,
             target_status_code = 200)
