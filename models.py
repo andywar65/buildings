@@ -106,10 +106,11 @@ class Building(models.Model):
         try:
             PlanSet.objects.get(slug=self.get_base_slug())
         except:
-            PlanSet.add_root(title=self.title,
-                slug=self.get_base_slug(),
-                intro = _("Base plan set"),
-                build=self)
+            PlanSet.add_root(title=self.title, slug=self.get_base_slug(),
+                intro = _("Base plan set"), build=self)
+            Family.add_root(title=self.title, slug=self.get_base_slug(),
+                intro = _("Base element family"), build=self,
+                sheet = {'building': self.title})
 
     class Meta:
         verbose_name = _('Building')
