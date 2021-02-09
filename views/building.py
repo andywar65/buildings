@@ -95,9 +95,11 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         #add stations
         context['stations'] = self.object.building_station.filter(Q(plan=None)|
             Q(plan_id__in=plan_list))
-        stat_list = PhotoStation.objects.filter(build_id=self.object.id).values_list('id', flat=True)
+        stat_list = PhotoStation.objects.filter(build_id=self.object.id)
+        stat_list = stat_list.values_list('id', flat=True)
         #add dates for images by date
-        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list).dates('date', 'day')
+        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list)
+        context['dates'] = context['dates'].dates('date', 'day')
         #add alerts
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
@@ -177,7 +179,8 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
         if 'cancel' in self.request.POST:
             return reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug })
-        return reverse('buildings:building_list') + f'?deleted={self.build.title}'
+        return (reverse('buildings:building_list') +
+            f'?deleted={self.build.title}')
 
 class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Plan
@@ -268,7 +271,8 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         context['stations'] = self.build.building_station.all()
         stat_list = context['stations'].values_list('id', flat=True)
         #add dates for images by date
-        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list).dates('date', 'day')
+        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list)
+        context['dates'] = context['dates'].dates('date', 'day')
         #add alerts
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
@@ -434,14 +438,16 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        if not 'cancel' in self.request.POST and not self.set.slug.startswith('base_'):
+        if (not 'cancel' in self.request.POST and
+            not self.set.slug.startswith('base_')):
             self.set.delete()
         return super(PlanSetDeleteView, self).form_valid(form)
 
     def get_success_url(self):
         if 'cancel' in self.request.POST or self.set.slug.startswith('base_'):
             return reverse('buildings:planset_change',
-                kwargs={'build_slug': self.build.slug, 'set_slug': self.set.slug})
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.set.slug})
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': 'base_'+str(self.build.id)}) +
