@@ -114,9 +114,18 @@ class BuildingViewsTest(TestCase):
         print("\n-Test buildings create forbidden")
         self.client.post(reverse('front_login'), {'username':'viewer',
             'password':'P4s5W0r6'})
-        print("--Test building create forbidden (TODO)")
-        response = self.client.get(reverse('buildings:building_list'))
-        self.assertEqual(response.status_code, 200)
+        img_path = Path(settings.STATIC_ROOT /
+            'buildings/images/image.jpg')
+        with open(img_path, 'rb') as f:
+            content = f.read()
+        print("--Test building create forbidden (responds 404)")
+        response = self.client.post(reverse('buildings:building_list'),
+            {'title': 'Building 4',
+            'image': SimpleUploadedFile('image4.jpg', content, 'image/jpg'),
+            'intro': 'foo', 'date': '2020-05-09',
+            'address': '', 'lat': 40, 'long': 20, 'zoom': 10},
+            follow = True)
+        self.assertEqual(response.status_code, 404)
         print("--Test plan create forbidden")
         response = self.client.get(reverse('buildings:plan_create',
             kwargs={'slug': 'building'}))
@@ -125,10 +134,15 @@ class BuildingViewsTest(TestCase):
         response = self.client.get(reverse('buildings:station_create',
             kwargs={'slug': 'building'}))
         self.assertEqual(response.status_code, 403)
-        print("--Test image create forbidden (TODO)")
-        response = self.client.get(reverse('buildings:station_detail',
-            kwargs={'build_slug': 'building', 'stat_slug': 'station'}))
-        self.assertEqual(response.status_code, 200)
+        print("--Test image create forbidden (responds 404)")
+        stat = PhotoStation.objects.get(slug='station')
+        response = self.client.post(reverse('buildings:station_detail',
+            kwargs={'build_slug': 'building', 'stat_slug': stat.slug}),
+            {'stat': stat.id, 'date': '2021-01-04',
+            'image': SimpleUploadedFile('image6.jpg', content, 'image/jpg'),
+            'caption': 'Footy Foo' },
+            follow = True)
+        self.assertEqual(response.status_code, 404)
 
     def test_create_status_code_ok(self):
         print("\n-Test buildings create ok")
@@ -145,7 +159,7 @@ class BuildingViewsTest(TestCase):
         response = self.client.get(reverse('buildings:station_create',
             kwargs={'slug': 'building'}))
         self.assertEqual(response.status_code, 200)
-        print("--Test image create ok (TODO)")
+        print("--Test image create ok (can view images)")
         response = self.client.get(reverse('buildings:station_detail',
             kwargs={'build_slug': 'building', 'stat_slug': 'station'}))
         self.assertEqual(response.status_code, 200)
