@@ -163,8 +163,10 @@ class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
     def setup(self, request, *args, **kwargs):
         super(StationImageListCreateView, self).setup(request, *args, **kwargs)
         #here we get the project by the slug
-        self.build = get_object_or_404( Building, slug = self.kwargs['build_slug'] )
-        self.stat = get_object_or_404( PhotoStation, slug = self.kwargs['stat_slug'] )
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        self.stat = get_object_or_404( PhotoStation,
+            slug = self.kwargs['stat_slug'] )
         if not self.stat.build == self.build:
             raise Http404(_("Station does not belong to Building"))
 
@@ -207,8 +209,10 @@ class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
     def get_object(self, queryset=None):
         #elsewhere we get the parent in setup, but here we also need object
         img = super(StationImageUpdateView, self).get_object(queryset=None)
-        self.build = get_object_or_404( Building, slug = self.kwargs['build_slug'] )
-        self.stat = get_object_or_404( PhotoStation, slug = self.kwargs['stat_slug'] )
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        self.stat = get_object_or_404( PhotoStation,
+            slug = self.kwargs['stat_slug'] )
         if not self.stat.build == self.build:
             raise Http404(_("Station does not belong to Building"))
         if not self.stat == img.stat:
@@ -255,7 +259,8 @@ class StationImageDeleteView(PermissionRequiredMixin, FormView):
                 kwargs={'build_slug': self.build.slug,
                 'stat_slug': self.stat.slug})
         return (reverse('buildings:station_detail',
-            kwargs={'build_slug': self.build.slug, 'stat_slug': self.stat.slug}) +
+            kwargs={'build_slug': self.build.slug,
+            'stat_slug': self.stat.slug}) +
             f'?img_deleted={self.title}')
 
 class StationImageDayArchiveView( PermissionRequiredMixin, DayArchiveView ):
