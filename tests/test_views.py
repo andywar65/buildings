@@ -258,7 +258,7 @@ class BuildingViewsTest(TestCase):
             kwargs={'build_slug': 'building-2', 'stat_slug': 'station'}))
         self.assertEqual(response.status_code, 404)
         print("--Test image create wrong parent")
-        response = self.client.get(reverse('buildings:image_add',
+        response = self.client.get(reverse('buildings:station_detail',
             kwargs={'build_slug': 'building-2', 'stat_slug': 'station'}))
         self.assertEqual(response.status_code, 404)
         print("--Test building plan wrong parent")
@@ -414,8 +414,9 @@ class BuildingViewsTest(TestCase):
             'refresh': True, 'geometry': '', 'visible': True },
             follow = True)
         self.assertRedirects(response,
-            reverse('buildings:building_detail',
-                kwargs={'slug': 'building'})+'?plan_modified=Created plan',
+            reverse('buildings:plan_detail',
+                kwargs={'build_slug': 'building',
+                'plan_slug': 'created-plan-30'})+'?plan_modified=Created plan',
             status_code=302,
             target_status_code = 200)
         print("--Modify building plan and add another")
@@ -424,10 +425,11 @@ class BuildingViewsTest(TestCase):
             'plan_slug': 'created-plan-add-60'}),
             {'build': build.id, 'title': 'Created plan add', 'elev': 6.0,
             'file': SimpleUploadedFile('plan5.dxf', content_d, 'txt/dxf'),
-            'refresh': True, 'geometry': '', 'visible': True },
+            'refresh': True, 'geometry': '', 'visible': True,
+            'add_another': '' },
             follow = True)
         self.assertRedirects(response,
-            reverse('buildings:building_detail',
+            reverse('buildings:plan_create',
                 kwargs={'slug': 'building'})+'?plan_modified=Created plan add',
             status_code=302,
             target_status_code = 200)
@@ -438,7 +440,9 @@ class BuildingViewsTest(TestCase):
             follow = True)
         self.assertRedirects(response,
             reverse('buildings:building_detail',
-                kwargs={'slug': 'building'})+'?plan_deleted=Created plan',
+                kwargs={'build_slug': 'building',
+                'set_slug': build.get_base_planset_slug()})+
+                '?plan_deleted=Created plan',
             status_code=302,
             target_status_code = 200)
 
@@ -518,7 +522,7 @@ class BuildingViewsTest(TestCase):
         with open(img_path, 'rb') as f:
             content = f.read()
         print("--Create Image")
-        response = self.client.post(reverse('buildings:image_add',
+        response = self.client.post(reverse('buildings:station_detail',
             kwargs={'build_slug': 'building', 'stat_slug': 'station'}),
             {'stat': stat.id, 'date': '2021-01-04',
             'image': SimpleUploadedFile('image6.jpg', content, 'image/jpg'),
@@ -532,7 +536,7 @@ class BuildingViewsTest(TestCase):
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
         print("--Create Image and add another")
-        response = self.client.post(reverse('buildings:image_add',
+        response = self.client.post(reverse('buildings:station_detail',
             kwargs={'build_slug': 'building', 'stat_slug': 'station'}),
             {'stat': stat.id, 'date': '2021-01-04',
             'image': SimpleUploadedFile('image7.jpg', content, 'image/jpg'),
@@ -540,7 +544,7 @@ class BuildingViewsTest(TestCase):
             follow = True)
         img = StationImage.objects.get(caption='Barry bar')
         self.assertRedirects(response,
-            reverse('buildings:image_add',
+            reverse('buildings:station_detail',
                 kwargs={'build_slug': 'building',
                 'stat_slug': 'station'})+f'?img_created={img.id}',
             status_code=302,
@@ -568,7 +572,7 @@ class BuildingViewsTest(TestCase):
             'caption': 'Barry bar', 'add_another': '' },
             follow = True)
         self.assertRedirects(response,
-            reverse('buildings:image_add',
+            reverse('buildings:station_detail',
                 kwargs={'build_slug': 'building',
                 'stat_slug': 'station'})+f'?img_modified={img.id}',
             status_code=302,
