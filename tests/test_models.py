@@ -14,7 +14,8 @@ class BuildingModelTest(TestCase):
     def setUpTestData(cls):
         print("Test buildings models")
         build = Building.objects.create(title='Building', )
-        Building.objects.create(date=datetime.strptime('2020-05-09', '%Y-%m-%d'))
+        Building.objects.create(date=datetime.strptime('2020-05-09',
+            '%Y-%m-%d'))
         stat = PhotoStation.objects.create(build=build, title='Station')
 
     def test_building_str_method(self):
@@ -126,11 +127,13 @@ class StationImageTest(TestCase):
         print("\n-Test building fb_image")
         build = Building.objects.get(slug='building')
         self.assertEquals(build.image, None)
-        self.assertEquals(build.fb_image.path, 'uploads/buildings/images/image.jpg')
+        self.assertEquals(build.fb_image.path,
+            'uploads/buildings/images/image.jpg')
 
     def test_stationimage_fb_image(self):
         print("\n-Test station image fb_image")
         stat = PhotoStation.objects.get(slug='station')
         image = StationImage.objects.filter(stat_id=stat.id).first()
         self.assertEquals(image.image, None)
-        self.assertEquals(image.fb_image.path, 'uploads/buildings/images/image2.jpg')
+        self.assertEquals(image.fb_image.path,
+            'uploads/buildings/images/image2.jpg')
