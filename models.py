@@ -104,9 +104,11 @@ class Building(models.Model):
             Building.objects.filter(id=self.id).update(image=None,
                 fb_image=FileObject(str(self.image)))
         try:
-            PlanSet.objects.get(slug='base_'+str(self.id), build_id=self.id)
+            PlanSet.objects.get(slug=self.get_base_planset_slug())
         except:
-            PlanSet.add_root(title=self.title, slug='base_'+str(self.id),
+            PlanSet.add_root(title=self.title,
+                slug=self.get_base_planset_slug(),
+                intro = _("Base plan set"),
                 build=self)
 
     class Meta:
