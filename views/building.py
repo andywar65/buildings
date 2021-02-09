@@ -261,11 +261,7 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         #add building
         context['build'] = self.build
         #add plansets
-        plansets = self.build.building_planset.all()
-        context['annotated_lists'] = []
-        for planset in plansets:
-            if planset.is_root():
-                context['annotated_lists'].append(PlanSet.get_annotated_list(parent=planset))
+        context['annotated_lists'] = self.build.get_planset_annotated_lists()
         #add plans
         context['plans'] = self.build.building_plan.all()
         #add stations
