@@ -276,3 +276,33 @@ class StationImage(models.Model):
         verbose_name=_("Image")
         verbose_name_plural=_("Images")
         ordering = ('-date', )
+
+class Family(MP_Node):
+    parent = models.ForeignKey('self', verbose_name = _('Parent family'),
+        null=True, blank=True,
+        help_text = _('Choose carefully, can be changed only by staff in admin'),
+        on_delete = models.SET_NULL)
+    title = models.CharField(_('Title'),
+        help_text=_("Family name"),
+        max_length = 50, )
+    intro = models.CharField(_('Description'),
+        null=True, blank=True,
+        help_text = _('Few words to describe the family'),
+        max_length = 100)
+    slug = models.SlugField(max_length=100, editable=False, null=True)
+    sheet = models.JSONField(_('Data sheet'), null=True, blank=True,
+        help_text=_("A dictionary of element features") )
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(Family, self.title)
+        if not self.sheet:
+            self.sheet = { 'Feature': 'Value' }
+        super(Family, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Element Family')
+        verbose_name_plural = _('Element Families')
