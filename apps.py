@@ -6,17 +6,16 @@ def create_buildings_group(sender, **kwargs):
     from django.contrib.auth.models import Permission, Group
     grp, created = Group.objects.get_or_create(name=_('Building Manager'))
     if created:
-        permissions = Permission.objects.filter(codename__in=('view_building',
-            'add_building', 'change_building', 'delete_building',
-            'view_plan', 'add_plan', 'change_plan',
-            'delete_plan',
+        permissions = Permission.objects.filter(codename__in=(
+            'view_building','add_building','change_building','delete_building',
+            'view_plan', 'add_plan', 'change_plan', 'delete_plan',
             'view_photostation', 'add_photostation', 'change_photostation',
             'delete_photostation',
             'view_stationimage', 'add_stationimage', 'change_stationimage',
-            'delete_stationimage', 'view_discipline', 'add_discipline',
-            'change_discipline', 'delete_discipline', 'view_planset',
-            'add_planset', 'change_planset',
-            'delete_planset',))
+            'delete_stationimage',
+            'view_planset', 'add_planset', 'change_planset', 'delete_planset',
+            'view_family', 'add_family', 'change_family', 'delete_family',
+            ))
         grp.permissions.set(permissions)
 
 def create_plansets(sender, **kwargs):
