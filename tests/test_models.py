@@ -1,5 +1,5 @@
-import os
 from datetime import datetime
+from pathlib import Path
 
 from django.conf import settings
 from django.test import TestCase, override_settings
@@ -63,16 +63,16 @@ class BuildingModelTest(TestCase):
         self.assertEquals(stat.lat, stat.build.lat )
         self.assertEquals(stat.long, stat.build.long )
 
-@override_settings(MEDIA_ROOT=os.path.join(settings.MEDIA_ROOT, 'temp'))
+@override_settings(MEDIA_ROOT=Path(settings.MEDIA_ROOT / 'temp'))
 class StationImageTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         print("Test station image models")
-        img_path = os.path.join(settings.STATIC_ROOT,
+        img_path = Path(settings.STATIC_ROOT /
             'buildings/images/image.jpg')
         with open(img_path, 'rb') as f:
             content = f.read()
-        dxf_path = os.path.join(settings.STATIC_ROOT,
+        dxf_path = Path(settings.STATIC_ROOT /
             'buildings/dxf/sample.dxf')
         with open(dxf_path, 'rb') as d:
             content_d = d.read()
@@ -87,22 +87,16 @@ class StationImageTest(TestCase):
 
     def tearDown(self):
         """Checks existing files, then removes them"""
-        try:
-            list = os.listdir(os.path.join(settings.MEDIA_ROOT,
-                'uploads/buildings/images/'))
-        except:
-            return
+        path = Path(settings.MEDIA_ROOT /
+            'uploads/buildings/images/')
+        list = [e for e in path.iterdir() if e.is_file()]
         for file in list:
-            os.remove(os.path.join(settings.MEDIA_ROOT,
-                f'uploads/buildings/images/{file}'))
-        try:
-            list = os.listdir(os.path.join(settings.MEDIA_ROOT,
-                'uploads/buildings/plans/dxf/'))
-        except:
-            return
+            Path(file).unlink()
+        path = Path(settings.MEDIA_ROOT /
+            'uploads/buildings/plans/dxf/')
+        list = [e for e in path.iterdir() if e.is_file()]
         for file in list:
-            os.remove(os.path.join(settings.MEDIA_ROOT,
-                f'uploads/buildings/plans/dxf/{file}'))
+            Path(file).unlink()
 
     def test_plan_str_method(self):
         print("\n-Test plan __str__ method")
