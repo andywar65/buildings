@@ -160,9 +160,9 @@ class PlanSet(MP_Node):
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_planset', verbose_name = _('Building'))
     parent = models.ForeignKey('self', verbose_name = _('Parent set'),
-        null=True, blank=True,
+        null=True, on_delete = models.CASCADE,
         help_text = _('Choose carefully, can be changed only by staff in admin'),
-        on_delete = models.SET_NULL)
+        )
     title = models.CharField(_('Title'),
         help_text=_("Set name"),
         max_length = 50, )
