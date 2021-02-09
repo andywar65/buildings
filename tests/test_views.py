@@ -77,7 +77,7 @@ class BuildingViewsTest(TestCase):
         print("--Test building detail forbidden")
         response = self.client.get(reverse('buildings:building_detail',
             kwargs={'build_slug': build.slug,
-            'set_slug': build.get_base_planset_slug()}))
+            'set_slug': build.get_base_slug()}))
         self.assertEqual(response.status_code, 403)
         print("--Test station detail forbidden")
         response = self.client.get(reverse('buildings:station_detail',
@@ -99,7 +99,7 @@ class BuildingViewsTest(TestCase):
         print("--Test building detail ok")
         response = self.client.get(reverse('buildings:building_detail',
             kwargs={'build_slug': build.slug,
-            'set_slug': build.get_base_planset_slug()}))
+            'set_slug': build.get_base_slug()}))
         self.assertEqual(response.status_code, 200)
         print("--Test station detail ok")
         response = self.client.get(reverse('buildings:station_detail',
@@ -331,7 +331,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building-4',
-                'set_slug': build.get_base_planset_slug()})+
+                'set_slug': build.get_base_slug()})+
                 '?created=Building 4',
             status_code=302,
             target_status_code = 200)#302 is first step of redirect chain
@@ -357,7 +357,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building-4',
-                'set_slug': build.get_base_planset_slug()})+'?modified=Building 4',
+                'set_slug': build.get_base_slug()})+'?modified=Building 4',
             status_code=302,
             target_status_code = 200)
         print("--Modify building and add another")
@@ -455,7 +455,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building',
-                'set_slug': build.get_base_planset_slug()})+
+                'set_slug': build.get_base_slug()})+
                 '?plan_deleted=Created plan',
             status_code=302,
             target_status_code = 200)
@@ -521,7 +521,7 @@ class BuildingViewsTest(TestCase):
         self.assertRedirects(response,
             reverse('buildings:building_detail',
                 kwargs={'build_slug': 'building',
-                'set_slug': build.get_base_planset_slug()})+
+                'set_slug': build.get_base_slug()})+
                 '?stat_deleted=Created station',
             status_code=302,
             target_status_code = 200)

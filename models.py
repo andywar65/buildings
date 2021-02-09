@@ -67,13 +67,13 @@ class Building(models.Model):
     def __str__(self):
         return self.title
 
-    def get_base_planset_slug(self):
+    def get_base_slug(self):
         return 'base_'+str(self.id)
 
     def get_full_path(self):
         return reverse('buildings:building_detail',
             kwargs={'build_slug': self.slug,
-            'set_slug': self.get_base_planset_slug()})
+            'set_slug': self.get_base_slug()})
 
     def map_dictionary(self):
         self.fb_image.version_generate("medium")
@@ -104,10 +104,10 @@ class Building(models.Model):
             Building.objects.filter(id=self.id).update(image=None,
                 fb_image=FileObject(str(self.image)))
         try:
-            PlanSet.objects.get(slug=self.get_base_planset_slug())
+            PlanSet.objects.get(slug=self.get_base_slug())
         except:
             PlanSet.add_root(title=self.title,
-                slug=self.get_base_planset_slug(),
+                slug=self.get_base_slug(),
                 intro = _("Base plan set"),
                 build=self)
 
@@ -280,10 +280,12 @@ class StationImage(models.Model):
         ordering = ('-date', )
 
 class Family(MP_Node):
+    build = models.ForeignKey(Building, on_delete = models.CASCADE,
+        related_name='building_family', verbose_name = _('Building'))
     parent = models.ForeignKey('self', verbose_name = _('Parent family'),
-        null=True, blank=True,
+        null=True,
         help_text = _('Choose carefully, can be changed only by staff in admin'),
-        on_delete = models.SET_NULL)
+        on_delete = models.CASCADE)
     title = models.CharField(_('Title'),
         help_text=_("Family name"),
         max_length = 50, )
