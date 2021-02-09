@@ -40,15 +40,15 @@
   </div>
   <div class="col-md-6 text-right">
     {% if perms.buildings.add_planset %}
-      <a class="btn btn-secondary" href="{% url 'buildings:planset_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
+      <a class="btn btn-info" href="{% url 'buildings:planset_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
         + <i class="fa fa-sitemap"></i></a>
     {% endif %}
     {% if perms.buildings.add_plan %}
-      <a class="btn btn-success" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
+      <a class="btn btn-info" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
         + <i class="fa fa-map-o"></i></a>
     {% endif %}
     {% if perms.buildings.add_photostation %}
-      <a class="btn btn-success" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
+      <a class="btn btn-danger" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
         + <i class="fa fa-camera"></i></a>
     {% endif %}
   </div>
