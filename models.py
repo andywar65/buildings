@@ -294,13 +294,16 @@ class Family(MP_Node):
         help_text=_("A dictionary of element features") )
 
     def __str__(self):
-        return self.title
+        prefix = ''
+        for i in range( self.depth -1 ):
+            prefix = prefix + '-'
+        return prefix + self.title
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Family, self.title)
         if not self.sheet:
-            self.sheet = { 'Feature': 'Value' }
+            self.sheet = { 'Feature 1': 'Value 1', 'Feature 2': 'Value 2' }
         super(Family, self).save(*args, **kwargs)
 
     class Meta:
