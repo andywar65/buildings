@@ -181,6 +181,13 @@ class PlanSet(MP_Node):
             prefix = prefix + '-'
         return prefix + self.title
 
+    def get_self_and_ancestor_plans(self):
+        plans = self.plans.all()
+        for ancestor in self.get_ancestors():
+            ancestor_plans = ancestor.plans.all()
+            plans = plans | ancestor_plans
+        return plans.distinct().order_by('elev')
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(PlanSet, self.title)
