@@ -359,16 +359,10 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
 
     def form_valid(self, form):
         #can't use save method because dealing with MP_Node
-        if form.instance.parent:
-            self.object = form.instance.parent.add_child(
-                build=self.build,
-                title=form.instance.title,
-                intro=form.instance.intro)
-        else:
-            self.object = PlanSet.add_root(
-                build=self.build,
-                title=form.instance.title,
-                intro=form.instance.intro)
+        self.object = form.instance.parent.add_child(
+            build=self.build,
+            title=form.instance.title,
+            intro=form.instance.intro)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
