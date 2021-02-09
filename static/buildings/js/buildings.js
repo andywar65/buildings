@@ -169,6 +169,10 @@ if (map_data.hasOwnProperty('on_map_click')){
     var inputlong = document.getElementById("id_long");
     inputlat.setAttribute('value', e.latlng.lat);
     inputlong.setAttribute('value', e.latlng.lng);
+    if (map_data.hasOwnProperty('on_map_zoom')){
+      var inputzoom = document.getElementById("id_zoom");
+      inputzoom.setAttribute('value', mymap.getZoom());
+    }
   }
 
   mymap.on('click', onMapClick);
