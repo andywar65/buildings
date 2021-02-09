@@ -80,19 +80,14 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
         self.set = get_object_or_404( PlanSet,
-            slug = self.kwargs['set_slug'],
-            build__slug=self.kwargs['build_slug'] )
+            slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
             raise Http404(_("Plan set does not belong to Building"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #add plansets
-        plansets = self.object.building_planset.all()
-        context['annotated_lists'] = []
-        for planset in plansets:
-            if planset.is_root():
-                context['annotated_lists'].append(PlanSet.get_annotated_list(parent=planset))
+        context['annotated_lists'] = self.object.get_planset_annotated_lists()
         #add plans
         context['planset'] = self.set
         context['plans'] = self.set.plans.all()
