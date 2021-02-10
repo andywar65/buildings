@@ -15,6 +15,7 @@
 {% include "buildings/includes/plan_alerts.html" %}
 {% include "buildings/includes/photostation_alerts.html" %}
 {% include "buildings/includes/planset_alerts.html" %}
+{% include "buildings/includes/family_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
     <h4><strong>{% translate "Building" %}: {{ build.title }}
@@ -52,7 +53,7 @@
         + <i class="fa fa-camera"></i></a>
     {% endif %}
     {% if perms.buildings.add_family %}
-      <a class="btn btn-warning" href="#" title="{% translate "Add element family" %}">
+      <a class="btn btn-warning" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
         + <i class="fa fa-folder-open"></i></a>
     {% endif %}
     {% if perms.buildings.add_family %}

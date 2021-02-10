@@ -25,7 +25,6 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def get_initial(self):
         initial = super( FamilyListCreateView, self ).get_initial()
         initial['build'] = self.build.id
-        initial['parent'] = Family.objects.get(slug=self.build.get_base_slug()).id
         return initial
 
     def get_context_data(self, **kwargs):

@@ -107,7 +107,7 @@ class FamilyCreateForm(ModelForm):
     def __init__(self, **kwargs):
         super(FamilyCreateForm, self).__init__(**kwargs)
         #filter parent queryset
-        self.fields['parent'].queryset = PlanSet.objects.filter(build_id=self.initial['build'])
+        self.fields['parent'].queryset = Family.objects.filter(build_id=self.initial['build'])
 
     class Meta:
         model = Family
@@ -117,7 +117,7 @@ class FamilyUpdateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
         queryset=Building.objects.all(), disabled = True )
     parent = ModelChoiceField( label=_('Parent family'),
-        queryset=Family.objects.all(), disabled = True, required = False,
+        queryset=Family.objects.all(), disabled = True,
         help_text = _('Can be changed only by staff in admin'))
 
     class Meta:
