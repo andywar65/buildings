@@ -88,7 +88,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #add plansets
-        context['annotated_lists'] = self.object.get_planset_annotated_lists()
+        context['annotated_list'] = self.object.get_planset_annotated_list()
         #add plans
         context['planset'] = self.set
         context['plans'] = self.set.get_self_and_ancestor_plans()
@@ -266,7 +266,7 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         #add building
         context['build'] = self.build
         #add plansets
-        context['annotated_lists'] = self.build.get_planset_annotated_lists()
+        context['annotated_list'] = self.build.get_planset_annotated_list()
         #add plans
         context['plans'] = self.build.building_plan.all()
         #add stations

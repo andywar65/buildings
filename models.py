@@ -83,17 +83,14 @@ class Building(models.Model):
             'path': self.get_full_path(), 'lat': self.lat,
             'long': self.long, 'zoom': self.zoom, 'fb_path': fb_path}
 
-    def get_planset_annotated_lists(self):
-        plansets = self.building_planset.all()
-        list = []
-        for planset in plansets:
-            if planset.is_root():
-                list.append(PlanSet.get_annotated_list(parent=planset))
-        return list
+    def get_planset_annotated_list(self):
+        parent = self.building_planset.get(slug=self.get_base_slug())
+        return PlanSet.get_annotated_list(parent=parent)
 
     def save(self, *args, **kwargs):
         if not self.title:
-            self.title = _('Building-%(date)s') % {'date': self.date.strftime("%d-%m-%y")}
+            self.title = _('Building-%(date)s') % {
+                'date': self.date.strftime("%d-%m-%y")}
         if not self.slug:
             self.slug = generate_unique_slug(Building, self.title)
         self.last_updated = now()
