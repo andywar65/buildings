@@ -38,4 +38,10 @@ urlpatterns = [
         StationImageDeleteView.as_view(), name = 'image_delete'),
     path(_('<slug>/stations/<int:year>/<int:month>/<int:day>/'),
         StationImageDayArchiveView.as_view(), name = 'image_day'),
+    path(_('<slug>/family/add/'), FamilyListCreateView.as_view(),
+        name = 'family_list_create'),
+    path(_('<slug:build_slug>/family/<slug:fam_slug>/change/'),
+        FamilyUpdateView.as_view(), name = 'family_change'),
+    path(_('<slug:build_slug>/family/<slug:fam_slug>/delete/'),
+        FamilyDeleteView.as_view(), name = 'family_delete'),
     ]

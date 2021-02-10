@@ -1,21 +1,14 @@
 from django.http import HttpResponseRedirect
-from django.db.models import Q
-from django.conf import settings
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
-    FormView,)
-from django.views.generic.dates import YearArchiveView, DayArchiveView
-from django.utils.crypto import get_random_string
+from django.shortcuts import get_object_or_404
+from django.views.generic import ( CreateView, UpdateView, FormView,)
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from buildings.models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family)
-from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
-    BuildingDeleteForm, PlanCreateForm,
-    FamilyCreateForm, FamilyUpdateForm)
+from buildings.models import (Building, Family)
+from buildings.forms import ( FamilyCreateForm, FamilyUpdateForm,
+    BuildingDeleteForm)
 from buildings.views.building import AlertMixin
 
 class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):

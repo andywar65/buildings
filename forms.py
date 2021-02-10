@@ -3,7 +3,7 @@ from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 from django.utils.translation import gettext as _
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet)
+    PlanSet, Family)
 
 class NodeMultipleChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):
@@ -99,3 +99,27 @@ class PlanSetUpdateForm(ModelForm):
     class Meta:
         model = PlanSet
         fields = ('build', 'parent', 'title', 'intro', 'plans')
+
+class FamilyCreateForm(ModelForm):
+    build = forms.ModelChoiceField( label=_('Building'),
+        queryset=Building.objects.all(), disabled = True )
+
+    def __init__(self, **kwargs):
+        super(FamilyCreateForm, self).__init__(**kwargs)
+        #filter parent queryset
+        self.fields['parent'].queryset = PlanSet.objects.filter(build_id=self.initial['build'])
+
+    class Meta:
+        model = Family
+        fields = ('build', 'parent', 'title', 'intro', 'sheet')
+
+class FamilyUpdateForm(ModelForm):
+    build = forms.ModelChoiceField( label=_('Building'),
+        queryset=Building.objects.all(), disabled = True )
+    parent = ModelChoiceField( label=_('Parent family'),
+        queryset=Family.objects.all(), disabled = True, required = False,
+        help_text = _('Can be changed only by staff in admin'))
+
+    class Meta:
+        model = Family
+        fields = ('build', 'parent', 'title', 'intro', 'sheet')
