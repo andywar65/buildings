@@ -311,8 +311,6 @@ class Family(MP_Node):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Family, self.title)
-        if not self.sheet:
-            self.sheet = { 'Feature 1': 'Value 1', 'Feature 2': 'Value 2' }
         super(Family, self).save(*args, **kwargs)
 
     class Meta:
