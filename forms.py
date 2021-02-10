@@ -117,7 +117,7 @@ class FamilyUpdateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
         queryset=Building.objects.all(), disabled = True )
     parent = ModelChoiceField( label=_('Parent family'),
-        queryset=Family.objects.all(), disabled = True,
+        queryset=Family.objects.all(), disabled = True, required = False,
         help_text = _('Can be changed only by staff in admin'))
 
     class Meta:
