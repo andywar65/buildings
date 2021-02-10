@@ -110,7 +110,7 @@ class Building(models.Model):
                 intro = _("Base plan set"), build=self)
             Family.add_root(title=self.title, slug=self.get_base_slug(),
                 intro = _("Base element family"), build=self,
-                sheet = {'building': self.title})
+                sheet = {_('Building'): self.title})
 
     class Meta:
         verbose_name = _('Building')

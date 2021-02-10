@@ -51,6 +51,14 @@
       <a class="btn btn-danger" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
         + <i class="fa fa-camera"></i></a>
     {% endif %}
+    {% if perms.buildings.add_family %}
+      <a class="btn btn-warning" href="#" title="{% translate "Add element family" %}">
+        + <i class="fa fa-folder-open"></i></a>
+    {% endif %}
+    {% if perms.buildings.add_family %}
+      <a class="btn btn-warning" href="#" title="{% translate "Add element" %}">
+        + <i class="fa fa-thumb-tack"></i></a>
+    {% endif %}
   </div>
 </div>
 <hr class="mb-4">
