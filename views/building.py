@@ -19,7 +19,7 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
-        prefix = ['', 'plan_', 'stat_', 'img_', 'set_']
+        prefix = ['', 'plan_', 'stat_', 'img_', 'set_', 'fam_', 'elem_']
         action = ['created', 'modified', 'deleted']
         for pref in prefix:
             for act in action:
