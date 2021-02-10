@@ -25,6 +25,7 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def get_initial(self):
         initial = super( FamilyListCreateView, self ).get_initial()
         initial['build'] = self.build.id
+        initial['sheet'] = { 'Feature 1': 'Value 1', 'Feature 2': 'Value 2' }
         return initial
 
     def get_context_data(self, **kwargs):
