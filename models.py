@@ -87,6 +87,10 @@ class Building(models.Model):
         parent = self.building_planset.get(slug=self.get_base_slug())
         return PlanSet.get_annotated_list(parent=parent)
 
+    def get_family_annotated_list(self):
+        parent = self.building_family.get(slug=self.get_base_slug())
+        return Family.get_annotated_list(parent=parent)
+
     def save(self, *args, **kwargs):
         if not self.title:
             self.title = _('Building-%(date)s') % {
