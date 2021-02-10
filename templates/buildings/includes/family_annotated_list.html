@@ -1,0 +1,22 @@
+{% load i18n %}
+
+{% for fam, info in annotated_list %}
+  {% if info.open %}
+      <ul><li>
+  {% else %}
+      </li><li>
+  {% endif %}
+    {{ fam.title }}
+    {% if fam.intro %}<em>- {{ fam.intro }}</em>{% endif %}
+      <a href="{% url 'buildings:family_change' build_slug=fam.build.slug fam_slug=fam.slug %}" title="{% trans "Modify family" %}">
+        <i class="fa fa-pencil"></i>
+      </a>
+  {% for close in info.close %}
+      </li></ul>
+  {% endfor %}
+{% endfor %}
+{% if perms.buildings.change_planset and user.is_staff %}
+<p class="text-right"><a class="btn btn-warning" href="/admin/buildings/family"
+  title="{% trans "Modify directory (in admin)" %}"><i class="fa fa-pencil"></i>
+  <i class="fa fa-list-ul"></i></a></p>
+{% endif %}

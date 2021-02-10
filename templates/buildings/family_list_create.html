@@ -10,6 +10,22 @@
   <div class="col-md-8">
     {% include "buildings/includes/family_alerts.html" %}
     <div class="row">
+      <div class="col text-right">
+        <a class="btn btn-secondary" data-toggle="collapse" href="#family-list" title="{% translate "Add element family" %}">
+          + <i class="fa fa-folder-open"></i></a>
+      </div>
+    </div>
+    <div class="row" id="family-list">
+      <div class="card" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
+        <div class="card-header">
+          <h5 class="card-title">{% trans "Element family list"%}</h5>
+        </div>
+        <div class="card-body">
+          {% include "buildings/includes/family_annotated_list.html" %}
+        </div>
+      </div>
+    </div>
+    <div class="row" id="add-family">
       <div class="col">
         <h4><strong>{% translate "Add element family" %}</strong></h4>
         {% if perms.buildings.add_family %}
