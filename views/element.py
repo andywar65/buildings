@@ -125,4 +125,4 @@ class FamilyDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
-            f'?fam_deleted={self.set.title}')
+            f'?fam_deleted={self.fam.title}')
