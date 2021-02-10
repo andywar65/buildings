@@ -447,5 +447,5 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
                 'set_slug': self.set.slug})
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
-            'set_slug': 'base_'+str(self.build.id)}) +
+            'set_slug': self.build.get_base_slug()}) +
             f'?set_deleted={self.set.title}')
