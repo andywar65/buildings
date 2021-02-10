@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% translate "Update element family" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    {% include "buildings/includes/family_alerts.html" %}
+    <div class="row">
+      <div class="col col-md-8">
+        <h4><strong>{% translate "Modify element family" %}</strong></h4>
+      </div>
+      <div class="col col-md-4 text-right">
+        <a class="btn btn-danger" href="{% url 'buildings:family_delete' build_slug=object.build.slug fam_slug=object.slug %}">{% translate 'Delete' %}</a>
+      </div>
+    </div>
+    <div class="row" id="add-family">
+      <div class="col">
+        {% if perms.buildings.change_family %}
+        {% include "buildings/includes/hello_formula.html" %}
+        <hr class="mb-4">
+        {% include "buildings/includes/form_errors.html" %}
+        <form action="" method="post" class="needs-validation" novalidate>
+            {{ form|crispy }}
+            <hr class="mb-4">
+              {% include "buildings/includes/add_buttons.html" %}
+            <hr class="mb-4">
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to change element families" %}.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
