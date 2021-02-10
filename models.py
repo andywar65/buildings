@@ -108,6 +108,9 @@ class Building(models.Model):
         except:
             PlanSet.add_root(title=self.title, slug=self.get_base_slug(),
                 intro = _("Base plan set"), build=self)
+        try:
+            Family.objects.get(slug=self.get_base_slug())
+        except:
             Family.add_root(title=self.title, slug=self.get_base_slug(),
                 intro = _("Base element family"), build=self,
                 sheet = {_('Building'): self.title})
