@@ -37,7 +37,8 @@ def generate_unique_slug(klass, field):
     return unique_slug
 
 def building_default_intro():
-    return _('Another Building by %(website)s!') % {'website': settings.WEBSITE_NAME}
+    return (_('Another Building by %(website)s!') %
+        {'website': settings.WEBSITE_NAME})
 
 class Building(models.Model):
     slug = models.SlugField(max_length=100, editable=False, null=True)
@@ -60,7 +61,8 @@ class Building(models.Model):
         max_length = 100)
     lat = models.FloatField(_("Latitude"), default = settings.CITY_LAT)
     long = models.FloatField(_("Longitude"), default = settings.CITY_LONG,
-        help_text=_("Coordinates from Google Maps or https://openstreetmap.org"))
+        help_text=_("""Coordinates from Google Maps
+            or https://openstreetmap.org"""))
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
 
@@ -168,7 +170,8 @@ class PlanSet(MP_Node):
         related_name='building_planset', verbose_name = _('Building'))
     parent = models.ForeignKey('self', verbose_name = _('Parent set'),
         null=True, on_delete = models.CASCADE,
-        help_text = _('Choose carefully, can be changed only by staff in admin'),
+        help_text = _("""Choose carefully,
+            can be changed only by staff in admin"""),
         )
     title = models.CharField(_('Title'),
         help_text=_("Set name"),
@@ -289,7 +292,8 @@ class Family(MP_Node):
         related_name='building_family', verbose_name = _('Building'))
     parent = models.ForeignKey('self', verbose_name = _('Parent family'),
         null=True,
-        help_text = _('Choose carefully, can be changed only by staff in admin'),
+        help_text = _("""Choose carefully,
+            can be changed only by staff in admin"""),
         on_delete = models.CASCADE)
     title = models.CharField(_('Title'),
         help_text=_("Family name"),
@@ -316,3 +320,58 @@ class Family(MP_Node):
     class Meta:
         verbose_name = _('Element Family')
         verbose_name_plural = _('Element Families')
+
+class Element(models.Model):
+
+    build = models.ForeignKey(Building, on_delete = models.CASCADE,
+        related_name='building_element', verbose_name = _('Building'))
+    plan = models.ForeignKey(Plan, on_delete = models.SET_NULL,
+        related_name='plan_element', verbose_name = _('Building plan'),
+        null=True, blank=True)
+    family = models.ForeignKey(Family, on_delete = models.CASCADE,
+        related_name='family_element', verbose_name = _('Family'),)
+    image = models.ImageField(_("Image"), max_length=200,
+        null=True, blank=True, upload_to='uploads/buildings/images/')
+    fb_image = FileBrowseField(_("Image"), max_length=200,
+        extensions=[".jpg", ".png", ".jpeg", ".gif", ".tif", ".tiff"],
+        null=True, directory='buildings/images/')
+    intro = models.CharField(_('Description'),
+        null=True, blank=True, max_length = 200)
+    lat = models.FloatField(_("Latitude"), null=True, blank=True)
+    long = models.FloatField(_("Longitude"), null=True, blank=True)
+    sheet = models.JSONField(_('Data sheet'), null=True, blank=True,
+        help_text=_("A dictionary of element features") )
+
+    def __str__(self):
+        return self.family.title + '-' + str(self.id)
+
+    #def map_dictionary(self):
+        #if self.fb_image:
+            #self.fb_image.version_generate("medium")
+            #fb_path = (settings.MEDIA_URL +
+                #self.fb_image.version_path("medium"))
+        #else:
+            #fb_path = ''
+        #path = reverse('buildings:station_detail',
+            #kwargs={'build_slug': self.build.slug,
+            #'stat_slug': self.slug})
+        #return {'id': self.id, 'title': self.title, 'path': path,
+            #'fb_path': fb_path, 'lat': self.lat, 'long': self.long,
+            #'intro': self.intro, 'plan_id': self.plan_id}
+
+    def save(self, *args, **kwargs):
+        if not self.lat:
+            self.lat = self.build.lat
+        if not self.long:
+            self.long = self.build.long
+        super(Element, self).save(*args, **kwargs)
+        if self.image:
+            #this is a sloppy workaround to make working test
+            #image is saved on the front end, passed to fb_image and deleted
+            Element.objects.filter(id=self.id).update(image=None,
+                fb_image=FileObject(str(self.image)))
+
+    class Meta:
+        verbose_name = _('Element')
+        verbose_name_plural = _('Elements')
+        ordering = ('build', 'family')

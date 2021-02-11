@@ -5,7 +5,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family)
+    PlanSet, Family, Element)
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -67,3 +67,19 @@ class FamilyAdmin(TreeAdmin):
         )
 
 admin.site.register(Family, FamilyAdmin)
+
+@admin.register(Element)
+class ElementAdmin(admin.ModelAdmin):
+    list_display = ( 'id', 'family', 'build', 'plan',)
+
+    fieldsets = (
+        (_('Image'), {
+            'fields': ('fb_image', ),
+        }),
+        (None, {
+            'fields': ('build', 'family', 'plan', 'intro', 'sheet'),
+        }),
+        (_('Map'), {
+            'fields': ('lat', 'long', ),
+        }),
+        )
