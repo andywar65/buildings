@@ -246,6 +246,16 @@ class PhotoStation(models.Model):
             'fb_path': fb_path, 'lat': self.lat, 'long': self.long,
             'intro': self.intro, 'plan_id': self.plan_id}
 
+    def get_building_redirection(self):
+        if self.plan:
+            return reverse('buildings:plan_detail',
+                kwargs={'build_slug': self.build.slug,
+                'plan_slug': self.plan.slug})
+        else:
+            return reverse('buildings:building_detail',
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.build.get_base_slug()})
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(PhotoStation, self.title)
