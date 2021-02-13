@@ -374,6 +374,18 @@ class Element(models.Model):
             self.lat = self.build.lat
         if not self.long:
             self.long = self.build.long
+        sheet = {}
+        for ancestor in self.family.get_ancestors():
+            if isinstance(ancestor.sheet, dict):
+                for key, value in ancestor.sheet.items():
+                    sheet[ key ] = value
+        if isinstance(self.family.sheet, dict):
+            for key, value in self.family.sheet.items():
+                sheet[ key ] = value
+        if isinstance(self.sheet, dict):
+            for key, value in self.sheet.items():
+                sheet[ key ] = value
+        self.sheet = sheet
         super(Element, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test
