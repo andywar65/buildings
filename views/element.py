@@ -1,4 +1,5 @@
 from django.http import HttpResponseRedirect
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.views.generic import ( CreateView, UpdateView, FormView,)
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -6,9 +7,9 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from buildings.models import (Building, Family)
+from buildings.models import (Building, Family, Element)
 from buildings.forms import ( FamilyCreateForm, FamilyUpdateForm,
-    BuildingDeleteForm)
+    BuildingDeleteForm, ElementCreateForm)
 from buildings.views.building import AlertMixin
 
 class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
@@ -126,3 +127,52 @@ class FamilyDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
             f'?fam_deleted={self.fam.title}')
+
+class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+    model = Element
+    permission_required = 'buildings.add_element'
+    form_class = ElementCreateForm
+
+    def setup(self, request, *args, **kwargs):
+        super(ElementCreateView, self).setup(request, *args, **kwargs)
+        #here we get the building by the slug
+        self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
+
+    def get_initial(self):
+        initial = super( ElementCreateView, self ).get_initial()
+        initial['build'] = self.build.id
+        initial['sheet'] = { 'Feature 1': 'Value 1', 'Feature 2': 'Value 2' }
+        initial['lat'] = self.build.lat
+        initial['long'] = self.build.long
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = self.add_alerts_to_context(context)
+        #we add the following to feed the map
+        #building data
+        build = self.build.map_dictionary()
+        #plan data
+        plans = []
+        for plan in self.build.building_plan.all().reverse():
+            plan_dict = plan.map_dictionary()
+            plan_dict['visible'] = False
+            plans.append(plan_dict)
+        context['map_data'] = {
+            'build': build,
+            'plans': plans,
+            'on_map_click': True,
+            'no_plan_popup': True,
+            'mapbox_token': settings.MAPBOX_TOKEN
+            }
+
+        return context
+
+    def get_success_url(self):
+        if 'add_another' in self.request.POST:
+            return (reverse('buildings:element_create',
+                kwargs={'slug': self.build.slug}) +
+                f'?elem_created={self.object.__str__()}')
+        else:
+            return (self.object.get_building_redirection() +
+                f'?elem_created={self.object.__str__()}')

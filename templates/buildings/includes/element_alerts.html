@@ -1,0 +1,30 @@
+{% load i18n %}
+
+{% if elem_created %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=elem_created %}
+    Element <strong>{{ link }}</strong> successfully created!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% elif elem_modified %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=elem_modified %}
+    Element <strong>{{ link }}</strong> successfully modified!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% elif elem_deleted %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {% blocktranslate with link=elem_deleted %}
+    Element <strong>{{ link }}</strong> successfully deleted!
+    {% endblocktranslate %}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endif %}

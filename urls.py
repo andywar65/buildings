@@ -44,4 +44,6 @@ urlpatterns = [
         FamilyUpdateView.as_view(), name = 'family_change'),
     path(_('<slug:build_slug>/family/<slug:fam_slug>/delete/'),
         FamilyDeleteView.as_view(), name = 'family_delete'),
+    path(_('<slug>/element/add/'), ElementCreateView.as_view(),
+        name = 'element_create'),
     ]

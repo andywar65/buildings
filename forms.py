@@ -3,7 +3,7 @@ from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
 from django.utils.translation import gettext as _
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family)
+    PlanSet, Family, Element)
 
 class NodeMultipleChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):
@@ -123,3 +123,20 @@ class FamilyUpdateForm(ModelForm):
     class Meta:
         model = Family
         fields = ('build', 'parent', 'title', 'intro', 'sheet')
+
+class ElementCreateForm(ModelForm):
+    build = forms.ModelChoiceField( label=_('Building'),
+        queryset=Building.objects.all(), disabled = True )
+
+    def __init__(self, **kwargs):
+        super(ElementCreateForm, self).__init__(**kwargs)
+        #filter querysets
+        self.fields['family'].queryset = (Family.objects
+            .filter(build_id=self.initial['build']))
+        self.fields['plan'].queryset = (Plan.objects
+            .filter(build_id=self.initial['build']))
+
+    class Meta:
+        model = Element
+        fields = ('image', 'build', 'family', 'plan', 'intro', 'lat', 'long',
+            'sheet')

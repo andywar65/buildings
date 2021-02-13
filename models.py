@@ -355,6 +355,16 @@ class Element(models.Model):
     def __str__(self):
         return self.family.title + '-' + str(self.id)
 
+    def get_building_redirection(self):
+        if self.plan:
+            return reverse('buildings:plan_detail',
+                kwargs={'build_slug': self.build.slug,
+                'plan_slug': self.plan.slug})
+        else:
+            return reverse('buildings:building_detail',
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.build.get_base_slug()})
+
     #def map_dictionary(self):
         #if self.fb_image:
             #self.fb_image.version_generate("medium")
