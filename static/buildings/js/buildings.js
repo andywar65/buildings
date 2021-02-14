@@ -9,6 +9,24 @@ var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   accessToken: map_data.mapbox_token
 });
 
+const buildMarker = L.divIcon({
+  html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
+  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+  className: 'build-marker'
+});
+
+const statMarker = L.divIcon({
+  html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
+  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+  className: 'stat-marker'
+});
+
+const elemMarker = L.divIcon({
+  html: '<i class="fa fa-thumb-tack fa-2x" style="color: green;"></i>',
+  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+  className: 'elem-marker'
+});
+
 if (map_data.hasOwnProperty('plans')){
   for (plan of map_data.plans){
     window['plan_' + plan.id ] = L.layerGroup();
@@ -38,18 +56,14 @@ if (map_data.hasOwnProperty('plans')){
   }
 }
 
+if (map_data.hasOwnProperty('no_plan_status')){
+  if (map_data.no_plan_status){
+    var no_plan = L.layerGroup();
+  }
+}
+
 if (map_data.hasOwnProperty('stations')){
   if (map_data.stations){
-    const statMarker = L.divIcon({
-      html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
-      iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-      className: 'stat-marker'
-    });
-    if (map_data.hasOwnProperty('no_plan_status')){
-      if (map_data.no_plan_status){
-        var no_plan = L.layerGroup();
-      }
-    }
     for (stat of map_data.stations){
       if (stat.fb_path){
         var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
@@ -63,6 +77,28 @@ if (map_data.hasOwnProperty('stations')){
         .bindPopup( content, {minWidth: 300});
       if (stat.plan_id){
         marker.addTo(window['plan_' + stat.plan_id ]);
+      } else {
+        marker.addTo( no_plan );
+      }
+    }
+  }
+}
+
+if (map_data.hasOwnProperty('elements')){
+  if (map_data.elements){
+    for (elem of map_data.elements){
+      if (elem.fb_path){
+        var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
+          "</a></h5><img src=\"" + elem.fb_path + "\"><br><small>" +
+            elem.intro + "</small>";
+      } else {
+        var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
+          "</a></h5><br><small>" + elem.intro + "</small>";
+      }
+      var marker = L.marker([elem.lat, elem.long ], {icon: elemMarker})
+        .bindPopup( content, {minWidth: 300});
+      if (elem.plan_id){
+        marker.addTo(window['plan_' + elem.plan_id ]);
       } else {
         marker.addTo( no_plan );
       }
@@ -99,11 +135,6 @@ if (map_data.hasOwnProperty('city_lat')){
 }
 
 if (map_data.hasOwnProperty('builds')){
-  const buildMarker = L.divIcon({
-    html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
-    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-    className: 'build-marker'
-  });
   for (build of map_data.builds ){
     var content = "<h5><a href=\"" + build.path + "\">" + build.title +
       "</a></h5><img src=\"" + build.fb_path + "\"><br><small>" +
@@ -114,12 +145,6 @@ if (map_data.hasOwnProperty('builds')){
 }
 
 if (map_data.hasOwnProperty('build')){
-  const buildMarker = L.divIcon({
-    html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
-    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-    className: 'build-marker'
-  });
-
   var content = "<h5>" + map_data.build.title + "</h5><img src=\"" +
     map_data.build.fb_path + "\">";
   L.marker([ map_data.build.lat , map_data.build.long ], {icon: buildMarker})
@@ -127,12 +152,6 @@ if (map_data.hasOwnProperty('build')){
 }
 
 if (map_data.hasOwnProperty('stat')){
-  const statMarker = L.divIcon({
-    html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
-    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-    className: 'stat-marker'
-  });
-
   if (map_data.stat.fb_path){
     var content = "<h5>" + map_data.stat.title +
       "</h5><img src=\"" + map_data.stat.fb_path + "\"><br><small>" +
@@ -146,12 +165,6 @@ if (map_data.hasOwnProperty('stat')){
 }
 
 if (map_data.hasOwnProperty('elem')){
-  const elemMarker = L.divIcon({
-    html: '<i class="fa fa-thumb-tack fa-2x" style="color: green;"></i>',
-    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-    className: 'elem-marker'
-  });
-
   if (map_data.elem.fb_path){
     var content = "<h5>" + map_data.elem.title +
       "</h5><img src=\"" + map_data.elem.fb_path + "\"><br><small>" +

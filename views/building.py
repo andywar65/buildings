@@ -93,6 +93,9 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         context['planset'] = self.set
         context['plans'] = self.set.get_self_and_ancestor_plans()
         plan_list = context['plans'].values_list('id', flat=True)
+        #add elements
+        context['elements'] = self.object.building_element.filter(Q(plan=None)|
+            Q(plan_id__in=plan_list))
         #add stations
         context['stations'] = self.object.building_station.filter(Q(plan=None)|
             Q(plan_id__in=plan_list))
@@ -110,17 +113,24 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         plans = []
         for plan in context['plans'].reverse():
             plans.append(plan.map_dictionary())
+        #element data
+        elements = []
+        for elem in context['elements']:
+            elements.append(elem.map_dictionary())
         #station data
         stations = []
         for stat in context['stations']:
             stations.append(stat.map_dictionary())
         #are there stations that don't belong to plans?
         no_plan_status = False
+        if context['elements'].filter(plan_id=None):
+            no_plan_status = True
         if context['stations'].filter(plan_id=None):
             no_plan_status = True
         context['map_data'] = {
             'build': build,
             'plans': plans,
+            'elements': elements,
             'stations': stations,
             'no_plan_status': no_plan_status,
             'no_plan_trans': _("No plan"),
