@@ -20,8 +20,6 @@
         <h4><strong>{% translate "Review / modify element" %}: </strong>{{ title }}</h4>
       </div>
       <div class="col col-md-4 text-right">
-        <a class="btn btn-secondary" href="{{ object.get_building_redirection }}" title="{% translate "Back to building" %}">
-          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
       {% if perms.buildings.delete_element %}
         <a class="btn btn-danger" href="#">{% translate 'Delete' %}</a>
       {% endif %}
