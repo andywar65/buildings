@@ -1,0 +1,29 @@
+{% load i18n %}
+
+<ul>
+  <li>
+    {% trans "Building: " %}<a href="{{ object.get_building_redirection }}">
+      <strong>{{ object.build.title }}</strong></a>
+  </li>
+  {% if object.plan %}
+    <li>
+      {% trans "Plan: " %}<a href="{% url 'buildings:plan_detail' build_slug=object.build.slug plan_slug=object.plan.slug %}">
+        <strong>{{ object.plan.title }}</strong></a>
+    </li>
+  {% endif %}
+  <li>
+    {% trans "Family: " %}<a href="{% url 'buildings:family_change' build_slug=object.build.slug fam_slug=object.family.slug %}">
+      <strong>{{ object.family.title }}</strong></a>
+  </li>
+  <li>
+    {% trans "Latitude (see map below): " %}<strong>{{ object.lat }}</strong>
+  </li>
+  <li>
+    {% trans "Longitude: " %}<strong>{{ object.long }}</strong>
+  </li>
+  {% for key, value in object.sheet.items %}
+    <li>
+      {{ key }}: <strong>{{ value }}</strong>
+    </li>
+  {% endfor %}
+</ul>

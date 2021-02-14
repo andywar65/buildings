@@ -145,6 +145,25 @@ if (map_data.hasOwnProperty('stat')){
     .addTo(mymap).bindPopup( content, {minWidth: 300});
 }
 
+if (map_data.hasOwnProperty('elem')){
+  const elemMarker = L.divIcon({
+    html: '<i class="fa fa-thumb-tack fa-2x" style="color: green;"></i>',
+    iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
+    className: 'elem-marker'
+  });
+
+  if (map_data.elem.fb_path){
+    var content = "<h5>" + map_data.elem.title +
+      "</h5><img src=\"" + map_data.elem.fb_path + "\"><br><small>" +
+        map_data.elem.intro + "</small>";
+  } else {
+    var content = "<h5>" + map_data.elem.title +
+      "</h5><br><small>" + map_data.elem.intro + "</small>";
+  }
+  L.marker([map_data.elem.lat, map_data.elem.long ], {icon: elemMarker})
+    .addTo(mymap).bindPopup( content, {minWidth: 300});
+}
+
 var baseMaps = {
   "Base": base_map
 };

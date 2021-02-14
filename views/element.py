@@ -176,3 +176,55 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         else:
             return (self.object.get_building_redirection() +
                 f'?elem_created={self.object.__str__()}')
+
+class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
+    model = Element
+    permission_required = 'buildings.change_element'
+    form_class = ElementCreateForm
+    template_name = 'buildings/element_form_update.html'
+    pk_url_kwarg = 'pk'
+
+    def get_object(self, queryset=None):
+        #elsewhere we get the parent in setup, but here we also need object
+        elem = super(ElementUpdateView, self).get_object(queryset=None)
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+        if not self.build == elem.build:
+            raise Http404(_("Element does not belong to Building"))
+        return elem
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.object.__str__()
+        #we add the following to feed the map
+        #building data
+        build = self.build.map_dictionary()
+        #plan data
+        plans = []
+        for plan in self.build.building_plan.all().reverse():
+            plan_dict = plan.map_dictionary()
+            if plan == self.object.plan:
+                plan_dict['visible'] = True
+            else:
+                plan_dict['visible'] = False
+            plans.append(plan_dict)
+        #element data
+        element = self.object.map_dictionary()
+        context['map_data'] = {
+            'build': build,
+            'plans': plans,
+            'elem': element,
+            'on_map_click': True,
+            'no_plan_popup': True,
+            'mapbox_token': settings.MAPBOX_TOKEN
+            }
+        return context
+
+    def get_success_url(self):
+        if 'add_another' in self.request.POST:
+            return (reverse('buildings:element_create',
+                kwargs={'slug': self.build.slug}) +
+                f'?elem_modified={self.object.__str__()}')
+        else:
+            return (self.object.get_building_redirection() +
+                f'?elem_modified={self.object.__str__()}')
