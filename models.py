@@ -366,7 +366,7 @@ class Element(models.Model):
                 'set_slug': self.build.get_base_slug()})
 
     def map_dictionary(self):
-        if self.fb_image:
+        if self.fb_image is not None:
             self.fb_image.version_generate("medium")
             fb_path = (settings.MEDIA_URL +
                 self.fb_image.version_path("medium"))

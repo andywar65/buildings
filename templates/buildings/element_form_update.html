@@ -45,10 +45,14 @@
     </div>
     <hr class="mb-4">
     {% include "buildings/includes/form_errors.html" %}
-    <div class="row"><div class="col">
-        <a href="{{ object.fb_image.url }}"><img src="{% version object.fb_image 'small' %}"
-          alt="{{ object.intro }}"></a>
-    </div></div>
+    {% if object.fb_image %}
+      <div class="row">
+        <div class="col">
+          <a href="{{ object.fb_image.url }}"><img src="{% version object.fb_image 'small' %}"
+            alt="{{ object.intro }}"></a>
+        </div>
+      </div>
+    {% endif %}
     <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
         {{ form|crispy }}
         <hr class="mb-4">
