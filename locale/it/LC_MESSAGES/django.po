@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-15 19:43+0100\n"
+"POT-Creation-Date: 2021-02-15 19:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -610,30 +610,6 @@ msgstr "Prossimi"
 msgid "No description"
 msgstr "Nessuna descrizione"
 
-#: .\buildings\templates\buildings\includes\stationimage_alerts.html:5
-#, python-format
-msgid ""
-"\n"
-"    Image <strong>%(link)s</strong> successfully created!\n"
-"    "
-msgstr ""
-
-#: .\buildings\templates\buildings\includes\stationimage_alerts.html:14
-#, python-format
-msgid ""
-"\n"
-"    Image <strong>%(link)s</strong> successfully modified!\n"
-"    "
-msgstr ""
-
-#: .\buildings\templates\buildings\includes\stationimage_alerts.html:23
-#, python-format
-msgid ""
-"\n"
-"    Image <strong>%(link)s</strong> successfully deleted!\n"
-"    "
-msgstr ""
-
 #: .\buildings\templates\buildings\photostation_form.html:35
 msgid "You don't have permissions to add photo stations"
 msgstr "Non hai le credenziali per aggiungere stazioni fotografiche"
@@ -654,274 +630,274 @@ msgstr "Non hai le credenziali per eliminare stazioni fotografiche"
 #: .\buildings\templates\buildings\photostation_form_update.html:19
 #: .\buildings\templates\buildings\stationimage_list_create.html:40
 msgid "Modify photo station"
-msgstr ""
+msgstr "Modifica stazione"
 
 #: .\buildings\templates\buildings\photostation_form_update.html:43
 msgid "You don't have permissions to change photo stations"
-msgstr ""
+msgstr "Non hai le credenziali per modificare stazioni fotografiche"
 
 #: .\buildings\templates\buildings\plan_detail.html:18
 msgid "plan"
-msgstr ""
+msgstr "planimetria"
 
 #: .\buildings\templates\buildings\plan_detail.html:20
 msgid "Elevation (m)"
-msgstr ""
+msgstr "Quota (m)"
 
 #: .\buildings\templates\buildings\plan_form.html:25
 msgid "You don't have permissions to add building plans"
-msgstr ""
+msgstr "Non hai le credenziali per aggiungere planimetrie"
 
 #: .\buildings\templates\buildings\plan_form_delete.html:4
 msgid "Delete building plan"
-msgstr ""
+msgstr "Elimina planimetria"
 
 #: .\buildings\templates\buildings\plan_form_delete.html:10
 msgid "Delete building plan:"
-msgstr ""
+msgstr "Elimina planimetria:"
 
 #: .\buildings\templates\buildings\plan_form_delete.html:14
 msgid "You don't have permissions to delete building plans"
-msgstr ""
+msgstr "Non hai le credenziali per eliminare planimetrie"
 
 #: .\buildings\templates\buildings\plan_form_update.html:6
 #: .\buildings\templates\buildings\plan_form_update.html:13
 msgid "Modify building plan"
-msgstr ""
+msgstr "Modifica planimetria"
 
 #: .\buildings\templates\buildings\plan_form_update.html:33
 msgid "You don't have permissions to modify building plans"
-msgstr ""
+msgstr "Non hai le credenziali per modificare planimetrie"
 
 #: .\buildings\templates\buildings\planset_form.html:5
 msgid "Create Plan set"
-msgstr ""
+msgstr "Crea set"
 
 #: .\buildings\templates\buildings\planset_form.html:14
 msgid "Add plan set"
-msgstr ""
+msgstr "Aggiungi set di planimetrie"
 
 #: .\buildings\templates\buildings\planset_form.html:27
 msgid "You don't have permissions to add plan sets"
-msgstr ""
+msgstr "Non hai le credenziali per aggiungere set di planimetrie"
 
 #: .\buildings\templates\buildings\planset_form_delete.html:4
 msgid "Delete Plan set"
-msgstr ""
+msgstr "Elimina Set"
 
 #: .\buildings\templates\buildings\planset_form_delete.html:10
 msgid "Delete Plan set:"
-msgstr ""
+msgstr "Elimina set di planimetrie:"
 
 #: .\buildings\templates\buildings\planset_form_delete.html:11
 msgid "You can't delete Base plan set."
-msgstr ""
+msgstr "Non puoi cancellare il Set di base."
 
 #: .\buildings\templates\buildings\planset_form_delete.html:15
 msgid "You don't have permissions to delete plan sets"
-msgstr ""
+msgstr "Non hai le credenziali per eliminare set di planimetrie"
 
 #: .\buildings\templates\buildings\planset_form_update.html:5
 msgid "Modify Plan set"
-msgstr ""
+msgstr "Modifica Set"
 
 #: .\buildings\templates\buildings\planset_form_update.html:11
 msgid "Modify Plan set: "
-msgstr ""
+msgstr "Modifica set di planimetrie:"
 
 #: .\buildings\templates\buildings\planset_form_update.html:31
 msgid "You don't have permissions to modify plan sets"
-msgstr ""
+msgstr "Non hai le credenziali per modificare set di planimetrie"
 
 #: .\buildings\templates\buildings\stationimage_archive_day.html:9
 msgid "Images by day"
-msgstr ""
+msgstr "Immagini per data"
 
 #: .\buildings\templates\buildings\stationimage_archive_day.html:18
 msgid "No images today"
-msgstr ""
+msgstr "Nessuna immagine oggi"
 
 #: .\buildings\templates\buildings\stationimage_archive_day.html:23
 msgid "PREVIOUS"
-msgstr ""
+msgstr "PRECEDENTE"
 
 #: .\buildings\templates\buildings\stationimage_archive_day.html:26
 msgid "NEXT"
-msgstr ""
+msgstr "PROSSIMO"
 
 #: .\buildings\templates\buildings\stationimage_form_delete.html:4
 msgid "Delete image"
-msgstr ""
+msgstr "Elimina immagine"
 
 #: .\buildings\templates\buildings\stationimage_form_delete.html:10
 msgid "Delete image:"
-msgstr ""
+msgstr "Elimina immagine:"
 
 #: .\buildings\templates\buildings\stationimage_form_delete.html:14
 msgid "You don't have permissions to delete images"
-msgstr ""
+msgstr "Non hai le credenziali per eliminare le immagini"
 
 #: .\buildings\templates\buildings\stationimage_form_update.html:6
 #: .\buildings\templates\buildings\stationimage_form_update.html:13
 msgid "Modify image"
-msgstr ""
+msgstr "Modifica immagine"
 
 #: .\buildings\templates\buildings\stationimage_form_update.html:37
 msgid "You don't have permissions to modify images"
-msgstr ""
+msgstr "Non hai le credenziali per modificare le immagini"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:18
 msgid "Bakcwards in time"
-msgstr ""
+msgstr "Indietro nel tempo"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:21
 msgid "Forwards in time"
-msgstr ""
+msgstr "Avanti nel tempo"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:25
 msgid "Add image"
-msgstr ""
+msgstr "Aggiungi immagine"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:33
 msgid "There are no images available for this station"
-msgstr ""
+msgstr "Non ci sono immagini disponibili per questa stazione"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:45
 msgid "Back to building"
-msgstr ""
+msgstr "Torna all'edificio"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:53
 msgid "Add an image"
-msgstr ""
+msgstr "Aggiungi un immagine"
 
 #: .\buildings\templates\buildings\stationimage_list_create.html:66
 msgid "You don't have permissions to add images"
-msgstr ""
+msgstr "Non hai le credenziali per aggiungere immagini"
 
 #: .\buildings\urls.py:9
 msgid "<slug>/change/"
-msgstr ""
+msgstr "<slug>/modifica/"
 
 #: .\buildings\urls.py:10
 msgid "<slug>/delete/"
-msgstr ""
+msgstr "<slug>/elimina/"
 
 #: .\buildings\urls.py:11
 msgid "<slug>/set/add/"
-msgstr ""
+msgstr "<slug>/set/aggiungi/"
 
 #: .\buildings\urls.py:15
 msgid "<slug:build_slug>/set/<slug:set_slug>/change/"
-msgstr ""
+msgstr "<slug:build_slug>/set/<slug:set_slug>/modifica/"
 
 #: .\buildings\urls.py:17
 msgid "<slug:build_slug>/set/<slug:set_slug>/delete/"
-msgstr ""
+msgstr "<slug:build_slug>/set/<slug:set_slug>/elimina/"
 
 #: .\buildings\urls.py:19
 msgid "<slug>/plan/add/"
-msgstr ""
+msgstr "<slug>/planimetria/aggiungi/"
 
 #: .\buildings\urls.py:21
 msgid "<slug:build_slug>/plan/<slug:plan_slug>/"
-msgstr ""
+msgstr "<slug:build_slug>/planimetria/<slug:plan_slug>/"
 
 #: .\buildings\urls.py:23
 msgid "<slug:build_slug>/plan/<slug:plan_slug>/change/"
-msgstr ""
+msgstr "<slug:build_slug>/planimetria/<slug:plan_slug>/modifica/"
 
 #: .\buildings\urls.py:25
 msgid "<slug:build_slug>/plan/<slug:plan_slug>/delete/"
-msgstr ""
+msgstr "<slug:build_slug>/planimetria/<slug:plan_slug>/elimina/"
 
 #: .\buildings\urls.py:27
 msgid "<slug>/station/add/"
-msgstr ""
+msgstr "<slug>/stazione/aggiungi/"
 
 #: .\buildings\urls.py:29
 msgid "<slug:build_slug>/station/<slug:stat_slug>/"
-msgstr ""
+msgstr "<slug:build_slug>/stazione/<slug:stat_slug>/"
 
 #: .\buildings\urls.py:31
 msgid "<slug:build_slug>/station/<slug:stat_slug>/change/"
-msgstr ""
+msgstr "<slug:build_slug>/stazione/<slug:stat_slug>/modifica/"
 
 #: .\buildings\urls.py:33
 msgid "<slug:build_slug>/station/<slug:stat_slug>/delete/"
-msgstr ""
+msgstr "<slug:build_slug>/stazione/<slug:stat_slug>/elimina/"
 
 #: .\buildings\urls.py:35
 msgid "<slug:build_slug>/station/<slug:stat_slug>/image/<pk>/change"
-msgstr ""
+msgstr "<slug:build_slug>/stazione/<slug:stat_slug>/immagine/<pk>/modifica"
 
 #: .\buildings\urls.py:37
 msgid "<slug:build_slug>/station/<slug:stat_slug>/image/<pk>/delete"
-msgstr ""
+msgstr "<slug:build_slug>/stazione/<slug:stat_slug>/immagine/<pk>/elimina"
 
 #: .\buildings\urls.py:39
 msgid "<slug>/stations/<int:year>/<int:month>/<int:day>/"
-msgstr ""
+msgstr "<slug>/stazioni/<int:year>/<int:month>/<int:day>/"
 
 #: .\buildings\urls.py:41
 msgid "<slug>/family/add/"
-msgstr ""
+msgstr "<slug>/famiglia/aggiungi/"
 
 #: .\buildings\urls.py:43
 msgid "<slug:build_slug>/family/<slug:fam_slug>/change/"
-msgstr ""
+msgstr "<slug:build_slug>/famiglia/<slug:fam_slug>/modifica/"
 
 #: .\buildings\urls.py:45
 msgid "<slug:build_slug>/family/<slug:fam_slug>/delete/"
-msgstr ""
+msgstr "<slug:build_slug>/famiglia/<slug:fam_slug>/elimina/"
 
 #: .\buildings\urls.py:47
 msgid "<slug>/element/add/"
-msgstr ""
+msgstr "<slug>/elemento/aggiungi/"
 
 #: .\buildings\urls.py:49
 msgid "<slug>/element/<pk>/change/"
-msgstr ""
+msgstr "<slug>/elemento/<pk>/modifica/"
 
 #: .\buildings\urls.py:51
 msgid "<slug>/element/<pk>/delete/"
-msgstr ""
+msgstr "<slug>/elemento/<pk>/elimina/"
 
 #: .\buildings\views\building.py:58
 msgid "User has no permission to add buildings"
-msgstr ""
+msgstr "L'utente non ha le credenziali per aggiungere edifici"
 
 #: .\buildings\views\building.py:82 .\buildings\views\building.py:400
 #: .\buildings\views\building.py:436
 msgid "Plan set does not belong to Building"
-msgstr ""
+msgstr "Il set di planimetrie non appartiene all'edificio"
 
 #: .\buildings\views\building.py:132 .\buildings\views\building.py:305
 msgid "No plan"
-msgstr ""
+msgstr "Nessuna planimetria"
 
 #: .\buildings\views\building.py:241 .\buildings\views\building.py:267
 #: .\buildings\views\building.py:323
 msgid "Plan does not belong to Building"
-msgstr ""
+msgstr "La planimetria non appartiene all'edificio"
 
 #: .\buildings\views\element.py:72 .\buildings\views\element.py:108
 msgid "Element family does not belong to Building"
-msgstr ""
+msgstr "La famiglia di elementi non appartiene all'edificio"
 
 #: .\buildings\views\element.py:193 .\buildings\views\element.py:245
 msgid "Element does not belong to Building"
-msgstr ""
+msgstr "L'elemento' non appartiene all'edificio"
 
 #: .\buildings\views\station.py:81 .\buildings\views\station.py:134
 #: .\buildings\views\station.py:171 .\buildings\views\station.py:217
 #: .\buildings\views\station.py:241
 msgid "Station does not belong to Building"
-msgstr ""
+msgstr "La stazione non appartiene all'edificio"
 
 #: .\buildings\views\station.py:194
 msgid "User has no permission to add images"
-msgstr ""
+msgstr "L'utente non ha le credenziali per aggiungere immagini"
 
 #: .\buildings\views\station.py:219 .\buildings\views\station.py:243
 msgid "Image does not belong to Photo Station"
-msgstr ""
+msgstr "L'immagine' non appartiene alla stazione fotografica"
