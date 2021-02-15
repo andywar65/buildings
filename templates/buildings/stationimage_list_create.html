@@ -5,8 +5,7 @@
 {% block title %}{{ website.acro }} | {{ stat.title }}{% endblock title %}
 
 {% block content %}
-{% include "buildings/includes/photostation_alerts.html" %}
-{% include "buildings/includes/stationimage_alerts.html" %}
+{% include "buildings/includes/building_alerts.html" %}
 <div class="row">
   <div class="col col-md-8">
     <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @
