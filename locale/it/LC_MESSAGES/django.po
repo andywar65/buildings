@@ -587,12 +587,12 @@ msgid ""
 "\n"
 "  Hello <strong>%(name)s</strong>, fill the fields below then submit.\n"
 msgstr ""
+"\n"
+"  Ciao <strong>%(name)s</strong>, inserisci i campi qui sotto e poi invia.\n"
 
 #: .\buildings\templates\buildings\includes\planset_annotated_list.html:11
 msgid "Activate!"
-msgstr ""
-"\n"
-"  Ciao <strong>%(name)s</strong>, inserisci i campi qui sotto e poi invia.\n"
+msgstr "Attiva!"
 
 #: .\buildings\templates\buildings\includes\planset_annotated_list.html:16
 msgid "Modify plan set"
