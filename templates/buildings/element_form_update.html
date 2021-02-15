@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load fb_versions %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 
@@ -27,45 +26,30 @@
     </div>
     <div class="row" id="element-detail">
       <div class="col">
-        <div class="card" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
-          <div class="card-header">
-            <h5 class="card-title">{% trans "Actual data"%}</h5>
-          </div>
-          <div class="card-body">
-            {% include "buildings/includes/element_detail.html" %}
-          </div>
-        </div>
+        {% include "buildings/includes/element_detail.html" %}
       </div>
     </div>
     {% if perms.buildings.change_element %}
-    <div class="row">
-      <div class="col">
-        {% include "buildings/includes/hello_formula.html" %}
-      </div>
-    </div>
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    {% if object.fb_image %}
       <div class="row">
         <div class="col">
-          <a href="{{ object.fb_image.url }}"><img src="{% version object.fb_image 'small' %}"
-            alt="{{ object.intro }}"></a>
+          {% include "buildings/includes/hello_formula.html" %}
         </div>
       </div>
-    {% endif %}
-    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-        <div class="row">
-          <div class="col" id="mapid" style="height: 480px;"></div>
-        </div>
-        <hr class="mb-4">
-          {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
+      <hr class="mb-4">
+      {% include "buildings/includes/form_errors.html" %}
+      <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+          {{ form|crispy }}
+          <hr class="mb-4">
+          <div class="row">
+            <div class="col" id="mapid" style="height: 480px;"></div>
+          </div>
+          <hr class="mb-4">
+            {% include "buildings/includes/add_buttons.html" %}
+          <hr class="mb-4">
+        {% csrf_token %}
+      </form>
     {% else %}
-    {% translate "You don't have permissions to change elements" %}.
+      {% translate "You don't have permissions to change elements" %}.
     {% endif %}
   </div>
 </div>
