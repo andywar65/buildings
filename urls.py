@@ -48,4 +48,6 @@ urlpatterns = [
         name = 'element_create'),
     path(_('<slug>/element/<pk>/change/'), ElementUpdateView.as_view(),
         name = 'element_change'),
+    path(_('<slug>/element/<pk>/delete/'), ElementDeleteView.as_view(),
+        name = 'element_delete'),
     ]

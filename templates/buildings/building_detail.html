@@ -54,11 +54,11 @@
         + <i class="fa fa-camera"></i></a>
     {% endif %}
     {% if perms.buildings.add_family %}
-      <a class="btn btn-warning" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
+      <a class="btn btn-success" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
         + <i class="fa fa-folder-open"></i></a>
     {% endif %}
     {% if perms.buildings.add_family %}
-      <a class="btn btn-warning" href="{% url 'buildings:element_create' slug=build.slug %}" title="{% translate "Add element" %}">
+      <a class="btn btn-success" href="{% url 'buildings:element_create' slug=build.slug %}" title="{% translate "Add element" %}">
         + <i class="fa fa-thumb-tack"></i></a>
     {% endif %}
   </div>

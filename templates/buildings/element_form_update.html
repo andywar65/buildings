@@ -21,7 +21,7 @@
       </div>
       <div class="col col-md-4 text-right">
       {% if perms.buildings.delete_element %}
-        <a class="btn btn-danger" href="#">{% translate 'Delete' %}</a>
+        <a class="btn btn-danger" href="{% url 'buildings:element_delete' slug=object.build.slug pk=object.id %}">{% translate 'Delete' %}</a>
       {% endif %}
       </div>
     </div>

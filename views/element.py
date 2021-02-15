@@ -228,3 +228,38 @@ class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
         else:
             return (self.object.get_building_redirection() +
                 f'?elem_modified={self.object.__str__()}')
+
+class ElementDeleteView(PermissionRequiredMixin, FormView):
+    permission_required = 'buildings.delete_element'
+    form_class = BuildingDeleteForm
+    template_name = 'buildings/element_form_delete.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(ElementDeleteView, self).setup(request, *args, **kwargs)
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+        self.elem = get_object_or_404( Element,
+            id = self.kwargs['pk'] )
+        self.title = self.elem.__str__()
+        if not self.build == self.elem.build:
+            raise Http404(_("Element does not belong to Building"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.title
+        return context
+
+    def form_valid(self, form):
+        if not 'cancel' in self.request.POST:
+            self.elem.delete()
+        return super(ElementDeleteView, self).form_valid(form)
+
+    def get_success_url(self):
+        if 'cancel' in self.request.POST:
+            return reverse('buildings:element_change',
+                kwargs={'slug': self.build.slug,
+                'pk': self.elem.id})
+        return (reverse('buildings:building_detail',
+            kwargs={'build_slug': self.build.slug,
+            'set_slug': self.build.get_base_slug()}) +
+            f'?elem_deleted={self.title}')
