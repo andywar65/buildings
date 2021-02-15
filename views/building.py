@@ -19,14 +19,10 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
-        prefix = ['', 'plan_', 'stat_', 'img_', 'set_', 'fam_', 'elem_']
-        action = ['created', 'modified', 'deleted']
-        for pref in prefix:
-            for act in action:
-                param = pref + act
-                if param in self.request.GET:
-                    context[ param ] = self.request.GET[ param ]
-                    return context
+        params = [ 'model', 'created', 'modified', 'deleted', ]
+        for param in params:
+            if param in self.request.GET:
+                context[ param ] = self.request.GET[ param ]
         return context
 
 class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
@@ -65,12 +61,12 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:building_list') +
-                f'?created={self.object.title}')
+                f'?created={self.object.title}&model={_("Building")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.object.slug,
                 'set_slug': 'base_'+str(self.object.id) }) +
-                f'?created={self.object.title}')
+                f'?created={self.object.title}&model={_("Building")}')
 
 class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     model = Building
@@ -160,12 +156,12 @@ class BuildingUpdateView(PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:building_list') +
-                f'?modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Building")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.object.slug,
                 'set_slug': 'base_'+str(self.object.id) }) +
-                f'?modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Building")}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
     #model = Building
@@ -192,7 +188,7 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
             return reverse('buildings:building_detail',
                 kwargs={'slug': self.build.slug })
         return (reverse('buildings:building_list') +
-            f'?deleted={self.build.title}')
+            f'?deleted={self.build.title}&model={_("Building")}')
 
 class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Plan
@@ -221,12 +217,12 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?plan_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Plan")}')
         else:
             return (reverse('buildings:plan_detail',
                 kwargs={'build_slug': self.build.slug,
                 'plan_slug': self.object.slug}) +
-                f'?plan_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Plan")}')
 
 class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
     model = Plan
@@ -249,12 +245,12 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?plan_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Plan")}')
         else:
             return (reverse('buildings:plan_detail',
                 kwargs={'build_slug': self.build.slug,
                 'plan_slug': self.object.slug}) +
-                f'?plan_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Plan")}')
 
 class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
     model = Plan
@@ -344,7 +340,7 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': 'base_'+str(self.build.id)}) +
-            f'?plan_deleted={self.plan.title}')
+            f'?deleted={self.plan.title}&model={_("Plan")}')
 
 class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = PlanSet
@@ -381,12 +377,12 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?set_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Plan set")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
                 'set_slug': self.object.slug}) +
-                f'?set_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Plan set")}')
 
 class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
     model = PlanSet
@@ -418,12 +414,12 @@ class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?set_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Plan set")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
                 'set_slug': self.object.slug}) +
-                f'?set_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Plan set")}')
 
 class PlanSetDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_planset'
@@ -458,4 +454,4 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
-            f'?set_deleted={self.set.title}')
+            f'?deleted={self.set.title}&model={_("Plan set")}')

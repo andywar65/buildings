@@ -2,8 +2,8 @@
 
 {% if created %}
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=created %}
-    Building <strong>{{ link }}</strong> successfully created!
+    {% blocktranslate with model_name=model object=created %}
+    {{ model_name }} <strong>{{ object }}</strong> successfully created!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
@@ -11,8 +11,8 @@
   </div>
 {% elif modified %}
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=modified %}
-    Building <strong>{{ link }}</strong> successfully modified!
+    {% blocktranslate with model_name=model object=modified %}
+    {{ model_name }} <strong>{{ object }}</strong> successfully modified!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
@@ -20,8 +20,8 @@
   </div>
 {% elif deleted %}
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {% blocktranslate with link=deleted %}
-    Building <strong>{{ link }}</strong> successfully deleted!
+    {% blocktranslate with model_name=model object=deleted %}
+    {{ model_name }} <strong>{{ object }}</strong> successfully deleted!
     {% endblocktranslate %}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>

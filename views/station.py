@@ -57,12 +57,12 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:station_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?stat_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Photo station")}')
         else:
             return (reverse('buildings:station_detail',
                 kwargs={'build_slug': self.build.slug,
                 'stat_slug': self.object.slug}) +
-                f'?stat_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Photo station")}')
 
 class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
     model = PhotoStation
@@ -111,12 +111,12 @@ class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:station_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?stat_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Photo station")}')
         else:
             return (reverse('buildings:station_detail',
                 kwargs={'build_slug': self.build.slug,
                 'stat_slug': self.object.slug}) +
-                f'?stat_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Photo station")}')
 
 class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
     #model = PhotoStation
@@ -151,7 +151,7 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
-            f'?stat_deleted={self.stat.title}')
+            f'?deleted={self.stat.title}&model={_("Photo station")}')
 
 class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
     CreateView ):
@@ -198,7 +198,7 @@ class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
         return (reverse('buildings:station_detail',
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.stat.slug}) +
-            f'?img_created={self.object.id}')
+            f'?created={self.object.id}&model={_("Image")}')
 
 class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
     model = StationImage
@@ -223,7 +223,7 @@ class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
         return (reverse('buildings:station_detail',
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.stat.slug}) +
-            f'?img_modified={self.object.id}')
+            f'?modified={self.object.id}&model={_("Image")}')
 
 class StationImageDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_stationimage'
@@ -261,7 +261,7 @@ class StationImageDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:station_detail',
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.stat.slug}) +
-            f'?img_deleted={self.title}')
+            f'?deleted={self.title}&model={_("Image")}')
 
 class StationImageDayArchiveView( PermissionRequiredMixin, DayArchiveView ):
     model = StationImage

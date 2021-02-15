@@ -49,12 +49,12 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:family_list_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?fam_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Element family")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
                 'set_slug': self.build.get_base_slug()}) +
-                f'?fam_created={self.object.title}')
+                f'?created={self.object.title}&model={_("Element family")}')
 
 class FamilyUpdateView( PermissionRequiredMixin, UpdateView ):
     model = Family
@@ -86,12 +86,12 @@ class FamilyUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:family_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?fam_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Element family")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
                 'set_slug': self.build.get_base_slug()}) +
-                f'?fam_modified={self.object.title}')
+                f'?modified={self.object.title}&model={_("Element family")}')
 
 class FamilyDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_family'
@@ -126,7 +126,7 @@ class FamilyDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
-            f'?fam_deleted={self.fam.title}')
+            f'?deleted={self.fam.title}&model={_("Element family")}')
 
 class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Element
@@ -172,10 +172,10 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:element_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?elem_created={self.object.__str__()}')
+                f'?created={self.object.__str__()}&model={_("Element")}')
         else:
             return (self.object.get_building_redirection() +
-                f'?elem_created={self.object.__str__()}')
+                f'?created={self.object.__str__()}&model={_("Element")}')
 
 class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
     model = Element
@@ -224,10 +224,10 @@ class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:element_create',
                 kwargs={'slug': self.build.slug}) +
-                f'?elem_modified={self.object.__str__()}')
+                f'?modified={self.object.__str__()}&model={_("Element")}')
         else:
             return (self.object.get_building_redirection() +
-                f'?elem_modified={self.object.__str__()}')
+                f'?modified={self.object.__str__()}&model={_("Element")}')
 
 class ElementDeleteView(PermissionRequiredMixin, FormView):
     permission_required = 'buildings.delete_element'
@@ -262,4 +262,4 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
-            f'?elem_deleted={self.title}')
+            f'?deleted={self.title}&model={_("Element")}')
