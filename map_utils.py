@@ -79,33 +79,33 @@ def parse_dxf(dxf_f):
 
             elif flag == 'ent':#close all other entities
 
-                    if d['ent'] == 'poly':#close polyline
-                        d['2'] = 'a-poly'
-                        if d['210'] == 0 and d['220'] == 0:
-                            d['10'] = d['vx'][0]
-                            d['20'] = d['vy'][0]
-                            d['30'] = d['38']
-                        d['num'] = x
-                        collection[x] = d
-                        flag = False
+                if d['ent'] == 'poly':#close polyline
+                    d['2'] = 'a-poly'
+                    if d['210'] == 0 and d['220'] == 0:
+                        d['10'] = d['vx'][0]
+                        d['20'] = d['vy'][0]
+                        d['30'] = d['38']
+                    d['num'] = x
+                    collection[x] = d
+                    flag = False
 
-                    elif d['ent'] == 'line':#close line
-                        d['2'] = 'a-line'
-                        d['num'] = x
-                        collection[x] = d
-                        flag = False
+                elif d['ent'] == 'line':#close line
+                    d['2'] = 'a-line'
+                    d['num'] = x
+                    collection[x] = d
+                    flag = False
 
-                    elif d['ent'] == 'circle':#close line
-                        d['2'] = 'a-circle'
-                        d['num'] = x
-                        collection[x] = d
-                        flag = False
+                elif d['ent'] == 'circle':#close line
+                    d['2'] = 'a-circle'
+                    d['num'] = x
+                    collection[x] = d
+                    flag = False
 
-                    elif d['ent'] == 'insert':
-                        d['family'] == d['2']
-                        d['num'] = x
-                        collection[x] = d
-                        flag = False
+                elif d['ent'] == 'insert':
+                    d['family'] == d['2']
+                    d['num'] = x
+                    collection[x] = d
+                    flag = False
 
             if value == 'LINE':#start line
                 d = {'ent': 'line', '30': 0, '31': 0, '39': 0, '41': 1, '42': 1, '43': 1,
@@ -263,7 +263,7 @@ def transform_collection(collection, layer_dict, lat, long):
     #from CAD x,y coords to latlong is approximate
     gy = 1 / (6371*2*pi*1000/360)
     gx = 1 / (6371*2*pi*fabs(cos(radians(lat)))*1000/360)
-    handled_objects = ['poly', 'line', 'circle']
+    handled_objects = ['poly', 'line', 'circle', ]
     for key, val in collection.items():
         if not val['ent'] in handled_objects:
             continue
@@ -298,6 +298,21 @@ def transform_collection(collection, layer_dict, lat, long):
         map_objects.append(object)
     return map_objects
 
+def extract_elements(collection, layer_dict, lat, long):
+    map_elements = []
+    #objects are very small with respect to earth, so our transformation
+    #from CAD x,y coords to latlong is approximate
+    gy = 1 / (6371*2*pi*1000/360)
+    gx = 1 / (6371*2*pi*fabs(cos(radians(lat)))*1000/360)
+    for key, val in collection.items():
+        if not val['ent'] == 'insert':
+            continue
+        element = {}
+        element['coords'] = [lat-(val['20']*gy), long+(val['10']*gx)]
+        element['family'] = val['2']
+        map_elements.append(element)
+    return map_elements
+
 def workflow(dxf, lat, long):
     #TODO get rid of os, use pathlib
     with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:
@@ -310,6 +325,8 @@ def workflow(dxf, lat, long):
         collection = parse_dxf(dxf_f)
         #transform to our needings
         map_objects = transform_collection(collection, layer_dict, lat, long)
+        map_elements = extract_elements(collection, layer_dict, lat, long)
+        print(map_elements)
 
     return map_objects
 
