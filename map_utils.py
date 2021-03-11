@@ -40,7 +40,6 @@ def parse_dxf(dxf_f):
     entity, including geometric and appearance values plus functional
     attributes. Returns a nested dictionary.
     """
-    #dxf_f = open(page.path_to_dxf, encoding = 'utf-8')
 
     collection = {}
     flag = False
@@ -325,9 +324,8 @@ def workflow(dxf, lat, long):
         #transform to our needings
         map_objects = transform_collection(collection, layer_dict, lat, long)
         map_elements = extract_elements(collection, layer_dict, lat, long)
-        print(map_elements)
 
-    return map_objects
+    return map_objects, map_elements
 
 def cad2hex(cad_color):
     cad_color = abs(int(cad_color))

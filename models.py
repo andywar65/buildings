@@ -154,7 +154,8 @@ class Plan(models.Model):
         #upload file
         super(Plan, self).save(*args, **kwargs)
         if self.refresh and self.file:
-            geometry = workflow(self.file, self.build.lat, self.build.long)
+            geometry, elements = workflow(self.file, self.build.lat,
+                self.build.long)
             #this is a sloppy workaround to make working test
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(geometry=geometry,
