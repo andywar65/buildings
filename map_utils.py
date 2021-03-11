@@ -1,5 +1,5 @@
-import os
 import html
+from pathlib import Path
 from math import radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 
 from django.conf import settings
@@ -314,8 +314,7 @@ def extract_elements(collection, layer_dict, lat, long):
     return map_elements
 
 def workflow(dxf, lat, long):
-    #TODO get rid of os, use pathlib
-    with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:
+    with open(Path(settings.MEDIA_ROOT / dxf.path)) as dxf_f:
         #extract layer names and colors
         layer_dict = get_layer_dict(dxf_f)
         #rewind dxf file
