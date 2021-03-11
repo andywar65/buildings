@@ -63,10 +63,21 @@ def parse_dxf(dxf_f):
         #stores values for all entities (with arbitrary axis algorithm)
         if flag == 'ent':
             d = store_entity_values(d, key, value)
+        #stores values for attributes within block
+        elif flag == 'attrib':
+            if key == '1':#attribute value
+                attr_value = html.escape(value, quote=True)
+            elif key == '2':#attribute key
+                d[value] = attr_value
+                flag = 'ent'#restore block modality
 
         if key == '0':
 
-            if flag == 'ent':#close all other entities
+            if value == 'ATTRIB':#start attribute within block
+                attr_value = ''
+                flag = 'attrib'
+
+            elif flag == 'ent':#close all other entities
 
                     if d['ent'] == 'poly':#close polyline
                         d['2'] = 'a-poly'
@@ -90,6 +101,12 @@ def parse_dxf(dxf_f):
                         collection[x] = d
                         flag = False
 
+                    elif d['ent'] == 'insert':
+                        d['family'] == d['2']
+                        d['num'] = x
+                        collection[x] = d
+                        flag = False
+
             if value == 'LINE':#start line
                 d = {'ent': 'line', '30': 0, '31': 0, '39': 0, '41': 1, '42': 1, '43': 1,
                 '50': 0, '210': 0, '220': 0, '230': 1, }
@@ -108,6 +125,14 @@ def parse_dxf(dxf_f):
                 #default values
                 d = {'ent': 'circle',}
                 flag = 'ent'
+                x += 1
+
+            elif value == 'INSERT':#start block
+                #default values
+                d = {'family': '', '41': 1, '42': 1, '43': 1, '50': 0, '210': 0, '220': 0,
+                 '230': 1,}
+                flag = 'ent'
+                d['ent'] = 'insert'
                 x += 1
 
     return collection
@@ -274,6 +299,7 @@ def transform_collection(collection, layer_dict, lat, long):
     return map_objects
 
 def workflow(dxf, lat, long):
+    #TODO get rid of os, use pathlib
     with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:
         #extract layer names and colors
         layer_dict = get_layer_dict(dxf_f)
