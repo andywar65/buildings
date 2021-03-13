@@ -275,6 +275,9 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         context['annotated_list'] = self.build.get_planset_annotated_list()
         #add plans
         context['plans'] = self.build.building_plan.all()
+        #add elements
+        context['elements'] = self.build.building_element.filter(
+            plan_id=self.object.id)
         #add stations
         context['stations'] = self.build.building_station.all()
         stat_list = context['stations'].values_list('id', flat=True)
@@ -295,11 +298,16 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
             else:
                 plan_dict['visible'] = False
             plans.append(plan_dict)
+        #element data
+        elements = []
+        for elem in context['elements']:
+            elements.append(elem.map_dictionary())
         #are there stations that don't belong to plans?
         no_plan_status = False
         context['map_data'] = {
             'build': build,
             'plans': plans,
+            'elements': elements,
             'stations': False,
             'no_plan_status': no_plan_status,
             'no_plan_trans': _("No plan"),
