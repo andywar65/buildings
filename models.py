@@ -160,6 +160,7 @@ class Plan(models.Model):
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(geometry=geometry,
                 refresh=False)
+            print(elements)
 
     class Meta:
         verbose_name = _('Building plan')

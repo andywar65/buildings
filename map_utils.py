@@ -67,7 +67,7 @@ def parse_dxf(dxf_f):
             if key == '1':#attribute value
                 attr_value = html.escape(value, quote=True)
             elif key == '2':#attribute key
-                d[value] = attr_value
+                d['sheet'][value] = attr_value
                 flag = 'ent'#restore block modality
 
         if key == '0':
@@ -101,7 +101,6 @@ def parse_dxf(dxf_f):
                     flag = False
 
                 elif d['ent'] == 'insert':
-                    d['family'] == d['2']
                     d['num'] = x
                     collection[x] = d
                     flag = False
@@ -128,7 +127,7 @@ def parse_dxf(dxf_f):
 
             elif value == 'INSERT':#start block
                 #default values
-                d = {'family': '', '41': 1, '42': 1, '43': 1, '50': 0, '210': 0, '220': 0,
+                d = {'sheet': {}, '41': 1, '42': 1, '43': 1, '50': 0, '210': 0, '220': 0,
                  '230': 1,}
                 flag = 'ent'
                 d['ent'] = 'insert'
@@ -309,6 +308,7 @@ def extract_elements(collection, layer_dict, lat, long):
         element = {}
         element['coords'] = [lat-(val['20']*gy), long+(val['10']*gx)]
         element['family'] = val['2']
+        element['sheet'] = val['sheet']
         map_elements.append(element)
     return map_elements
 
