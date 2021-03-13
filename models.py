@@ -160,7 +160,13 @@ class Plan(models.Model):
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(geometry=geometry,
                 refresh=False)
-            print(elements)
+            base_family = Family.objects.get(slug=self.build.get_base_slug())
+            for element in elements:
+                try:
+                    Family.objects.get(build_id=self.build.id,
+                        title=element['family'])
+                except:
+                    print('no family with this name')
 
     class Meta:
         verbose_name = _('Building plan')
