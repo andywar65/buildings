@@ -163,13 +163,25 @@ class Plan(models.Model):
             base_family = Family.objects.get(slug=self.build.get_base_slug())
             for element in elements:
                 try:
-                    Family.objects.get(build_id=self.build.id,
-                        title=element['family'])
+                    family = Family.objects.get(
+                        build_id=self.build.id,
+                        title=element['family']
+                        )
                 except:
-                    base_family.add_child(
+                    family = base_family.add_child(
                         build=self.build,
                         title=element['family']
                         )
+                elm, created = Element.objects.get_or_create(
+                    lat=element['coords'][0],
+                    long=element['coords'][1],
+                    build_id=self.build.id,
+                    family_id=family.id,
+                    plan_id=self.id,
+                    )
+                if created:
+                    elm.sheet = element['sheet']
+                    elm.save()
 
     class Meta:
         verbose_name = _('Building plan')
