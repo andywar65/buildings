@@ -166,7 +166,10 @@ class Plan(models.Model):
                     Family.objects.get(build_id=self.build.id,
                         title=element['family'])
                 except:
-                    print('no family with this name')
+                    base_family.add_child(
+                        build=self.build,
+                        title=element['family']
+                        )
 
     class Meta:
         verbose_name = _('Building plan')
