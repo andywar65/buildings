@@ -267,9 +267,16 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
             f'?deleted={self.title}&model={_("Element")}')
 
 def csv_writer(writer, qs):
-    writer.writerow([_('Building'), ])
+    writer.writerow([_('Building'), _('Family'), _('Plan'), _('Image'),
+        _('Description'), _('Latitude'), _('Longitude'), _('Data sheet')])
     for e in qs:
-        writer.writerow([e.build, ])
+        image = e.fb_image.url if e.fb_image else _('No image')
+        intro = e.intro if e.intro else _('No description')
+        row = [e.build, e.family, e.plan, image, intro, e.lat, e.long]
+        for key, value in e.sheet.items():
+            row.append(key)
+            row.append(value)
+        writer.writerow(row)
     return writer
 
 @permission_required('buildings.view_building')
