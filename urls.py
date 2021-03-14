@@ -50,4 +50,6 @@ urlpatterns = [
         name = 'element_change'),
     path(_('<slug>/element/<pk>/delete/'), ElementDeleteView.as_view(),
         name = 'element_delete'),
+    path(_('<slug>/element/download/'), building_element_download,
+        name = 'element_download'),
     ]

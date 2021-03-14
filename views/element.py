@@ -1,9 +1,11 @@
-from django.http import HttpResponseRedirect
+import csv
+
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.views.generic import ( CreateView, UpdateView, FormView,)
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import Http404
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
@@ -263,3 +265,25 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.title}&model={_("Element")}')
+
+def csv_writer(writer, qs):
+    writer.writerow([_('Building'), ])
+    for e in qs:
+        writer.writerow([e.build, ])
+    return writer
+
+@permission_required('buildings.view_building')
+def building_element_download(request, slug):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = (
+        'attachment; filename="%(building)s-elements.csv"' %
+        { 'building': _('Buildings') }
+        )
+    build = get_object_or_404( Building, slug = slug )
+    qs = Element.objects.filter(build_id=build.id)
+
+    writer = csv.writer(response)
+    writer = csv_writer(writer, qs)
+
+    return response
