@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
+from django.contrib.gis.admin import OSMGeoAdmin
 
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element)
+    PlanSet, Family, Element, City)
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -83,3 +84,7 @@ class ElementAdmin(admin.ModelAdmin):
             'fields': ('lat', 'long', ),
         }),
         )
+
+@admin.register(City)
+class CityAdmin(OSMGeoAdmin):
+    list_display = ('name', 'location')
