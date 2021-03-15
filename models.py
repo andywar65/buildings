@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
+from django.contrib.gis.db import models
 
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
@@ -431,3 +432,16 @@ class Element(models.Model):
         verbose_name = _('Element')
         verbose_name_plural = _('Elements')
         ordering = ('build', 'family')
+
+class City(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.PointField()
+    zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
+        help_text=_("Maximum should be 23"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('City')
+        verbose_name_plural = _('Cities')
