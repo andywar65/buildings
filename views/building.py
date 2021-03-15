@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from buildings.models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet)
+    PlanSet, City)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm)
@@ -42,13 +43,23 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         builds = []
         for build in context['builds']:
             builds.append( build.map_dictionary() )
+        city = City.objects.first()
+        if city:
+            loc = json.loads(city.location.geojson)
+            city_long = loc['coordinates'][0]
+            city_lat = loc['coordinates'][1]
+            city_zoom = city.zoom
+        else:
+            city_long = settings.CITY_LONG
+            city_lat = settings.CITY_LAT
+            city_zoom = settings.CITY_ZOOM
         context['map_data'] = {
             'builds': builds,
             'on_map_click': True,
             'on_map_zoom': True,
-            'city_lat': settings.CITY_LAT,
-            'city_long': settings.CITY_LONG,
-            'city_zoom': settings.CITY_ZOOM,
+            'city_lat': city_lat,
+            'city_long': city_long,
+            'city_zoom': city_zoom,
             'mapbox_token': settings.MAPBOX_TOKEN
             }
         return context
