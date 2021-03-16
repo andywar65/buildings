@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
@@ -64,6 +65,7 @@ class Building(models.Model):
     long = models.FloatField(_("Longitude"), default = settings.CITY_LONG,
         help_text=_("""Coordinates from Google Maps
             or https://openstreetmap.org"""))
+    location = models.PointField(srid=4326, geography=True, null=True)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
 
@@ -101,6 +103,7 @@ class Building(models.Model):
         if not self.slug:
             self.slug = generate_unique_slug(Building, self.title)
         self.last_updated = now()
+        self.location = Point( self.long, self.lat )
         super(Building, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test
@@ -252,6 +255,7 @@ class PhotoStation(models.Model):
         max_length = 100)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
+    location = models.PointField(srid=4326, geography=True, null=True)
 
     def __str__(self):
         return self.title + ' / ' + self.build.title
@@ -287,6 +291,7 @@ class PhotoStation(models.Model):
             self.lat = self.build.lat
         if not self.long:
             self.long = self.build.long
+        self.location = Point( self.long, self.lat )
         super(PhotoStation, self).save(*args, **kwargs)
 
     class Meta:
@@ -373,6 +378,7 @@ class Element(models.Model):
         null=True, blank=True, max_length = 200)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
+    location = models.PointField(srid=4326, geography=True, null=True)
     sheet = models.JSONField(_('Data sheet'), null=True, blank=True,
         help_text=_("A dictionary of element features") )
 
@@ -409,6 +415,7 @@ class Element(models.Model):
             self.lat = self.build.lat
         if not self.long:
             self.long = self.build.long
+        self.location = Point( self.long, self.lat )
         sheet = {}
         for ancestor in self.family.get_ancestors():
             if isinstance(ancestor.sheet, dict):
