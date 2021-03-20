@@ -73,6 +73,10 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:building_list') +
                 f'?created={self.object.title}&model={_("Building")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:building_change',
+                kwargs={'slug': self.object.slug }) +
+                f'?created={self.object.title}&model={_("Building")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.object.slug,
@@ -167,6 +171,10 @@ class BuildingUpdateView(PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:building_list') +
+                f'?modified={self.object.title}&model={_("Building")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:building_change',
+                kwargs={'slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Building")}')
         else:
             return (reverse('buildings:building_detail',
