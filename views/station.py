@@ -58,10 +58,15 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (reverse('buildings:station_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?created={self.object.title}&model={_("Photo station")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:station_change',
+                kwargs={'build_slug': self.build.slug,
+                'stat_slug': self.object.slug }) +
+                f'?created={self.object.title}&model={_("Photo station")}')
         else:
             return (reverse('buildings:station_detail',
                 kwargs={'build_slug': self.build.slug,
-                'stat_slug': self.object.slug}) +
+                'stat_slug': self.object.slug }) +
                 f'?created={self.object.title}&model={_("Photo station")}')
 
 class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
@@ -111,6 +116,11 @@ class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:station_create',
                 kwargs={'slug': self.build.slug}) +
+                f'?modified={self.object.title}&model={_("Photo station")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:station_change',
+                kwargs={'build_slug': self.build.slug,
+                'stat_slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Photo station")}')
         else:
             return (reverse('buildings:station_detail',
@@ -195,6 +205,12 @@ class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
         return super(StationImageListCreateView, self).form_valid(form)
 
     def get_success_url(self):
+        if 'continue' in self.request.POST:
+            return (reverse('buildings:image_change',
+                kwargs={'build_slug': self.build.slug,
+                'stat_slug': self.stat.slug,
+                'pk': self.object.id }) +
+                f'?created={self.object.id}&model={_("Image")}')
         return (reverse('buildings:station_detail',
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.stat.slug}) +
@@ -220,6 +236,12 @@ class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
         return img
 
     def get_success_url(self):
+        if 'continue' in self.request.POST:
+            return (reverse('buildings:image_change',
+                kwargs={'build_slug': self.build.slug,
+                'stat_slug': self.stat.slug,
+                'pk': self.object.id }) +
+                f'?modified={self.object.id}&model={_("Image")}')
         return (reverse('buildings:station_detail',
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.stat.slug}) +

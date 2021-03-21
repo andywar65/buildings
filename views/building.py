@@ -237,6 +237,11 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?created={self.object.title}&model={_("Plan")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:plan_change',
+                kwargs={'build_slug': self.build.slug,
+                'plan_slug': self.object.slug }) +
+                f'?created={self.object.title}&model={_("Plan")}')
         else:
             return (reverse('buildings:plan_detail',
                 kwargs={'build_slug': self.build.slug,
@@ -264,6 +269,11 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:plan_create',
                 kwargs={'slug': self.build.slug}) +
+                f'?modified={self.object.title}&model={_("Plan")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:plan_change',
+                kwargs={'build_slug': self.build.slug,
+                'plan_slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Plan")}')
         else:
             return (reverse('buildings:plan_detail',
@@ -405,6 +415,11 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?created={self.object.title}&model={_("Plan set")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:planset_change',
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.object.slug }) +
+                f'?created={self.object.title}&model={_("Plan set")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
@@ -441,6 +456,11 @@ class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:planset_create',
                 kwargs={'slug': self.build.slug}) +
+                f'?modified={self.object.title}&model={_("Plan set")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:planset_change',
+                kwargs={'build_slug': self.build.slug,
+                'set_slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Plan set")}')
         else:
             return (reverse('buildings:building_detail',

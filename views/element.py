@@ -52,6 +52,11 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (reverse('buildings:family_list_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?created={self.object.title}&model={_("Element family")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:family_change',
+                kwargs={'build_slug': self.build.slug,
+                'fam_slug': self.object.slug }) +
+                f'?created={self.object.title}&model={_("Element family")}')
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
@@ -88,6 +93,11 @@ class FamilyUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:family_create',
                 kwargs={'slug': self.build.slug}) +
+                f'?modified={self.object.title}&model={_("Element family")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:family_change',
+                kwargs={'build_slug': self.build.slug,
+                'fam_slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Element family")}')
         else:
             return (reverse('buildings:building_detail',
@@ -175,6 +185,11 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (reverse('buildings:element_create',
                 kwargs={'slug': self.build.slug}) +
                 f'?created={self.object.__str__()}&model={_("Element")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:element_change',
+                kwargs={'build_slug': self.build.slug,
+                'pk': self.object.id }) +
+                f'?created={self.object.__str__()}&model={_("Element")}')
         else:
             return (self.object.get_building_redirection() +
                 f'?created={self.object.__str__()}&model={_("Element")}')
@@ -226,6 +241,11 @@ class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:element_create',
                 kwargs={'slug': self.build.slug}) +
+                f'?modified={self.object.__str__()}&model={_("Element")}')
+        elif 'continue' in self.request.POST:
+            return (reverse('buildings:element_change',
+                kwargs={'build_slug': self.build.slug,
+                'pk': self.object.id }) +
                 f'?modified={self.object.__str__()}&model={_("Element")}')
         else:
             return (self.object.get_building_redirection() +
