@@ -69,7 +69,7 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'stat_slug': self.object.slug }) +
                 f'?created={self.object.title}&model={_("Photo station")}')
 
-class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
+class PhotoStationUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = PhotoStation
     permission_required = 'buildings.change_photostation'
     form_class = PhotoStationCreateForm
@@ -88,6 +88,7 @@ class PhotoStationUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
         build = self.build.map_dictionary()
@@ -216,7 +217,7 @@ class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
             'stat_slug': self.stat.slug}) +
             f'?created={self.object.id}&model={_("Image")}')
 
-class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
+class StationImageUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = StationImage
     permission_required = 'buildings.change_stationimage'
     form_class = StationImageUpdateForm
@@ -234,6 +235,11 @@ class StationImageUpdateView( PermissionRequiredMixin, UpdateView ):
         if not self.stat == img.stat:
             raise Http404(_("Image does not belong to Photo Station"))
         return img
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = self.add_alerts_to_context(context)
+        return context
 
     def get_success_url(self):
         if 'continue' in self.request.POST:

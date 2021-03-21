@@ -63,7 +63,7 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'set_slug': self.build.get_base_slug()}) +
                 f'?created={self.object.title}&model={_("Element family")}')
 
-class FamilyUpdateView( PermissionRequiredMixin, UpdateView ):
+class FamilyUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = Family
     permission_required = 'buildings.change_family'
     form_class = FamilyUpdateForm
@@ -87,6 +87,7 @@ class FamilyUpdateView( PermissionRequiredMixin, UpdateView ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['build'] = self.build
+        context = self.add_alerts_to_context(context)
         return context
 
     def get_success_url(self):
@@ -194,7 +195,7 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (self.object.get_building_redirection() +
                 f'?created={self.object.__str__()}&model={_("Element")}')
 
-class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
+class ElementUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = Element
     permission_required = 'buildings.change_element'
     form_class = ElementCreateForm
@@ -212,6 +213,7 @@ class ElementUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context = self.add_alerts_to_context(context)
         context['title'] = self.object.__str__()
         #we add the following to feed the map
         #building data
