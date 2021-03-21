@@ -149,7 +149,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
             }
         return context
 
-class BuildingUpdateView(PermissionRequiredMixin, UpdateView):
+class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
     model = Building
     permission_required = 'buildings.change_building'
     form_class = BuildingUpdateForm
@@ -157,6 +157,8 @@ class BuildingUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        #building alerts
+        context = self.add_alerts_to_context(context)
         #we add the following to feed the map
         #building data
         build = self.object.map_dictionary()
@@ -248,7 +250,7 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'plan_slug': self.object.slug}) +
                 f'?created={self.object.title}&model={_("Plan")}')
 
-class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
+class PlanUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = Plan
     permission_required = 'buildings.change_plan'
     form_class = PlanCreateForm
@@ -264,6 +266,12 @@ class PlanUpdateView( PermissionRequiredMixin, UpdateView ):
         if not self.build == plan.build:
             raise Http404(_("Plan does not belong to Building"))
         return plan
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #building alerts
+        context = self.add_alerts_to_context(context)
+        return context
 
     def get_success_url(self):
         if 'add_another' in self.request.POST:
@@ -426,7 +434,7 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'set_slug': self.object.slug}) +
                 f'?created={self.object.title}&model={_("Plan set")}')
 
-class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
+class PlanSetUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     model = PlanSet
     permission_required = 'buildings.change_planset'
     form_class = PlanSetUpdateForm
@@ -449,6 +457,8 @@ class PlanSetUpdateView( PermissionRequiredMixin, UpdateView ):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        #building alerts
+        context = self.add_alerts_to_context(context)
         context['build'] = self.build
         return context
 
