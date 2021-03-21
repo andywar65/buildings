@@ -210,6 +210,7 @@ class PlanSet(MP_Node):
     slug = models.SlugField(max_length=100, editable=False, null=True)
     plans = models.ManyToManyField(Plan,
         blank = True, verbose_name = _('Plans'),
+        #through = 'PlanVisibility',
         help_text=_("Choose plans to show in this set") )
 
     def __str__(self):
@@ -235,6 +236,17 @@ class PlanSet(MP_Node):
         verbose_name = _('Plan set')
         verbose_name_plural = _('Plan sets')
         ordering = ('build', 'path')
+
+class PlanVisibility(models.Model):
+    plan = models.ForeignKey(Plan, on_delete = models.CASCADE,
+        related_name='plan_visibility', verbose_name = _('Building plan'))
+    set = models.ForeignKey(PlanSet, on_delete = models.CASCADE,
+        related_name='planset_visibility', verbose_name = _('Plan set'))
+    visibility = models.BooleanField(_("Visible"), default=False,
+        help_text=_("Check if plan is visible in this plan set"))
+
+    class Meta:
+        verbose_name = _('Plan visibility')
 
 def photo_station_default_intro():
     return (_('Another photo station by %(sitename)s!') %
