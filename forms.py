@@ -51,7 +51,7 @@ class PhotoStationCreateForm(ModelForm):
 
     class Meta:
         model = PhotoStation
-        fields = '__all__'
+        exclude = ('location', )
 
 class StationImageCreateForm(ModelForm):
     stat = forms.ModelChoiceField( label=_('Photo station'),
