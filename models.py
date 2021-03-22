@@ -224,7 +224,14 @@ class PlanSet(MP_Node):
         for ancestor in self.get_ancestors():
             ancestor_plans = ancestor.plans.all()
             plans = plans | ancestor_plans
-        return plans.distinct().order_by('elev')
+        plans = plans.distinct().order_by('elev')
+        plan_visibility = {}
+        for plan in plans:
+            pv = PlanVisibility.objects.get(set_id=self.id,
+                plan_id=plan.id)
+            plan_visibility[plan] = pv.visibility
+        print(plan_visibility)
+        return plans
 
     def save(self, *args, **kwargs):
         if not self.slug:
