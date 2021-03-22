@@ -254,7 +254,7 @@ class PlanVisibility(models.Model):
         related_name='plan_visibility', verbose_name = _('Building plan'))
     set = models.ForeignKey(PlanSet, on_delete = models.CASCADE,
         related_name='planset_visibility', verbose_name = _('Plan set'))
-    visibility = models.BooleanField(_("Visible"), default=False,
+    visibility = models.BooleanField(_("Visible"), default=True,
         help_text=_("Check if plan is visible in this plan set"))
 
     class Meta:
