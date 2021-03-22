@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from buildings.models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, City)
+    PlanSet, City, PlanVisibility)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm)
@@ -95,6 +95,17 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
             slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
             raise Http404(_("Plan set does not belong to Building"))
+
+    def get(self, request, *args, **kwargs):
+        if 'visibility' in request.GET:
+            pv = get_object_or_404( PlanVisibility,
+                id=request.GET['visibility'])
+            if pv.visibility:
+                pv.visibility = False
+            else:
+                pv.visibility = True
+            pv.save()
+        return super(BuildingDetailView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
