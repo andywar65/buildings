@@ -220,13 +220,19 @@ class PlanSet(MP_Node):
         return prefix + self.title
 
     def get_self_and_ancestor_plans(self):
-        plans = self.plans.all()
-        for ancestor in self.get_ancestors():
-            ancestor_plans = ancestor.plans.all()
-            plans = plans | ancestor_plans
-        plans = plans.distinct().order_by('elev')
         plan_visibility = {}
-        for plan in plans:
+        plans = self.plans.all()#first plan queryset
+        for ancestor in self.get_ancestors():#get planset ancestors
+            ancestor_plans = ancestor.plans.all()#get their plans
+            plans = plans | ancestor_plans#merge querysets
+            for ancestor_plan in ancestor_plans:#set visibility for ancestors
+                pv = PlanVisibility.objects.get(set_id=ancestor.id,
+                    plan_id=ancestor_plan.id)
+                plan_visibility[ancestor_plan] = ( pv.id, pv.visibility )
+        plans = plans.distinct().order_by('elev')#squash duplicates
+
+        for plan in self.plans.all():#repeat queryset for active planset
+            #eventually override ancestor visibility
             pv = PlanVisibility.objects.get(set_id=self.id,
                 plan_id=plan.id)
             plan_visibility[plan] = ( pv.id, pv.visibility )

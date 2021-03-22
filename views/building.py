@@ -135,7 +135,10 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         #plan data
         plans = []
         for plan in context['plans'].reverse():
-            plans.append(plan.map_dictionary())
+            plan_temp = plan.map_dictionary()
+            visibility = context['plan_visibility'][plan]
+            plan_temp['visible'] = visibility[1]
+            plans.append(plan_temp)
         #element data
         elements = []
         for elem in context['elements']:
