@@ -6,15 +6,28 @@
       <tr>
         <th scope="col">{% translate 'Modify' %}</th>
         <th scope="col">{% translate 'Elevation (mt)' %}</th>
+        {% if plan_visibility %}
+          <th scope="col">{% translate 'Visibility' %}</th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for plan in plans.all %}
-      <tr>
-        <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
-        <td>{{ plan.elev }}</td>
-      </tr>
-      {% endfor %}
+      {% if plan_visibility %}
+        {% for plan, visibility in plan_visibility.items %}
+        <tr>
+          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+          <td>{{ plan.elev }}</td>
+          <td><a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=planset.slug %}?visibility={{ visibility.0 }}">{{ visibility.1 }}</a></td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        {% for plan in plans.all %}
+        <tr>
+          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+          <td>{{ plan.elev }}</td>
+        </tr>
+        {% endfor %}
+      {% endif %}
     <tbody>
   </table>
 </div>
