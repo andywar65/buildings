@@ -15,15 +15,23 @@
       {% if plan_visibility %}
         {% for plan, visibility in plan_visibility.items %}
         <tr>
-          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">
+            {{ plan.title }}</a></td>
           <td>{{ plan.elev }}</td>
-          <td><a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=planset.slug %}?visibility={{ visibility.0 }}">{{ visibility.1 }}</a></td>
+          <td><a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=planset.slug %}?visibility={{ visibility.0 }}">
+            {% if visibility.1 %}
+              <i class="fa fa-check-circle" style="color: limegreen;" title="{% trans 'Make invisible' %}"></i>
+            {% else %}
+              <i class="fa fa-times-circle" style="color: red;" title="{% trans 'Make visible' %}"></i>
+            {% endif %}
+          </a></td>
         </tr>
         {% endfor %}
       {% else %}
         {% for plan in plans.all %}
         <tr>
-          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">{{ plan.title }}</a></td>
+          <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">
+            {{ plan.title }}</a></td>
           <td>{{ plan.elev }}</td>
         </tr>
         {% endfor %}
