@@ -230,8 +230,7 @@ class PlanSet(MP_Node):
             pv = PlanVisibility.objects.get(set_id=self.id,
                 plan_id=plan.id)
             plan_visibility[plan] = pv.visibility
-        print(plan_visibility)
-        return plans
+        return plans, plan_visibility
 
     def save(self, *args, **kwargs):
         if not self.slug:

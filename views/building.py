@@ -102,7 +102,8 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         context['annotated_list'] = self.object.get_planset_annotated_list()
         #add plans
         context['planset'] = self.set
-        context['plans'] = self.set.get_self_and_ancestor_plans()
+        context['plans'], context['plan_visibility'] = (self.set.
+            get_self_and_ancestor_plans())
         plan_list = context['plans'].values_list('id', flat=True)
         #add elements
         context['elements'] = self.object.building_element.filter(Q(plan=None)|
