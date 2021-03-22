@@ -229,7 +229,7 @@ class PlanSet(MP_Node):
         for plan in plans:
             pv = PlanVisibility.objects.get(set_id=self.id,
                 plan_id=plan.id)
-            plan_visibility[plan] = pv.visibility
+            plan_visibility[plan] = ( pv.id, pv.visibility )
         return plans, plan_visibility
 
     def save(self, *args, **kwargs):
