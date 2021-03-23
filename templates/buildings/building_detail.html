@@ -24,52 +24,7 @@
     </div>
   </div>
   <div class="col">
-    <div class="card-group">
-      {% if perms.buildings.change_building %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-primary" href="{% url 'buildings:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
-          <i class="fa fa-pencil"></i> <i class="fa fa-building"></i></a>
-      </div>
-      {% endif %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-secondary" href="{% url 'buildings:building_list' %}" title="{% translate "Back to all buildings" %}">
-          <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
-      </div>
-      {% if perms.buildings.add_planset %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-info" href="{% url 'buildings:planset_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
-          + <i class="fa fa-sitemap"></i></a>
-      </div>
-      {% endif %}
-      {% if perms.buildings.add_plan %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-info" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
-          + <i class="fa fa-map-o"></i></a>
-      </div>
-      {% endif %}
-      {% if perms.buildings.add_photostation %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-danger" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
-          + <i class="fa fa-camera"></i></a>
-      </div>
-      {% endif %}
-      {% if perms.buildings.add_family %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-success" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
-          + <i class="fa fa-folder-open"></i></a>
-      </div>
-      {% endif %}
-      {% if perms.buildings.add_element %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-success" href="{% url 'buildings:element_create' slug=build.slug %}" title="{% translate "Add element" %}">
-          + <i class="fa fa-thumb-tack"></i></a>
-      </div>
-      {% endif %}
-      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-success" href="{% url 'buildings:element_download' slug=build.slug %}" title="{% translate "Download elements" %}">
-          <i class="fa fa-thumb-tack"></i><i class="fa fa-download"></i></a>
-      </div>
-    </div>
+    {% include "buildings/includes/edit_buttons.html" %}
   </div>
 </div>
 <div class="card-deck">
