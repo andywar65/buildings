@@ -61,8 +61,8 @@ class Building(models.Model):
     address = models.CharField(_('Address'), null=True, blank=True,
         help_text = _('Something like "Rome - Monteverde" is ok'),
         max_length = 100)
-    lat = models.FloatField(_("Latitude"), default = settings.CITY_LAT)
-    long = models.FloatField(_("Longitude"), default = settings.CITY_LONG,
+    lat = models.FloatField(_("Latitude"), null=True)
+    long = models.FloatField(_("Longitude"), null=True,
         help_text=_("""Coordinates from Google Maps
             or https://openstreetmap.org"""))
     location = models.PointField(srid=4326, geography=True, null=True)
@@ -103,7 +103,10 @@ class Building(models.Model):
         if not self.slug:
             self.slug = generate_unique_slug(Building, self.title)
         self.last_updated = now()
-        self.location = Point( self.long, self.lat )
+        if self.long and self.lat:
+            self.location = Point( self.long, self.lat )
+            self.long = None
+            self.lat = None
         super(Building, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test

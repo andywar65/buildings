@@ -14,7 +14,7 @@ class PlanInline(admin.TabularInline):
     extra = 0
 
 @admin.register(Building)
-class BuildingAdmin(admin.ModelAdmin):
+class BuildingAdmin(OSMGeoAdmin):
     list_display = ('title', 'address', )
     inlines = [ PlanInline,  ]
 
@@ -26,7 +26,7 @@ class BuildingAdmin(admin.ModelAdmin):
             'fields': ('title', 'date', 'intro', 'address'),
         }),
         (_('Map'), {
-            'fields': ('lat', 'long', 'zoom', ),
+            'fields': ('location', 'zoom', ),
         }),
         )
 
