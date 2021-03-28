@@ -197,6 +197,12 @@ class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
             }
         return context
 
+    def get_initial(self):
+        initial = super( BuildingUpdateView, self ).get_initial()
+        initial['lat'] = self.object.location.coords[1]
+        initial['long'] = self.object.location.coords[0]
+        return initial
+
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:building_list') +
