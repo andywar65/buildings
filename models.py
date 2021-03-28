@@ -42,6 +42,12 @@ def building_default_intro():
     return (_('Another Building by %(website)s!') %
         {'website': settings.WEBSITE_NAME})
 
+def building_default_location():
+    city = City.objects.first()
+    if city:
+        return city.location
+    return Point( settings.CITY_LONG, settings.CITY_LAT )
+
 class Building(models.Model):
     slug = models.SlugField(max_length=100, editable=False, null=True)
     image = models.ImageField(_("Image"), max_length=200,
@@ -65,7 +71,8 @@ class Building(models.Model):
     long = models.FloatField(_("Longitude"), null=True,
         help_text=_("""Coordinates from Google Maps
             or https://openstreetmap.org"""))
-    location = models.PointField(srid=4326, geography=True, null=True)
+    location = models.PointField(srid=4326, geography=True, null=True,
+        default=building_default_location)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
 
