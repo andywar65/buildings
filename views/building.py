@@ -66,10 +66,15 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             }
         return context
 
-    #def get_initial(self):
-        #initial = super( BuildingListCreateView, self ).get_initial()
-        #initial['build'] = self.build.id
-        #return initial
+    def get_initial(self):
+        initial = super( BuildingListCreateView, self ).get_initial()
+        if self.city:
+            initial['lat'] = self.city.location.coords[1]
+            initial['long'] = self.city.location.coords[0]
+        else:
+            initial['lat'] = settings.CITY_LAT
+            initial['long'] = settings.CITY_LONG
+        return initial
 
     def form_valid(self, form):
         if not self.request.user.has_perm('buildings.add_building'):
