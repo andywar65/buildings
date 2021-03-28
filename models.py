@@ -92,8 +92,9 @@ class Building(models.Model):
         fb_path = (settings.MEDIA_URL +
             self.fb_image.version_path("medium"))
         return {'title': self.title, 'intro': self.intro,
-            'path': self.get_full_path(), 'lat': self.lat,
-            'long': self.long, 'zoom': self.zoom, 'fb_path': fb_path}
+            'path': self.get_full_path(), 'lat': self.location.coords[1],
+            'long': self.location.coords[0], 'zoom': self.zoom,
+            'fb_path': fb_path}
 
     def get_planset_annotated_list(self):
         parent = self.building_planset.get(slug=self.get_base_slug())
