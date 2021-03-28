@@ -32,6 +32,10 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     form_class = BuildingCreateForm
     template_name = 'buildings/building_list_create.html'
 
+    def setup(self, request, *args, **kwargs):
+        super(BuildingListCreateView, self).setup(request, *args, **kwargs)
+        self.city = City.objects.first()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #list all buildings
@@ -43,12 +47,10 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         builds = []
         for build in context['builds']:
             builds.append( build.map_dictionary() )
-        city = City.objects.first()
-        if city:
-            loc = json.loads(city.location.geojson)
-            city_long = loc['coordinates'][0]
-            city_lat = loc['coordinates'][1]
-            city_zoom = city.zoom
+        if self.city:
+            city_long = self.city.location.coords[0]
+            city_lat = self.city.location.coords[1]
+            city_zoom = self.city.zoom
         else:
             city_long = settings.CITY_LONG
             city_lat = settings.CITY_LAT
@@ -63,6 +65,11 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             'mapbox_token': settings.MAPBOX_TOKEN
             }
         return context
+
+    #def get_initial(self):
+        #initial = super( BuildingListCreateView, self ).get_initial()
+        #initial['build'] = self.build.id
+        #return initial
 
     def form_valid(self, form):
         if not self.request.user.has_perm('buildings.add_building'):
