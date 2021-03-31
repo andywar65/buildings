@@ -36,10 +36,20 @@ class StationImageInline(admin.TabularInline):
     extra = 0
 
 @admin.register(PhotoStation)
-class PhotoStationAdmin(admin.ModelAdmin):
-    list_display = ( 'title', 'intro', 'build', 'plan', 'lat', 'long')
-    list_editable = ( 'lat', 'long')
+class PhotoStationAdmin(OSMGeoAdmin):
+    list_display = ( 'title', 'intro', 'build', 'plan', 'location')
     inlines = [ StationImageInline,  ]
+    fieldsets = (
+        (_('Building'), {
+            'fields': ('build', 'plan' ),
+        }),
+        (None, {
+            'fields': ('title', 'intro', ),
+        }),
+        (_('Map'), {
+            'fields': ('location', ),
+        }),
+        )
 
 class PlanSetAdmin(TreeAdmin):
     form = movenodeform_factory(PlanSet)

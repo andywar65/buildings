@@ -71,7 +71,7 @@ class Building(models.Model):
     long = models.FloatField(_("Longitude"), null=True,
         help_text=_("""Coordinates from Google Maps
             or https://openstreetmap.org"""))
-    location = models.PointField(srid=4326, geography=True, null=True,
+    location = models.PointField( srid=4326, null=True,
         default=building_default_location)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
@@ -290,7 +290,7 @@ class PhotoStation(models.Model):
         max_length = 100)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
-    location = models.PointField(srid=4326, geography=True, null=True)
+    location = models.PointField( srid=4326, null=True, blank=True )
 
     def __str__(self):
         return self.title + ' / ' + self.build.title
@@ -306,7 +306,8 @@ class PhotoStation(models.Model):
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.slug})
         return {'id': self.id, 'title': self.title, 'path': path,
-            'fb_path': fb_path, 'lat': self.lat, 'long': self.long,
+            'fb_path': fb_path, 'lat': self.location.coords[1], 
+            'long': self.location.coords[0],
             'intro': self.intro, 'plan_id': self.plan_id}
 
     def get_building_redirection(self):
@@ -322,11 +323,12 @@ class PhotoStation(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(PhotoStation, self.title)
-        if not self.lat:
-            self.lat = self.build.lat
-        if not self.long:
-            self.long = self.build.long
-        self.location = Point( self.long, self.lat )
+        if self.lat and self.long:
+            self.location = Point( self.long, self.lat )
+            self.long = None
+            self.lat = None
+        if not self.location:
+            self.location = self.build.location
         super(PhotoStation, self).save(*args, **kwargs)
 
     class Meta:

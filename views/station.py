@@ -86,6 +86,12 @@ class PhotoStationUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
             raise Http404(_("Station does not belong to Building"))
         return stat
 
+    def get_initial(self):
+        initial = super( PhotoStationUpdateView, self ).get_initial()
+        initial['lat'] = self.object.location.coords[1]
+        initial['long'] = self.object.location.coords[0]
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context = self.add_alerts_to_context(context)
