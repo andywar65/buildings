@@ -1,11 +1,11 @@
 const map_data = JSON.parse(document.getElementById("map_data").textContent);
 
-var base_map = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
   maxZoom: 23,
-  id: 'mapbox/streets-v11',
   tileSize: 512,
   zoomOffset: -1,
+  id: 'mapbox/streets-v11',
   accessToken: map_data.mapbox_token
 });
 
