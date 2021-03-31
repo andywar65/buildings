@@ -6,8 +6,11 @@ from .views import *
 app_name = 'buildings'
 urlpatterns = [
     path('', BuildingListCreateView.as_view(), name = 'building_list'),
-    path(_('<slug>/change/'), BuildingUpdateView.as_view(), name = 'building_change'),
-    path(_('<slug>/delete/'), BuildingDeleteView.as_view(), name = 'building_delete'),
+    path(_('<slug>/'), BuildingRedirectView.as_view(), name = 'building_slug'),
+    path(_('<slug>/change/'), BuildingUpdateView.as_view(),
+        name = 'building_change'),
+    path(_('<slug>/delete/'), BuildingDeleteView.as_view(),
+        name = 'building_delete'),
     path(_('<slug>/set/add/'), PlanSetCreateView.as_view(),
         name = 'planset_create'),
     path('<slug:build_slug>/set/<slug:set_slug>/',

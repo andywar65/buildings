@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
-    FormView,)
+    FormView, RedirectView)
 from django.views.generic.dates import YearArchiveView, DayArchiveView
 from django.utils.crypto import get_random_string
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -25,6 +25,16 @@ class AlertMixin:
             if param in self.request.GET:
                 context[ param ] = self.request.GET[ param ]
         return context
+
+class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
+    permission_required = 'buildings.view_building'
+
+    def get_redirect_url(self, *args, **kwargs):
+        build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+        return (reverse('buildings:building_detail',
+            kwargs={'build_slug': build.slug,
+            'set_slug': build.get_base_slug() }))
 
 class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
@@ -92,7 +102,7 @@ class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.object.slug,
-                'set_slug': 'base_'+str(self.object.id) }) +
+                'set_slug': self.object.get_base_slug() }) +
                 f'?created={self.object.title}&model={_("Building")}')
 
 class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
@@ -214,7 +224,7 @@ class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
         else:
             return (reverse('buildings:building_detail',
                 kwargs={'build_slug': self.object.slug,
-                'set_slug': 'base_'+str(self.object.id) }) +
+                'set_slug': self.object.get_base_slug() }) +
                 f'?modified={self.object.title}&model={_("Building")}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
@@ -414,10 +424,10 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
         if 'cancel' in self.request.POST:
             return reverse('buildings:building_detail',
                 kwargs={'build_slug': self.build.slug,
-                'set_slug': 'base_'+str(self.build.id)})
+                'set_slug': self.build.get_base_slug() })
         return (reverse('buildings:building_detail',
             kwargs={'build_slug': self.build.slug,
-            'set_slug': 'base_'+str(self.build.id)}) +
+            'set_slug': self.build.get_base_slug() }) +
             f'?deleted={self.plan.title}&model={_("Plan")}')
 
 class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
