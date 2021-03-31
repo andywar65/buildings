@@ -261,7 +261,7 @@ def transform_collection(collection, layer_dict, lat, long):
     #from CAD x,y coords to latlong is approximate
     gy = 1 / (6371*2*pi*1000/360)
     gx = 1 / (6371*2*pi*fabs(cos(radians(lat)))*1000/360)
-    handled_objects = ['poly', 'line', 'circle', ]
+    handled_objects = ['poly', 'line', ]#circle has to be turned in polygon
     for key, val in collection.items():
         if not val['ent'] in handled_objects:
             continue
