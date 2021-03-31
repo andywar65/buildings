@@ -13,6 +13,7 @@ from django.contrib.gis.geos import Point
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
 from treebeard.mp_tree import MP_Node
+from colorfield.fields import ColorField
 
 from .map_utils import workflow
 
@@ -72,7 +73,7 @@ class Building(models.Model):
         help_text=_("""Coordinates from Google Maps
             or https://openstreetmap.org"""))
     location = models.PointField( srid=4326, null=True,
-        default=building_default_location)
+        default=building_default_location, geography=True)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
 
@@ -203,6 +204,22 @@ class Plan(models.Model):
         verbose_name_plural = _('Building plans')
         ordering = ('-elev', )
 
+class PlanGeometry(models.Model):
+    plan = models.ForeignKey(Plan, on_delete = models.CASCADE,
+        related_name='plan_geometry', verbose_name = _('Plan geometry'),)
+    color = ColorField(default='#FF0000')
+    popup = models.CharField(_('Popup'),
+        help_text=_("Geometry description in popup"), max_length = 100, )
+    geometry = models.GeometryField( verbose_name = _('Geometry'),
+        help_text=_("can be LineString or Polygon"))
+
+    def __str__(self):
+        return self.plan.title + '-' + str(self.id)
+
+    class Meta:
+        verbose_name = _('Plan geometry')
+        verbose_name_plural = _('Plan geometries')
+
 class PlanSet(MP_Node):
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_planset', verbose_name = _('Building'))
@@ -290,7 +307,8 @@ class PhotoStation(models.Model):
         max_length = 100)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
-    location = models.PointField( srid=4326, null=True, blank=True )
+    location = models.PointField( srid=4326, null=True, blank=True,
+        geography=True )
 
     def __str__(self):
         return self.title + ' / ' + self.build.title
@@ -415,7 +433,7 @@ class Element(models.Model):
         null=True, blank=True, max_length = 200)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
-    location = models.PointField(srid=4326, null=True)
+    location = models.PointField(srid=4326, null=True, geography=True )
     sheet = models.JSONField(_('Data sheet'), null=True, blank=True,
         help_text=_("A dictionary of element features") )
 
