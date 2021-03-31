@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
-from django.contrib.gis.admin import OSMGeoAdmin
+#from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.gis.forms.widgets import OSMWidget
 from django.contrib.gis.db import models
 
@@ -16,9 +16,12 @@ class PlanInline(admin.TabularInline):
     extra = 0
 
 @admin.register(Building)
-class BuildingAdmin(OSMGeoAdmin):
+class BuildingAdmin(admin.ModelAdmin):
     list_display = ('title', 'address', )
     inlines = [ PlanInline,  ]
+    formfield_overrides = {
+        models.PointField: {"widget": OSMWidget},
+    }
 
     fieldsets = (
         (_('Image'), {
@@ -72,9 +75,12 @@ class StationImageInline(admin.TabularInline):
     extra = 0
 
 @admin.register(PhotoStation)
-class PhotoStationAdmin(OSMGeoAdmin):
+class PhotoStationAdmin(admin.ModelAdmin):
     list_display = ( 'title', 'intro', 'build', 'plan', 'location')
     inlines = [ StationImageInline,  ]
+    formfield_overrides = {
+        models.PointField: {"widget": OSMWidget},
+    }
     fieldsets = (
         (_('Building'), {
             'fields': ('build', 'plan' ),
@@ -116,8 +122,11 @@ class FamilyAdmin(TreeAdmin):
 admin.site.register(Family, FamilyAdmin)
 
 @admin.register(Element)
-class ElementAdmin(OSMGeoAdmin):
+class ElementAdmin(admin.ModelAdmin):
     list_display = ( 'id', 'family', 'build', 'plan', 'location')
+    formfield_overrides = {
+        models.PointField: {"widget": OSMWidget},
+    }
 
     fieldsets = (
         (_('Image'), {
@@ -132,5 +141,8 @@ class ElementAdmin(OSMGeoAdmin):
         )
 
 @admin.register(City)
-class CityAdmin(OSMGeoAdmin):
+class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'location')
+    formfield_overrides = {
+        models.PointField: {"widget": OSMWidget},
+    }
