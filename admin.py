@@ -80,8 +80,8 @@ class FamilyAdmin(TreeAdmin):
 admin.site.register(Family, FamilyAdmin)
 
 @admin.register(Element)
-class ElementAdmin(admin.ModelAdmin):
-    list_display = ( 'id', 'family', 'build', 'plan',)
+class ElementAdmin(OSMGeoAdmin):
+    list_display = ( 'id', 'family', 'build', 'plan', 'location')
 
     fieldsets = (
         (_('Image'), {
@@ -91,7 +91,7 @@ class ElementAdmin(admin.ModelAdmin):
             'fields': ('build', 'family', 'plan', 'intro', 'sheet'),
         }),
         (_('Map'), {
-            'fields': ('lat', 'long', ),
+            'fields': ('location', ),
         }),
         )
 

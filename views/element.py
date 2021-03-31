@@ -155,8 +155,8 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         initial = super( ElementCreateView, self ).get_initial()
         initial['build'] = self.build.id
         initial['sheet'] = { 'Feature 1': 'Value 1', 'Feature 2': 'Value 2' }
-        initial['lat'] = self.build.lat
-        initial['long'] = self.build.long
+        initial['lat'] = self.build.location.coords[1]
+        initial['long'] = self.build.location.coords[0]
         return initial
 
     def get_context_data(self, **kwargs):
@@ -210,6 +210,12 @@ class ElementUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
         if not self.build == elem.build:
             raise Http404(_("Element does not belong to Building"))
         return elem
+
+    def get_initial(self):
+        initial = super( ElementUpdateView, self ).get_initial()
+        initial['lat'] = self.object.location.coords[1]
+        initial['long'] = self.object.location.coords[0]
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

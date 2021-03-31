@@ -306,7 +306,7 @@ class PhotoStation(models.Model):
             kwargs={'build_slug': self.build.slug,
             'stat_slug': self.slug})
         return {'id': self.id, 'title': self.title, 'path': path,
-            'fb_path': fb_path, 'lat': self.location.coords[1], 
+            'fb_path': fb_path, 'lat': self.location.coords[1],
             'long': self.location.coords[0],
             'intro': self.intro, 'plan_id': self.plan_id}
 
@@ -415,7 +415,7 @@ class Element(models.Model):
         null=True, blank=True, max_length = 200)
     lat = models.FloatField(_("Latitude"), null=True, blank=True)
     long = models.FloatField(_("Longitude"), null=True, blank=True)
-    location = models.PointField(srid=4326, geography=True, null=True)
+    location = models.PointField(srid=4326, null=True)
     sheet = models.JSONField(_('Data sheet'), null=True, blank=True,
         help_text=_("A dictionary of element features") )
 
@@ -443,16 +443,18 @@ class Element(models.Model):
             kwargs={'slug': self.build.slug,
             'pk': self.id})
         return {'id': self.id, 'title': self.__str__(), 'path': path,
-            'fb_path': fb_path, 'lat': self.lat, 'long': self.long,
+            'fb_path': fb_path, 'lat': self.location.coords[1],
+            'long': self.location.coords[0],
             'intro': self.intro, 'plan_id': self.plan_id,
             'sheet': self.sheet}
 
     def save(self, *args, **kwargs):
-        if not self.lat:
-            self.lat = self.build.lat
-        if not self.long:
-            self.long = self.build.long
-        self.location = Point( self.long, self.lat )
+        if self.lat and self.long:
+            self.location = Point( self.long, self.lat )
+            self.long = None
+            self.lat = None
+        if not self.location:
+            self.location = self.build.location
         sheet = {}
         for ancestor in self.family.get_ancestors():
             if isinstance(ancestor.sheet, dict):

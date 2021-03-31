@@ -27,8 +27,8 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def get_initial(self):
         initial = super( PhotoStationCreateView, self ).get_initial()
         initial['build'] = self.build.id
-        initial['lat'] = self.build.lat
-        initial['long'] = self.build.long
+        initial['lat'] = self.build.location.coords[1]
+        initial['long'] = self.build.location.coords[0]
         return initial
 
     def get_context_data(self, **kwargs):
