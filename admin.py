@@ -54,17 +54,17 @@ class PlanAdmin(admin.ModelAdmin):
         }),
         )
 
-@admin.register(PlanGeometry)
-class PlanGeometryAdmin(OSMGeoAdmin):
-    list_display = ('id', 'plan', )
-    fieldsets = (
-        (None, {
-            'fields': ('plan', 'color', 'popup', ),
-        }),
-        (_('Geometry'), {
-            'fields': ('geometry', ),
-        }),
-        )
+#@admin.register(PlanGeometry)
+#class PlanGeometryAdmin(OSMGeoAdmin):
+    #list_display = ('id', 'plan', )
+    #fieldsets = (
+        #(None, {
+            #'fields': ('plan', 'color', 'popup', ),
+        #}),
+        #(_('Geometry'), {
+            #'fields': ('geometry', ),
+        #}),
+        #)
 
 class StationImageInline(admin.TabularInline):
     model = StationImage

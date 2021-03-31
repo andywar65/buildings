@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon, LineString
 
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
@@ -170,8 +170,25 @@ class Plan(models.Model):
         #upload file
         super(Plan, self).save(*args, **kwargs)
         if self.refresh and self.file:
-            geometry, elements = workflow(self.file, self.build.lat,
-                self.build.long)
+            #clear plan geometries
+            self.plan_geometry.all().delete()
+            geometry, elements = workflow(self.file,
+                self.build.location.coords[1],
+                self.build.location.coords[0])
+            for gm in geometry:
+                first = gm['coords'][0]
+                coords = ()
+                for c in gm['coords']:
+                    coords = coords + ((c[1], c[0]),)
+                if gm['type'] == 'polygon':
+                    coords = coords + ((first[1], first[0]),)
+                    PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
+                        popup=gm['popup'],
+                        geometry=Polygon(coords))
+                elif gm['type'] == 'polyline':
+                    PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
+                        popup=gm['popup'],
+                        geometry=LineString(coords))
             #this is a sloppy workaround to make working test
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(geometry=geometry,
