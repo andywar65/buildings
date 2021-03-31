@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.contrib.gis.admin import OSMGeoAdmin
+from django.contrib.gis.forms.widgets import OSMWidget
+from django.contrib.gis.db import models
 
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City)
+    PlanSet, Family, Element, City, PlanGeometry)
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -27,6 +29,40 @@ class BuildingAdmin(OSMGeoAdmin):
         }),
         (_('Map'), {
             'fields': ('location', 'zoom', ),
+        }),
+        )
+
+class PlanGeometryInline(admin.TabularInline):
+    model = PlanGeometry
+    fields = ('geometry', 'color', 'popup')
+    extra = 0
+    formfield_overrides = {
+        models.GeometryField: {"widget": OSMWidget},
+    }
+
+@admin.register(Plan)
+class PlanAdmin(admin.ModelAdmin):
+    list_display = ('title', 'build', 'elev', 'file')
+    inlines = [ PlanGeometryInline,  ]
+
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'build', 'elev', ),
+        }),
+        (_('File'), {
+            'fields': ('file', 'refresh', ),
+        }),
+        )
+
+@admin.register(PlanGeometry)
+class PlanGeometryAdmin(OSMGeoAdmin):
+    list_display = ('id', 'plan', )
+    fieldsets = (
+        (None, {
+            'fields': ('plan', 'color', 'popup', ),
+        }),
+        (_('Geometry'), {
+            'fields': ('geometry', ),
         }),
         )
 
