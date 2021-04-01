@@ -38,6 +38,7 @@ class PlanCreateForm(ModelForm):
 
     class Meta:
         model = Plan
+        fields = ('__all__')
 
 class PhotoStationCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
