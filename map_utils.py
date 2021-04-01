@@ -271,22 +271,26 @@ def transform_collection(collection, layer_dict, lat, long):
             object['color'] = val['COLOR']
         else:
             object['color'] = layer_dict[object['popup']]
-        object['coords'] = []
+        #TODO prepare coordinates as tuple of longlat tuples
+        #instead of list of latlong lists
+        object['coords'] = ()
         if val['ent'] == 'poly':
+            for i in range(val['90']):
+                object['coords'] = object['coords'] + ((long+val['vx'][i]*gx,
+                    lat-val['vy'][i]*gy),)
             if val['70']:
                 object['type'] = 'polygon'
+                #close ring
+                object['coords'] = object['coords'] + ((long+val['vx'][0]*gx,
+                    lat-val['vy'][0]*gy),)
             else:
-                object['type'] = 'polyline'
-
-            for i in range(val['90']):
-                object['coords'].append([lat-(val['vy'][i]*gy),
-                    long+(val['vx'][i]*gx)])
+                object['type'] = 'linestring'
         elif val['ent'] == 'line':
-            object['type'] = 'polyline'
-            object['coords'].append([lat-(val['20']*gy),
-                long+(val['10']*gx)])
-            object['coords'].append([lat-(val['21']*gy),
-                long+(val['11']*gx)])
+            object['type'] = 'linestring'
+            object['coords'] = object['coords'] + ((long+val['10']*gx,
+                lat-val['20']*gy),)
+            object['coords'] = object['coords'] + ((long+val['11']*gx,
+                lat-val['21']*gy),)
         elif val['ent'] == 'circle':
             object['type'] = 'circle'
             object['coords'] = [lat-(val['20']*gy),

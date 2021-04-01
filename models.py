@@ -190,23 +190,17 @@ class Plan(models.Model):
                 self.build.location.coords[1],
                 self.build.location.coords[0])
             for gm in geometry:
-                first = gm['coords'][0]
-                coords = ()
-                for c in gm['coords']:
-                    coords = coords + ((c[1], c[0]),)
                 if gm['type'] == 'polygon':
-                    coords = coords + ((first[1], first[0]),)
                     PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
                         popup=gm['popup'],
-                        geometry=Polygon(coords))
-                elif gm['type'] == 'polyline':
+                        geometry=Polygon(gm['coords']))
+                elif gm['type'] == 'linestring':
                     PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
                         popup=gm['popup'],
-                        geometry=LineString(coords))
+                        geometry=LineString(gm['coords']))
             #this is a sloppy workaround to make working test
             #geometry refreshed
-            Plan.objects.filter(id=self.id).update(geometry=geometry,
-                refresh=False)
+            Plan.objects.filter(id=self.id).update(refresh=False)
             base_family = Family.objects.get(slug=self.build.get_base_slug())
             for element in elements:
                 try:
@@ -220,11 +214,11 @@ class Plan(models.Model):
                         title=element['family']
                         )
                 elm, created = Element.objects.get_or_create(
-                    lat=element['coords'][0],
-                    long=element['coords'][1],
                     build_id=self.build.id,
                     family_id=family.id,
                     plan_id=self.id,
+                    defaults={'location': Point(element['coords'][1],
+                        element['coords'][0])},
                     )
                 if created:
                     elm.sheet = element['sheet']
