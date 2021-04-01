@@ -12,7 +12,7 @@ from .models import (Building, Plan, PhotoStation, StationImage,
 
 class PlanInline(admin.TabularInline):
     model = Plan
-    fields = ('title', 'elev', 'file', 'refresh', 'geometry', 'visible')
+    fields = ('title', 'elev', 'file', 'refresh', )
     extra = 0
 
 @admin.register(Building)

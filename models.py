@@ -172,7 +172,7 @@ class Plan(models.Model):
             gmd['popup'] = gm.popup
             geometry.append(gmd)
         return {'id': self.id, 'geometry': geometry,
-            'title': self.title, 'visible': self.visible}
+            'title': self.title, }
 
     def save(self, *args, **kwargs):
         if not self.slug:

@@ -38,7 +38,6 @@ class PlanCreateForm(ModelForm):
 
     class Meta:
         model = Plan
-        exclude = ('visible', )
 
 class PhotoStationCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
