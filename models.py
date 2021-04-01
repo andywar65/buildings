@@ -160,7 +160,21 @@ class Plan(models.Model):
         return self.title + ' | ' + str(self.elev)
 
     def map_dictionary(self):
-        return {'id': self.id, 'geometry': self.geometry,
+        geometry = []
+        for gm in self.plan_geometry.all():
+            gmd = {}
+            if gm.geometry.geom_typeid == 1:
+                gmd['type'] = 'polyline'
+            else:
+                gmd['type'] = 'polygon'
+                gmc=gm.geometry.coords[0]
+            gmd['coords'] = []
+            for crd in gmc:
+                gmd['coords'].append([crd[1], crd[0]])
+            gmd['color'] = gm.color
+            gmd['popup'] = gm.popup
+            geometry.append(gmd)
+        return {'id': self.id, 'geometry': geometry,
             'title': self.title, 'visible': self.visible}
 
     def save(self, *args, **kwargs):
