@@ -152,9 +152,6 @@ class Plan(models.Model):
         validators=[FileExtensionValidator(allowed_extensions=['dxf', ])],
         null=True, blank=True )
     refresh = models.BooleanField(_("Refresh geometry"), default=True)
-    geometry = models.JSONField( null=True, blank=True )
-    visible = models.BooleanField(_("Visible"), default=False,
-        help_text=_("Check if plan is immediately visible"))
 
     def __str__(self):
         return self.title + ' | ' + str(self.elev)
@@ -191,11 +188,13 @@ class Plan(models.Model):
                 self.build.location.coords[0])
             for gm in geometry:
                 if gm['type'] == 'polygon':
-                    PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
+                    PlanGeometry.objects.create(plan_id=self.id,
+                        color=gm['color'],
                         popup=gm['popup'],
                         geometry=Polygon(gm['coords']))
                 elif gm['type'] == 'linestring':
-                    PlanGeometry.objects.create(plan_id=self.id, color=gm['color'],
+                    PlanGeometry.objects.create(plan_id=self.id,
+                        color=gm['color'],
                         popup=gm['popup'],
                         geometry=LineString(gm['coords']))
             #this is a sloppy workaround to make working test
