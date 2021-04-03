@@ -53,7 +53,9 @@
       <div class="card-body">
         {% if perms.buildings.add_building %}
         <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-          {% include "buildings/includes/add_buttons_icons.html" %}
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+          </div>
           {% include "buildings/includes/form_errors.html" %}
           {{ form|crispy }}
           <hr class="mb-4">
