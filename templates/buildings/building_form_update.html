@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% load fb_versions %}
 {% load crispy_forms_tags %}
+{% load fb_versions %}
 {% load i18n %}
 {% load static %}
 
@@ -11,42 +11,66 @@
 {% endblock extra-head %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    {% include "buildings/includes/building_alerts.html" %}
-    <h4><strong>{% translate "Modify building" %}</strong></h4>
-    {% if perms.buildings.change_building %}
-    <div class="row">
-      <div class="col col-md-8">
-        {% include "buildings/includes/hello_formula.html" %}
+{% include "buildings/includes/building_alerts.html" %}
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Modify building" %}: </strong>
+        {{ object.title }}</h4>
       </div>
-      <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:building_delete' object.slug %}">{% translate 'Delete' %}</a>
+      <div class="card-body">
+        <div id="mapid" style="height: 600px;"></div>
       </div>
     </div>
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <div class="row"><div class="col">
-      <a href="{{ object.fb_image.url }}">
-        <img src="{% version object.fb_image 'small' %}"
-          alt="{{ object.intro }}">
-      </a>
-    </div></div>
-    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-        <div class="row">
-          <div class="col" id="mapid" style="height: 480px;"></div>
-        </div>
-        <hr class="mb-4">
+  </div>
+  <div class="col">
+    <div class="card-group">
+      {% if perms.buildings.change_building %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="#building-update" title="{% translate "Update" %}">
+          <i class="fa fa-pencil"></i></a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div class="row" id="building-update" style="height: 65px;">
+</div>
+<div class="row" id="building-update-form">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <p>{% translate "Click on the map above to set Latitude, Longitude and Zoom factor." %}</p>
+      </div>
+      <div class="card-body">
+        {% if perms.buildings.change_building %}
+        <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+            <div class="col">
+              <a class="btn btn-danger btn-lg btn-block" href="{% url 'buildings:building_delete' object.slug %}" title="{% translate 'Delete' %}">
+              <i class="fa fa-trash-o"></i></a>
+            </div>
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+          <div class="row"><div class="col">
+            <a href="{{ object.fb_image.url }}">
+              <img src="{% version object.fb_image 'small' %}"
+                alt="{{ object.intro }}">
+            </a>
+          </div></div>
+          {{ form|crispy }}
+          <hr class="mb-4">
           {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to modify buildings" %}.
-    {% endif %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to modify buildings" %}.
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 {% endblock content %}
