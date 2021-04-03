@@ -249,7 +249,7 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:
-            return reverse('buildings:building_detail',
+            return reverse('buildings:building_slug',
                 kwargs={'slug': self.build.slug })
         return (reverse('buildings:building_list') +
             f'?deleted={self.build.title}&model={_("Building")}')
