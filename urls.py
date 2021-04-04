@@ -35,6 +35,8 @@ urlpatterns = [
         PhotoStationUpdateView.as_view(), name = 'station_change'),
     path(_('<slug:build_slug>/station/<slug:stat_slug>/delete/'),
         PhotoStationDeleteView.as_view(), name = 'station_delete'),
+    path(_('<slug:build_slug>/station/<slug:stat_slug>/3d/'),
+        PhotoStation3dView.as_view(), name = 'station_3d'),
     path(_('<slug:build_slug>/station/<slug:stat_slug>/image/<pk>/change'),
         StationImageUpdateView.as_view(), name = 'image_change'),
     path(_('<slug:build_slug>/station/<slug:stat_slug>/image/<pk>/delete'),

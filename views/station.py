@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
-    FormView,)
+    FormView, TemplateView)
 from django.views.generic.dates import YearArchiveView, DayArchiveView
 from django.utils.crypto import get_random_string
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -169,6 +169,23 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.stat.title}&model={_("Photo station")}')
+
+class PhotoStation3dView(TemplateView):
+    template_name = 'buildings/photostation_3d.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(PhotoStation3dView, self).setup(request, *args, **kwargs)
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        self.stat = get_object_or_404( PhotoStation,
+            slug = self.kwargs['stat_slug'] )
+        if not self.build == self.stat.build:
+            raise Http404(_("Station does not belong to Building"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['stat'] = self.stat
+        return context
 
 class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
     CreateView ):
