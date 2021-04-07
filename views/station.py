@@ -170,7 +170,8 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.stat.title}&model={_("Photo station")}')
 
-class PhotoStation3dView(TemplateView):
+class PhotoStation3dView( PermissionRequiredMixin, TemplateView ):
+    permission_required = 'buildings.view_photostation'
     template_name = 'buildings/photostation_3d.html'
 
     def setup(self, request, *args, **kwargs):
