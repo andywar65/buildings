@@ -8,6 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+build/*
+!build/three.module.js
 develop-eggs/
 dist/
 downloads/
