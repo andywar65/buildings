@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0.127.0/build/three.module.js';
+import * as THREE from './three/v0.127.0/build/three.module.js';
 
-import { PointerLockControls } from 'https://unpkg.com/three@0.127.0/examples/jsm/controls/PointerLockControls.js';
+import { PointerLockControls } from './three/v0.127.0/examples/jsm/controls/PointerLockControls.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
