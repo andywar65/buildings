@@ -3,7 +3,20 @@
 
 {% block title %}{{ website.acro }} | {{ stat.title }}{% endblock title %}
 
+{% block extra-head %}
+<link type="text/css" rel="stylesheet" href="{% static 'buildings/css/pointer-block.css'%}">
+{% endblock extra-head %}
+
 {% block content %}
+<div id="blocker">
+		<div id="instructions">
+			<span style="font-size:36px">Click to play</span>
+			<br /><br />
+			Move: WASD<br/>
+			Jump: SPACE<br/>
+			Look: MOUSE
+		</div>
+</div>
 {% endblock content %}
 {% block extra-js %}
   <script type="module" src="{% static 'buildings/js/photostation_3d.js'%}"></script>
