@@ -2,6 +2,8 @@ import * as THREE from './three/v0.127.0/build/three.module.js';
 
 import { PointerLockControls } from './three/v0.127.0/examples/jsm/controls/PointerLockControls.js';
 
+const map_data = JSON.parse(document.getElementById("map_data").textContent);
+
 let camera, scene, renderer, controls;
 
 const objects = [];

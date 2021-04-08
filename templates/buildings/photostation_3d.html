@@ -19,5 +19,6 @@
 </div>
 {% endblock content %}
 {% block extra-js %}
+	{{ map_data|json_script:"map_data"}}
   <script type="module" src="{% static 'buildings/js/photostation_3d.js'%}"></script>
 {% endblock extra-js %}
