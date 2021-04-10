@@ -28,7 +28,10 @@ animate();
 function init() {
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
-	camera.position.y = 10;
+	//scale eye height to 10
+	camera.position.x = map_data.camera[0]*6.25;
+	camera.position.y = map_data.camera[1]*6.25;
+	camera.position.z = map_data.camera[2]*6.25;
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xffffff );

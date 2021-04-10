@@ -355,12 +355,15 @@ class PhotoStation(models.Model):
             'intro': self.intro, 'plan_id': self.plan_id}
 
     def camera_position(self):
-        d = self.location.distance(self.build.location)
-        x = 6371000*(radians(self.build.location.coords[0]-self.location.coords[0]))*cos(radians(self.build.location.coords[1]))
+        x = ( - 6371000 * ( radians( self.build.location.coords[0] -
+            self.location.coords[0] ) ) *
+            cos( radians( self.build.location.coords[1] ) ) )
         y = self.plan.elev if self.plan else 0
-        z = 6371000*(radians(self.build.location.coords[1]-self.location.coords[1]))
-        print( x, y, -z, d )
-        return ( x, y, -z, d )
+        z = ( 6371000 * ( radians( self.build.location.coords[1] -
+            self.location.coords[1] ) ) )
+        #Remember: in threejs Z=Y and Y=-Z
+        #add eye height
+        return ( x, y+1.6, z )
 
     def get_building_redirection(self):
         if self.plan:
