@@ -259,8 +259,8 @@ def transform_collection(collection, layer_dict, lat, long):
     map_objects = []
     #objects are very small with respect to earth, so our transformation
     #from CAD x,y coords to latlong is approximate
-    gy = 1 / (6371*2*pi*1000/360)
-    gx = 1 / (6371*2*pi*fabs(cos(radians(lat)))*1000/360)
+    gy = 1 / (6371*1000)
+    gx = 1 / (6371*1000*fabs(cos(radians(lat))))
     handled_objects = ['poly', 'line', ]#circle has to be turned in polygon
     for key, val in collection.items():
         if not val['ent'] in handled_objects:
@@ -276,21 +276,21 @@ def transform_collection(collection, layer_dict, lat, long):
         object['coords'] = ()
         if val['ent'] == 'poly':
             for i in range(val['90']):
-                object['coords'] = object['coords'] + ((long+val['vx'][i]*gx,
-                    lat-val['vy'][i]*gy),)
+                object['coords'] = object['coords'] + ((long+degrees(val['vx'][i]*gx),
+                    lat-degrees(val['vy'][i]*gy)),)
             if val['70']:
                 object['type'] = 'polygon'
                 #close ring
-                object['coords'] = object['coords'] + ((long+val['vx'][0]*gx,
-                    lat-val['vy'][0]*gy),)
+                object['coords'] = object['coords'] + ((long+degrees(val['vx'][0]*gx),
+                    lat-degrees(val['vy'][0]*gy)),)
             else:
                 object['type'] = 'linestring'
         elif val['ent'] == 'line':
             object['type'] = 'linestring'
-            object['coords'] = object['coords'] + ((long+val['10']*gx,
-                lat-val['20']*gy),)
-            object['coords'] = object['coords'] + ((long+val['11']*gx,
-                lat-val['21']*gy),)
+            object['coords'] = object['coords'] + ((long+degrees(val['10']*gx),
+                lat-degrees(val['20']*gy)),)
+            object['coords'] = object['coords'] + ((long+degrees(val['11']*gx),
+                lat-degrees(val['21']*gy)),)
         elif val['ent'] == 'circle':
             object['type'] = 'circle'
             object['coords'] = [lat-(val['20']*gy),
