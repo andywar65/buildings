@@ -1,4 +1,6 @@
 from datetime import datetime
+from math import radians, sin, cos
+#radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 
 from django.db import models
 from django.conf import settings
@@ -351,6 +353,14 @@ class PhotoStation(models.Model):
             'fb_path': fb_path, 'lat': self.location.coords[1],
             'long': self.location.coords[0],
             'intro': self.intro, 'plan_id': self.plan_id}
+
+    def camera_position(self):
+        d = self.location.distance(self.build.location)
+        x = 6371000*(radians(self.build.location.coords[0]-self.location.coords[0]))*cos(radians(self.build.location.coords[1]))
+        y = self.plan.elev if self.plan else 0
+        z = 6371000*(radians(self.build.location.coords[1]-self.location.coords[1]))
+        print( x, y, -z, d )
+        return ( x, y, -z, d )
 
     def get_building_redirection(self):
         if self.plan:

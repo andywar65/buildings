@@ -186,6 +186,8 @@ class PhotoStation3dView( PermissionRequiredMixin, TemplateView ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['stat'] = self.stat
+        context['map_data'] = {}
+        context['map_data']['camera'] = self.stat.camera_position()
         return context
 
 class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
