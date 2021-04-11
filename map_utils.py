@@ -261,7 +261,7 @@ def transform_collection(collection, layer_dict, lat, long):
     #from CAD x,y coords to latlong is approximate
     gy = 1 / (6371*1000)
     gx = 1 / (6371*1000*fabs(cos(radians(lat))))
-    handled_objects = ['poly', 'line', ]#circle has to be turned in polygon
+    handled_objects = ['poly', 'line', 'circle']
     for key, val in collection.items():
         if not val['ent'] in handled_objects:
             continue
@@ -277,25 +277,33 @@ def transform_collection(collection, layer_dict, lat, long):
         if val['ent'] == 'poly':
             for i in range(val['90']):
                 object['coords'] = object['coords'] + ((long+degrees(val['vx'][i]*gx),
-                    lat-degrees(val['vy'][i]*gy)),)
+                    lat-degrees(val['vy'][i]*gy)), )
             if val['70']:
                 object['type'] = 'polygon'
                 #close ring
                 object['coords'] = object['coords'] + ((long+degrees(val['vx'][0]*gx),
-                    lat-degrees(val['vy'][0]*gy)),)
+                    lat-degrees(val['vy'][0]*gy)), )
             else:
                 object['type'] = 'linestring'
         elif val['ent'] == 'line':
             object['type'] = 'linestring'
             object['coords'] = object['coords'] + ((long+degrees(val['10']*gx),
-                lat-degrees(val['20']*gy)),)
+                lat-degrees(val['20']*gy)), )
             object['coords'] = object['coords'] + ((long+degrees(val['11']*gx),
-                lat-degrees(val['21']*gy)),)
+                lat-degrees(val['21']*gy)), )
         elif val['ent'] == 'circle':
-            object['type'] = 'circle'
-            object['coords'] = [lat-(val['20']*gy),
-                long+(val['10']*gx)]
-            object['radius'] = val['40']
+            object['type'] = 'polygon'
+            segm = 12
+            for i in range( segm ):
+                a = 2*pi*i/segm
+                cx = val['10'] + val['40']*cos(a)
+                cy = val['20'] + val['40']*sin(a)
+                object['coords'] = object['coords'] + (( long+degrees(cx*gx),
+                    lat-degrees(cy*gy)), )
+            cx = val['10'] + val['40']*cos(2*pi)
+            cy = val['20'] + val['40']*sin(2*pi)
+            object['coords'] = object['coords'] + (( long+degrees(cx*gx),
+                lat-degrees(cy*gy)), )
 
         map_objects.append(object)
     return map_objects
