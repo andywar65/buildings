@@ -187,7 +187,8 @@ def store_entity_values(d, key, value):
             d['50'] = 0
         d['P_z'] = d['30']
         d = arbitrary_axis_algorithm(d)
-
+        #now yow have real yaw, pitch an roll values, it would be a good idea
+        #to transform polyline vertices accordingly. Use make_position
     return d
 
 def arbitrary_axis_algorithm(d):
@@ -255,6 +256,23 @@ def arbitrary_axis_algorithm(d):
 
     return d
 
+def make_position(d):
+    sx = sin(radians(-d['210']))
+    cx = cos(radians(-d['210']))
+    sy = sin(radians(-d['220']))
+    cy = cos(radians(-d['220']))
+    sz = sin(radians(-d['50']))
+    cz = cos(radians(-d['50']))
+
+    #Euler angles, yaw (Z), pitch (X), roll (Y)
+    d['10'] = d['10'] + (cy*cz-sx*sy*sz)*d['dx'] + (-cx*sz)*d['dy'] +  (cz*sy+cy*sx*sz)*d['dz']
+    d['20'] = d['20'] + (cz*sx*sy+cy*sz)*d['dx'] +  (cx*cz)*d['dy'] + (-cy*cz*sx+sy*sz)*d['dz']
+    d['30'] = d['30'] +         (-cx*sy)*d['dx'] +     (sx)*d['dy'] +           (cx*cy)*d['dz']
+
+    position = f'{round(d["10"], 4)} {round(d["30"], 4)} {round(d["20"], 4)}'
+
+    return position
+
 def transform_collection(collection, layer_dict, lat, long):
     map_objects = []
     #objects are very small with respect to earth, so our transformation
@@ -271,8 +289,6 @@ def transform_collection(collection, layer_dict, lat, long):
             object['color'] = val['COLOR']
         else:
             object['color'] = layer_dict[object['popup']]
-        #TODO prepare coordinates as tuple of longlat tuples
-        #instead of list of latlong lists
         object['coords'] = ()
         if val['ent'] == 'poly':
             for i in range(val['90']):
@@ -293,13 +309,14 @@ def transform_collection(collection, layer_dict, lat, long):
                 lat-degrees(val['21']*gy)), )
         elif val['ent'] == 'circle':
             object['type'] = 'polygon'
-            segm = 12
+            segm = 12 #change this to have smoother circle
             for i in range( segm ):
                 a = 2*pi*i/segm
                 cx = val['10'] + val['40']*cos(a)
                 cy = val['20'] + val['40']*sin(a)
                 object['coords'] = object['coords'] + (( long+degrees(cx*gx),
                     lat-degrees(cy*gy)), )
+            #close ring
             cx = val['10'] + val['40']*cos(2*pi)
             cy = val['20'] + val['40']*sin(2*pi)
             object['coords'] = object['coords'] + (( long+degrees(cx*gx),
@@ -330,7 +347,7 @@ def workflow(dxf, lat, long):
         layer_dict = get_layer_dict(dxf_f)
         #rewind dxf file
         dxf_f.seek(0)
-        #extract entities according to another project:
+        #extract entities, code from another project:
         #https://github.com/andywar65/architettura/
         collection = parse_dxf(dxf_f)
         #transform to our needings
