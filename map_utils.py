@@ -115,7 +115,7 @@ def parse_dxf(dxf_f):
                 #default values
                 d = {'ent': 'poly', '38': 0,  '39': 0, '41': 1, '42': 1,
                 '43': 1, '50': 0, '70': False, '210': 0, '220': 0, '230': 1,
-                'vx': [], 'vy': [], }
+                'vx': [], 'vy': [], 'vz': [], }
                 flag = 'ent'
                 x += 1
 
@@ -187,8 +187,39 @@ def store_entity_values(d, key, value):
             d['50'] = 0
         d['P_z'] = d['30']
         d = arbitrary_axis_algorithm(d)
-        #now yow have real yaw, pitch an roll values, it would be a good idea
-        #to transform polyline vertices accordingly. Use make_position
+
+    return d
+
+def transform_polyline_vertices(d):
+    #get polyline elevation
+    d['30'] = d.get('38', 0)
+    if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
+        #polyline is parallel to floor (simple case)
+        for i in range( d['90'] ):
+            d['vz'].append(d['30'])
+    else:
+        #polyline is on a plane incident to floor
+        d['vz'].append(d['30'])
+        #angles straight out from a_a_a
+        sx = sin(radians(-d['210']))
+        cx = cos(radians(-d['210']))
+        sy = sin(radians(-d['220']))
+        cy = cos(radians(-d['220']))
+        sz = sin(radians(-d['50']))
+        cz = cos(radians(-d['50']))
+        for i in range( 1, d['90'] ):
+            #difference between vertex and origin
+            dx = d['vx'][i] - d['10']
+            dy = d['vy'][i] - d['20']
+            dz = 0 - d['30']
+            #Euler angles, yaw (Z), pitch (X), roll (Y)
+            d['vx'][i] = ( d['10'] + (cy*cz-sx*sy*sz)*dx +
+                (-cx*sz)*dy + (cz*sy+cy*sx*sz)*dz )
+            d['vy'][i] = ( d['20'] + (cz*sx*sy+cy*sz)*dx +
+                (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
+            d['vz'].append( d['30'] + (-cx*sy)*dx +
+                (sx)*dy + (cx*cy)*dz )
+    print(d)
     return d
 
 def arbitrary_axis_algorithm(d):
@@ -256,23 +287,6 @@ def arbitrary_axis_algorithm(d):
 
     return d
 
-def make_position(d):
-    sx = sin(radians(-d['210']))
-    cx = cos(radians(-d['210']))
-    sy = sin(radians(-d['220']))
-    cy = cos(radians(-d['220']))
-    sz = sin(radians(-d['50']))
-    cz = cos(radians(-d['50']))
-
-    #Euler angles, yaw (Z), pitch (X), roll (Y)
-    d['10'] = d['10'] + (cy*cz-sx*sy*sz)*d['dx'] + (-cx*sz)*d['dy'] +  (cz*sy+cy*sx*sz)*d['dz']
-    d['20'] = d['20'] + (cz*sx*sy+cy*sz)*d['dx'] +  (cx*cz)*d['dy'] + (-cy*cz*sx+sy*sz)*d['dz']
-    d['30'] = d['30'] +         (-cx*sy)*d['dx'] +     (sx)*d['dy'] +           (cx*cy)*d['dz']
-
-    position = f'{round(d["10"], 4)} {round(d["30"], 4)} {round(d["20"], 4)}'
-
-    return position
-
 def transform_collection(collection, layer_dict, lat, long):
     map_objects = []
     #objects are very small with respect to earth, so our transformation
@@ -291,6 +305,7 @@ def transform_collection(collection, layer_dict, lat, long):
             object['color'] = layer_dict[object['popup']]
         object['coords'] = ()
         if val['ent'] == 'poly':
+            transform_polyline_vertices(val)
             for i in range(val['90']):
                 object['coords'] = object['coords'] + ((long+degrees(val['vx'][i]*gx),
                     lat-degrees(val['vy'][i]*gy)), )
@@ -309,7 +324,7 @@ def transform_collection(collection, layer_dict, lat, long):
                 lat-degrees(val['21']*gy)), )
         elif val['ent'] == 'circle':
             object['type'] = 'polygon'
-            segm = 12 #change this to have smoother circle
+            segm = 12 #increase this to have smoother circle
             for i in range( segm ):
                 a = 2*pi*i/segm
                 cx = val['10'] + val['40']*cos(a)
