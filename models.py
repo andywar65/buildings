@@ -238,6 +238,9 @@ class PlanGeometry(models.Model):
         help_text=_("Geometry description in popup"), max_length = 100, )
     geometry = models.GeometryField( verbose_name = _('Geometry'),
         help_text=_("can be LineString or Polygon"))
+    geometryz = models.GeometryField( dim=3, null=True )
+    is3d = models.BooleanField(_("Is 3D"), default=False,
+        help_text=_("Use third dimension in camera view"))
 
     def __str__(self):
         return self.plan.title + '-' + str(self.id)

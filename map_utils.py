@@ -219,7 +219,6 @@ def transform_polyline_vertices(d):
                 (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
             d['vz'].append( d['30'] + (-cx*sy)*dx +
                 (sx)*dy + (cx*cy)*dz )
-    print(d)
     return d
 
 def arbitrary_axis_algorithm(d):
