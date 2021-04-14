@@ -193,12 +193,14 @@ class Plan(models.Model):
                     PlanGeometry.objects.create(plan_id=self.id,
                         color=gm['color'],
                         popup=gm['popup'],
-                        geometry=Polygon(gm['coords']))
+                        geometry=Polygon(gm['coords']),
+                        geometryz=Polygon(gm['coordz']))
                 elif gm['type'] == 'linestring':
                     PlanGeometry.objects.create(plan_id=self.id,
                         color=gm['color'],
                         popup=gm['popup'],
-                        geometry=LineString(gm['coords']))
+                        geometry=LineString(gm['coords']),
+                        geometryz=LineString(gm['coordz']))
             #this is a sloppy workaround to make working test
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(refresh=False)
