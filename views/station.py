@@ -188,6 +188,7 @@ class PhotoStation3dView( PermissionRequiredMixin, TemplateView ):
         context['stat'] = self.stat
         context['map_data'] = {}
         context['map_data']['camera'] = self.stat.camera_position()
+        context['map_data']['geom'] = self.build.get_3d_geometries()
         return context
 
 class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,

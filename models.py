@@ -107,6 +107,32 @@ class Building(models.Model):
         parent = self.building_family.get(slug=self.get_base_slug())
         return Family.get_annotated_list(parent=parent)
 
+    def get_3d_geometries(self):
+        bx = self.location.coords[0]
+        bcos = cos( radians( self.location.coords[1] ) )
+        bz = self.location.coords[1]
+        geom = []
+        for plan in self.building_plan.all():
+            for gm in plan.plan_geometry.all():
+                gmd = {}
+                gmd['id'] = 'geom_' + str(gm.id)
+                if gm.geometry.geom_typeid == 1:
+                    gmd['type'] = 'polyline'
+                    gmc = gm.geometryz.coords
+                else:
+                    gmd['type'] = 'polygon'
+                    gmc=gm.geometryz.coords[0]
+                gmd['color'] = gm.color
+                gmd['popup'] = gm.popup
+                gmd['coords'] = []
+                for crd in gmc:
+                    #Remember: in threejs Z=Y and Y=-Z
+                    x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
+                    z = ( 6371000 * ( radians( crd[1] - bz ) ) )
+                    gmd['coords'].append( ( x, crd[2], z ) )
+                geom.append(gmd)
+        return geom
+
     def save(self, *args, **kwargs):
         if not self.title:
             self.title = _('Building-%(date)s') % {
