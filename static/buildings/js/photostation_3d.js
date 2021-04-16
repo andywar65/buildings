@@ -284,3 +284,21 @@ function animate() {
 	renderer.render( scene, camera );
 
 }
+
+//var vertices = [your vertices array];
+//var holes = [];
+//var triangles, mesh;
+//var geometry = new THREE.Geometry();
+//var material = new THREE.MeshBasicMaterial();
+
+//geometry.vertices = vertices;
+
+//triangles = THREE.ShapeUtils.triangulateShape( vertices, holes );
+
+//for( var i = 0; i < triangles.length; i++ ){
+
+    //geometry.faces.push( new THREE.Face3( triangles[i][0], triangles[i][1], triangles[i][2] ));
+
+//}
+
+//mesh = new THREE.Mesh( geometry, material );
