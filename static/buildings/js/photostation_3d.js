@@ -150,20 +150,15 @@ function init() {
 		switch ( gm.type ){
 			case 'polygon':
 				let contour = [];
+				let i;
 				for( i of gm.coords ){
 					contour.push( new THREE.Vector2( i[0],  i[1] ) );
 				}
-				let holes = [];
-				let triangles, mesh;
-				let polygon = new THREE.BufferGeometry();
-				let material = new THREE.MeshBasicMaterial();
-
-				polygon.vertices = contour;
-				triangles = THREE.ShapeUtils.triangulateShape( contour, holes );
-				for( var i = 0; i < triangles.length; i++ ){
-				    polygon.faces.push( new THREE.Face3( triangles[i][0], triangles[i][1], triangles[i][2] ));
-				}
-				mesh = new THREE.Mesh( polygon, material );
+				let objshape = new THREE.Shape( contour );
+				let objgeometry = new THREE.ShapeGeometry( objshape )
+				let material = new THREE.MeshBasicMaterial( { color: gm.color } );
+				let mesh = new THREE.Mesh( objgeometry, material );
+				mesh.rotateX( - Math.PI / 2 );
 				scene.add(mesh)
 				break;
 			case 'polyline':
