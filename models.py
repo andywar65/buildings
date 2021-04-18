@@ -108,6 +108,9 @@ class Building(models.Model):
         return Family.get_annotated_list(parent=parent)
 
     def get_3d_geometries(self):
+        #scale factor
+        sc = 6.25
+        #building location
         bx = self.location.coords[0]
         bcos = cos( radians( self.location.coords[1] ) )
         bz = self.location.coords[1]
@@ -115,21 +118,25 @@ class Building(models.Model):
         for plan in self.building_plan.all():
             for gm in plan.plan_geometry.all():
                 gmd = {}
+                gmd['coords'] = []
                 gmd['id'] = 'geom_' + str(gm.id)
+                gmd['color'] = gm.color
                 if gm.geometry.geom_typeid == 1:
                     gmd['type'] = 'polyline'
                     gmc = gm.geometryz.coords
+                    for crd in gmc:
+                        #Remember: in threejs Z=Y and Y=-Z
+                        x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
+                        z = ( 6371000 * ( radians( crd[1] - bz ) ) )
+                        gmd['coords'].append( ( x*sc, crd[2]*sc, z*sc ) )
                 else:
                     gmd['type'] = 'polygon'
-                    gmc=gm.geometryz.coords[0]
-                gmd['color'] = gm.color
-                gmd['popup'] = gm.popup
-                gmd['coords'] = []
-                for crd in gmc:
-                    #Remember: in threejs Z=Y and Y=-Z
-                    x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
-                    z = ( 6371000 * ( radians( crd[1] - bz ) ) )
-                    gmd['coords'].append( ( x, crd[2], z ) )
+                    gmc=gm.geometry.coords[0]
+                    gmd['elev'] = plan.elev
+                    for crd in gmc:
+                        x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
+                        z = ( 6371000 * ( radians( crd[1] - bz ) ) )
+                        gmd['coords'].append( ( x*sc, z*sc ) )
                 geom.append(gmd)
         return geom
 
