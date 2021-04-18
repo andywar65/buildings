@@ -136,44 +136,73 @@ function init() {
 
 	// floor
 
-	const geometry = new THREE.PlaneGeometry( 2000, 2000, 32 );
-	geometry.rotateX( - Math.PI / 2 );
-	const material = new THREE.MeshBasicMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
-	const floor = new THREE.Mesh( geometry, material );
+	let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
+	floorGeometry.rotateX( - Math.PI / 2 );
+
+	// vertex displacement
+
+	let position = floorGeometry.attributes.position;
+
+	for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+		vertex.fromBufferAttribute( position, i );
+
+		vertex.x += Math.random() * 20 - 10;
+		vertex.y += Math.random() * 2;
+		vertex.z += Math.random() * 20 - 10;
+
+		position.setXYZ( i, vertex.x, vertex.y, vertex.z );
+
+	}
+
+	floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+
+	position = floorGeometry.attributes.position;
+	const colorsFloor = [];
+
+	for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+		color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+		colorsFloor.push( color.r, color.g, color.b );
+
+	}
+
+	floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
+
+	const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } );
+
+	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 	scene.add( floor );
 
-	let position = geometry.attributes.position;
-
 	// objects
-	let gm;
-	for (gm of map_data.geom){
-		switch ( gm.type ){
-			case 'polygon':
-				let contour = [];
-				for( i of gm.coords ){
-					contour.push( new THREE.Vector2( i[0],  i[1] ) );
-				}
-				let holes = [];
-				let triangles, mesh;
-				let polygon = new THREE.BufferGeometry();
-				let material = new THREE.MeshBasicMaterial();
 
-				polygon.vertices = contour;
-				triangles = THREE.ShapeUtils.triangulateShape( contour, holes );
-				for( var i = 0; i < triangles.length; i++ ){
-				    polygon.faces.push( new THREE.Face3( triangles[i][0], triangles[i][1], triangles[i][2] ));
-				}
-				mesh = new THREE.Mesh( polygon, material );
-				scene.add(mesh)
-				break;
-			case 'polyline':
-				//var object = L.polyline( obj.coords, {color: obj.color});
-				break;
-			case 'circle':
-				//var object = L.circle( obj.coords, {radius: obj.radius,
-					//color: obj.color, fillcolor: obj.color, fillOpacity: 0.5});
-				break;
-		}
+	const boxGeometry = new THREE.BoxGeometry( 20, 20, 20 ).toNonIndexed();
+
+	position = boxGeometry.attributes.position;
+	const colorsBox = [];
+
+	for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+		color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+		colorsBox.push( color.r, color.g, color.b );
+
+	}
+
+	boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
+
+	for ( let i = 0; i < 500; i ++ ) {
+
+		const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
+		boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+
+		const box = new THREE.Mesh( boxGeometry, boxMaterial );
+		box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
+		box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
+		box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
+
+		scene.add( box );
+		objects.push( box );
+
 	}
 
 	//
@@ -255,3 +284,21 @@ function animate() {
 	renderer.render( scene, camera );
 
 }
+
+//var vertices = [your vertices array];
+//var holes = [];
+//var triangles, mesh;
+//var geometry = new THREE.Geometry();
+//var material = new THREE.MeshBasicMaterial();
+
+//geometry.vertices = vertices;
+
+//triangles = THREE.ShapeUtils.triangulateShape( vertices, holes );
+
+//for( var i = 0; i < triangles.length; i++ ){
+
+    //geometry.faces.push( new THREE.Face3( triangles[i][0], triangles[i][1], triangles[i][2] ));
+
+//}
+
+//mesh = new THREE.Mesh( geometry, material );
