@@ -280,6 +280,11 @@ class PlanGeometry(models.Model):
     def __str__(self):
         return self.plan.title + '-' + str(self.id)
 
+    def save(self, *args, **kwargs):
+        if not self.geomjson:
+            self.is3d = False
+        super(PlanGeometry, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name = _('Plan geometry')
         verbose_name_plural = _('Plan geometries')
