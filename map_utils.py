@@ -190,37 +190,6 @@ def store_entity_values(d, key, value):
 
     return d
 
-def transform_polyline_vertices(d):
-    #get polyline elevation
-    d['30'] = d.get('38', 0)
-    if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
-        #polyline is parallel to floor (simple case)
-        for i in range( d['90'] ):
-            d['vz'].append(d['30'])
-    else:
-        #polyline is on a plane incident to floor
-        d['vz'].append(d['30'])
-        #angles straight out from a_a_a
-        sx = sin(radians(-d['210']))
-        cx = cos(radians(-d['210']))
-        sy = sin(radians(-d['220']))
-        cy = cos(radians(-d['220']))
-        sz = sin(radians(-d['50']))
-        cz = cos(radians(-d['50']))
-        for i in range( 1, d['90'] ):
-            #difference between vertex and origin
-            dx = d['vx'][i] - d['10']
-            dy = d['vy'][i] - d['20']
-            dz = 0 - d['30']
-            #Euler angles, yaw (Z), pitch (X), roll (Y)
-            d['vx'][i] = ( d['10'] + (cy*cz-sx*sy*sz)*dx +
-                (-cx*sz)*dy + (cz*sy+cy*sx*sz)*dz )
-            d['vy'][i] = ( d['20'] + (cz*sx*sy+cy*sz)*dx +
-                (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
-            d['vz'].append( d['30'] + (-cx*sy)*dx +
-                (sx)*dy + (cx*cy)*dz )
-    return d
-
 def arbitrary_axis_algorithm(d):
     #see if OCS z vector is close to world Z axis
     if fabs(d['Az_1']) < (1/64) and fabs(d['Az_2']) < (1/64):
@@ -293,64 +262,118 @@ def transform_collection(collection, layer_dict, lat, long):
     gy = 1 / (6371*1000)
     gx = 1 / (6371*1000*fabs(cos(radians(lat))))
     handled_objects = ['poly', 'line', 'circle']
-    for key, val in collection.items():
-        if not val['ent'] in handled_objects:
+    for key, d in collection.items():
+        if not d['ent'] in handled_objects:
             continue
         object = {}
-        object['popup'] = val['layer']
-        if 'COLOR' in val:
-            object['color'] = val['COLOR']
+        object['popup'] = d['layer']
+        if 'COLOR' in d:
+            object['color'] = d['COLOR']
         else:
             object['color'] = layer_dict[object['popup']]
+        #coordinates for postgis geometry
         object['coords'] = ()
-        object['coordz'] = ()
-        if val['ent'] == 'poly':
-            transform_polyline_vertices(val)
-            for i in range(val['90']):
-                object['coords'] = object['coords'] + ((long+degrees(val['vx'][i]*gx),
-                    lat-degrees(val['vy'][i]*gy)), )
-                object['coordz'] = object['coordz'] + ((long+degrees(val['vx'][i]*gx),
-                    lat-degrees(val['vy'][i]*gy), val['vz'][i] ), )
-            if val['70']:
+        #coordinates, position and rotation for threejs
+        object['coordz'] = {}
+        if d['ent'] == 'poly':
+            #is it closed or open
+            if d['70']:
                 object['type'] = 'polygon'
-                #close ring
-                object['coords'] = object['coords'] + ((long+degrees(val['vx'][0]*gx),
-                    lat-degrees(val['vy'][0]*gy)), )
-                object['coordz'] = object['coordz'] + ((long+degrees(val['vx'][0]*gx),
-                    lat-degrees(val['vy'][0]*gy), val['vz'][0] ), )
             else:
                 object['type'] = 'linestring'
-        elif val['ent'] == 'line':
+            if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
+                #simple case, polyline is parallel to floor, no coordz
+                for i in range(d['90']):
+                    object['coords'] = object['coords'] + (
+                        (long+degrees(d['vx'][i]*gx),
+                        lat-degrees(d['vy'][i]*gy)),
+                        )
+                #eventually close ring
+                if d['70']:
+                    object['coords'] = object['coords'] + (
+                        (long+degrees(d['vx'][0]*gx),
+                        lat-degrees(d['vy'][0]*gy)),
+                        )
+            else:
+                #polyline is incident to floor
+                #polyline elevation
+                d['30'] = d.get('38', 0)
+                #prepare data for threejs
+                coords = []
+                for i in range(d['90']):
+                    coords.append(
+                        ( d['vx'][i]-d['vx'][0] , d['vy'][i]-d['vy'][0] )
+                        )
+                #eventually close ring
+                if d['70']:
+                    coords.append( ( 0,0 ) )
+                object['coordz']['coords'] = coords
+                object['coordz']['position'] = ( d['10'], d['20'], d['30'] )
+                object['coordz']['rotation'] = ( d['210'], d['220'], d['50'] )
+                #prepare transformed polyline for postgis
+                transform_polyline_vertices(d)
+                for i in range(d['90']):
+                    object['coords'] = object['coords'] + (
+                        (long+degrees(d['vx'][i]*gx),
+                        lat-degrees(d['vy'][i]*gy)),
+                        )
+                #eventually close ring
+                if d['70']:
+                    object['coords'] = object['coords'] + (
+                        (long+degrees(d['vx'][0]*gx),
+                        lat-degrees(d['vy'][0]*gy)),
+                        )
+        elif d['ent'] == 'line':
             object['type'] = 'linestring'
-            object['coords'] = object['coords'] + ((long+degrees(val['10']*gx),
-                lat-degrees(val['20']*gy)), )
-            object['coordz'] = object['coordz'] + ((long+degrees(val['10']*gx),
-                lat-degrees(val['20']*gy), val['30'] ), )
-            object['coords'] = object['coords'] + ((long+degrees(val['11']*gx),
-                lat-degrees(val['21']*gy)), )
-            object['coordz'] = object['coordz'] + ((long+degrees(val['11']*gx),
-                lat-degrees(val['21']*gy), val['31'] ), )
-        elif val['ent'] == 'circle':
+            object['coords'] = object['coords'] + ((long+degrees(d['10']*gx),
+                lat-degrees(d['20']*gy)), )
+            object['coords'] = object['coords'] + ((long+degrees(d['11']*gx),
+                lat-degrees(d['21']*gy)), )
+            coords = []
+            coords.append( ( d['10'], d['20'], d['30'] ) )
+            coords.append( ( d['11'], d['21'], d['31'] ) )
+            object['coordz']['coords'] = coords
+        elif d['ent'] == 'circle':
             object['type'] = 'polygon'
-            segm = 12 #increase this to have smoother circle
+            segm = 36 #increase this to have smoother circle
             for i in range( segm ):
                 a = 2*pi*i/segm
-                cx = val['10'] + val['40']*cos(a)
-                cy = val['20'] + val['40']*sin(a)
+                cx = d['10'] + d['40']*cos(a)
+                cy = d['20'] + d['40']*sin(a)
                 object['coords'] = object['coords'] + (( long+degrees(cx*gx),
                     lat-degrees(cy*gy)), )
-                object['coordz'] = object['coordz'] + (( long+degrees(cx*gx),
-                    lat-degrees(cy*gy), 0 ), )
             #close ring
-            cx = val['10'] + val['40']*cos(2*pi)
-            cy = val['20'] + val['40']*sin(2*pi)
+            cx = d['10'] + d['40']*cos(2*pi)
+            cy = d['20'] + d['40']*sin(2*pi)
             object['coords'] = object['coords'] + (( long+degrees(cx*gx),
                 lat-degrees(cy*gy)), )
-            object['coordz'] = object['coordz'] + (( long+degrees(cx*gx),
-                lat-degrees(cy*gy), 0 ), )
 
         map_objects.append(object)
     return map_objects
+
+def transform_polyline_vertices(d):
+    d['vz'].append(d['30'])
+    #angles straight out from a_a_a
+    sx = sin(radians(-d['210']))
+    cx = cos(radians(-d['210']))
+    sy = sin(radians(-d['220']))
+    cy = cos(radians(-d['220']))
+    sz = sin(radians(-d['50']))
+    cz = cos(radians(-d['50']))
+    for i in range( 1, d['90'] ):
+        #difference between vertex and origin
+        dx = d['vx'][i] - d['10']
+        dy = d['vy'][i] - d['20']
+        dz = 0 - d['30']
+        #Euler angles, yaw (Z), pitch (X), roll (Y)
+        d['vx'][i] = ( d['10'] + (cy*cz-sx*sy*sz)*dx +
+            (-cx*sz)*dy + (cz*sy+cy*sx*sz)*dz )
+        d['vy'][i] = ( d['20'] + (cz*sx*sy+cy*sz)*dx +
+            (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
+        d['vz'].append( d['30'] + (-cx*sy)*dx +
+            (sx)*dy + (cx*cy)*dz )
+
+    return d
 
 def extract_elements(collection, layer_dict, lat, long):
     map_elements = []
@@ -358,13 +381,13 @@ def extract_elements(collection, layer_dict, lat, long):
     #from CAD x,y coords to latlong is approximate
     gy = 1 / (6371*2*pi*1000/360)
     gx = 1 / (6371*2*pi*fabs(cos(radians(lat)))*1000/360)
-    for key, val in collection.items():
-        if not val['ent'] == 'insert':
+    for key, d in collection.items():
+        if not d['ent'] == 'insert':
             continue
         element = {}
-        element['coords'] = [lat-(val['20']*gy), long+(val['10']*gx)]
-        element['family'] = val['2']
-        element['sheet'] = val['sheet']
+        element['coords'] = [lat-(d['20']*gy), long+(d['10']*gx)]
+        element['family'] = d['2']
+        element['sheet'] = d['sheet']
         map_elements.append(element)
     return map_elements
 
