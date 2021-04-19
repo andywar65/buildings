@@ -123,7 +123,7 @@ class Building(models.Model):
                 gmd['color'] = gm.color
                 if gm.geometry.geom_typeid == 1:
                     gmd['type'] = 'polyline'
-                    gmc = gm.geometryz.coords
+                    gmc = gm.geometry.coords
                     for crd in gmc:
                         #Remember: in threejs Z=Y and Y=-Z
                         x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
@@ -227,13 +227,13 @@ class Plan(models.Model):
                         color=gm['color'],
                         popup=gm['popup'],
                         geometry=Polygon(gm['coords']),
-                        geometryz=Polygon(gm['coordz']))
+                        geomjson=gm['coordz'],)
                 elif gm['type'] == 'linestring':
                     PlanGeometry.objects.create(plan_id=self.id,
                         color=gm['color'],
                         popup=gm['popup'],
                         geometry=LineString(gm['coords']),
-                        geometryz=LineString(gm['coordz']))
+                        geomjson=gm['coordz'],)
             #this is a sloppy workaround to make working test
             #geometry refreshed
             Plan.objects.filter(id=self.id).update(refresh=False)
@@ -273,7 +273,7 @@ class PlanGeometry(models.Model):
         help_text=_("Geometry description in popup"), max_length = 100, )
     geometry = models.GeometryField( verbose_name = _('Geometry'),
         help_text=_("can be LineString or Polygon"))
-    geometryz = models.GeometryField( dim=3, null=True )
+    geomjson = models.JSONField( null=True )
     is3d = models.BooleanField(_("Is 3D"), default=False,
         help_text=_("Use third dimension in camera view"))
 
