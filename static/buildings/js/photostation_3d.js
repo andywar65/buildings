@@ -157,7 +157,10 @@ function init() {
 				}
 				let objshape = new THREE.Shape( contour );
 				let objgeometry = new THREE.ShapeGeometry( objshape )
-				let material = new THREE.MeshBasicMaterial( { color: gm.color, side: THREE.DoubleSide } );
+				let material = new THREE.MeshBasicMaterial( {
+					color: gm.color,
+					side: THREE.DoubleSide
+				 } );
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				let pos = gm.position

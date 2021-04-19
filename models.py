@@ -128,8 +128,8 @@ class Building(models.Model):
                     gmd['type'] = gm.geomjson['type']
                     gmd['position'] = (
                         gm.geomjson['position'][0]*sc,
-                        gm.geomjson['position'][1]*sc,
-                        gm.geomjson['position'][2]*sc
+                        gm.geomjson['position'][2]*sc,
+                        gm.geomjson['position'][1]*sc
                         )
                     gmd['rotation'] = (
                         radians(gm.geomjson['rotation'][0]),
@@ -143,7 +143,7 @@ class Building(models.Model):
                     else:
                         gmd['type'] = 'polygon'
                         gmc=gm.geometry.coords[0]
-                    gmd['position'] = ( 0, plan.elev, 0 )
+                    gmd['position'] = ( 0, plan.elev*sc, 0 )
                     for crd in gmc:
                         x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
                         z = ( 6371000 * ( radians( crd[1] - bz ) ) )
