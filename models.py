@@ -197,6 +197,7 @@ class Plan(models.Model):
             gmd = {}
             if gm.geometry.geom_typeid == 1:
                 gmd['type'] = 'polyline'
+                gmc=gm.geometry.coords
             else:
                 gmd['type'] = 'polygon'
                 gmc=gm.geometry.coords[0]
