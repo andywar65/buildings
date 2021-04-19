@@ -132,9 +132,9 @@ class Building(models.Model):
                         gm.geomjson['position'][2]*sc
                         )
                     gmd['rotation'] = (
-                        gm.geomjson['rotation'][0],
-                        gm.geomjson['rotation'][1],
-                        gm.geomjson['rotation'][2]
+                        radians(gm.geomjson['rotation'][0]),
+                        radians(gm.geomjson['rotation'][1]),
+                        radians(gm.geomjson['rotation'][2])
                         )
                 else:
                     if gm.geometry.geom_typeid == 1:

@@ -140,6 +140,7 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshBasicMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
+	floor.position.set( 0, -.01, 0 )
 	scene.add( floor );
 
 	let position = geometry.attributes.position;
@@ -156,9 +157,14 @@ function init() {
 				}
 				let objshape = new THREE.Shape( contour );
 				let objgeometry = new THREE.ShapeGeometry( objshape )
-				let material = new THREE.MeshBasicMaterial( { color: gm.color } );
+				let material = new THREE.MeshBasicMaterial( { color: gm.color, side: THREE.DoubleSide } );
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
+				let pos = gm.position
+				mesh.position.set( pos[0], pos[1], pos[2], );
+				mesh.rotateZ( gm.rotation[2] );
+				mesh.rotateX( gm.rotation[0] );
+				mesh.rotateY( gm.rotation[1] );
 				scene.add(mesh)
 				break;
 			case 'polyline':
