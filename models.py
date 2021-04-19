@@ -121,18 +121,29 @@ class Building(models.Model):
                 gmd['coords'] = []
                 gmd['id'] = 'geom_' + str(gm.id)
                 gmd['color'] = gm.color
-                if gm.geometry.geom_typeid == 1:
-                    gmd['type'] = 'polyline'
-                    gmc = gm.geometry.coords
-                    for crd in gmc:
-                        #Remember: in threejs Z=Y and Y=-Z
-                        x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
-                        z = ( 6371000 * ( radians( crd[1] - bz ) ) )
-                        gmd['coords'].append( ( x*sc, crd[2]*sc, z*sc ) )
+                gmd['rotation'] = (0,0,0)
+                if gm.is3d:
+                    for crd in gm.geomjson['coords']:
+                        gmd['coords'].append( ( crd[0]*sc, crd[1]*sc ) )
+                    gmd['type'] = gm.geomjson['type']
+                    gmd['position'] = (
+                        gm.geomjson['position'][0]*sc,
+                        gm.geomjson['position'][1]*sc,
+                        gm.geomjson['position'][2]*sc
+                        )
+                    gmd['rotation'] = (
+                        gm.geomjson['rotation'][0],
+                        gm.geomjson['rotation'][1],
+                        gm.geomjson['rotation'][2]
+                        )
                 else:
-                    gmd['type'] = 'polygon'
-                    gmc=gm.geometry.coords[0]
-                    gmd['elev'] = plan.elev
+                    if gm.geometry.geom_typeid == 1:
+                        gmd['type'] = 'polyline'
+                        gmc = gm.geometry.coords
+                    else:
+                        gmd['type'] = 'polygon'
+                        gmc=gm.geometry.coords[0]
+                    gmd['position'] = ( 0, plan.elev, 0 )
                     for crd in gmc:
                         x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
                         z = ( 6371000 * ( radians( crd[1] - bz ) ) )

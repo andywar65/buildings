@@ -307,6 +307,9 @@ def transform_collection(collection, layer_dict, lat, long):
                 #eventually close ring
                 if d['70']:
                     coords.append( ( 0,0 ) )
+                    object['coordz']['type'] = 'polygon'
+                else:
+                    object['coordz']['type'] = 'polyline'
                 object['coordz']['coords'] = coords
                 object['coordz']['position'] = ( d['10'], d['20'], d['30'] )
                 object['coordz']['rotation'] = ( d['210'], d['220'], d['50'] )
