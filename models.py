@@ -143,6 +143,8 @@ class Building(models.Model):
                             radians(gm.geomjson['rotation'][1]),
                             radians(gm.geomjson['rotation'][2])
                             )
+                    if 'depth' in gm.geomjson:
+                        gmd['depth'] = gm.geomjson['depth']*sc
                 else:
                     if gm.geometry.geom_typeid == 1:
                         gmd['type'] = 'polyline'

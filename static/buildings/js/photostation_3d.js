@@ -156,11 +156,20 @@ function init() {
 					contour.push( new THREE.Vector2( i[0],  i[1] ) );
 				}
 				let objshape = new THREE.Shape( contour );
-				let objgeometry = new THREE.ShapeGeometry( objshape )
-				let material = new THREE.MeshBasicMaterial( {
-					color: gm.color,
-					side: THREE.DoubleSide
-				 } );
+				let objgeometry, material;
+				if (gm.depth){
+					let extrudeSettings = { amount: gm.depth, bevelEnabled: false };
+					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
+					material = new THREE.MeshBasicMaterial( {
+						color: gm.color
+					 } );
+				} else {
+					objgeometry = new THREE.ShapeGeometry( objshape )
+					material = new THREE.MeshBasicMaterial( {
+						color: gm.color,
+						side: THREE.DoubleSide
+					 } );
+				}
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				let pos = gm.position

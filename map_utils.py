@@ -276,8 +276,8 @@ def transform_collection(collection, layer_dict, lat, long):
         #coordinates, position and rotation for threejs
         object['coordz'] = {}
         if d['ent'] == 'poly':
-            if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
-                #simple case, polyline is parallel to floor, no coordz
+            if d['50'] == 0 and d['210'] == 0 and d['220'] == 0 and d['39'] == 0:
+                #simple case, polyline is flat and parallel to floor, no coordz
                 for i in range(d['90']):
                     object['coords'] = object['coords'] + (
                         (long+degrees(d['vx'][i]*gx),
@@ -313,6 +313,7 @@ def transform_collection(collection, layer_dict, lat, long):
                 object['coordz']['coords'] = coords
                 object['coordz']['position'] = ( d['10'], d['20'], d['30'] )
                 object['coordz']['rotation'] = ( d['210'], d['220'], d['50'] )
+                object['coordz']['depth'] = d.get('39', 0)
                 #prepare transformed polyline for postgis
                 transform_polyline_vertices(d)
                 for i in range(d['90']):
