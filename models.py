@@ -124,8 +124,12 @@ class Building(models.Model):
                 gmd['position'] = (0,0,0)
                 gmd['rotation'] = (0,0,0)
                 if gm.is3d:
-                    for crd in gm.geomjson['coords']:
-                        gmd['coords'].append( ( crd[0]*sc, crd[1]*sc ) )
+                    if gm.geomjson['type'] == 'line':
+                        for crd in gm.geomjson['coords']:
+                            gmd['coords'].append( ( crd[0]*sc, crd[1]*sc , crd[2]*sc) )
+                    else:
+                        for crd in gm.geomjson['coords']:
+                            gmd['coords'].append( ( crd[0]*sc, crd[1]*sc ) )
                     gmd['type'] = gm.geomjson['type']
                     if 'position' in gm.geomjson:
                         gmd['position'] = (

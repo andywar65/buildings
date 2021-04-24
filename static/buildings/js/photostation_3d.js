@@ -193,14 +193,13 @@ function init() {
 			let lpoints = [];
 			let l;
 				for( l of gm.coords ){
-					lpoints.push( new THREE.Vector2( l[0],  l[1] ) );
+					lpoints.push( new THREE.Vector3( l[0],  l[2],  l[1] ) );
 				}
 				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
 				let lmaterial = new THREE.LineBasicMaterial( {
 					color: gm.color,
 				 } );
 				let lline = new THREE.Line( lgeometry, lmaterial );
-				lline.rotateX( - Math.PI / 2 );
 				scene.add(lline)
 				break;
 		}
