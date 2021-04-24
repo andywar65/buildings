@@ -37,7 +37,7 @@ class BuildingAdmin(admin.ModelAdmin):
 
 class PlanGeometryInline(admin.TabularInline):
     model = PlanGeometry
-    fields = ('geometry', 'color', 'popup', 'is3d')
+    fields = ('geometry', 'color', 'popup', )
     extra = 0
     formfield_overrides = {
         models.GeometryField: {"widget": OSMWidget},

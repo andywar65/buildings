@@ -123,7 +123,7 @@ class Building(models.Model):
                 gmd['color'] = gm.color
                 gmd['position'] = (0,0,0)
                 gmd['rotation'] = (0,0,0)
-                if gm.is3d:
+                if gm.geomjson:
                     if gm.geomjson['type'] == 'line':
                         for crd in gm.geomjson['coords']:
                             gmd['coords'].append( ( crd[0]*sc, crd[1]*sc , crd[2]*sc) )
