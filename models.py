@@ -240,7 +240,7 @@ class Plan(models.Model):
                         popup=gm['popup'],
                         geometry=Polygon(gm['coords']),
                         geomjson=gm['coordz'],)
-                elif gm['type'] == 'linestring':
+                elif gm['type'] == 'linestring' or gm['type'] == 'line':
                     PlanGeometry.objects.create(plan_id=self.id,
                         color=gm['color'],
                         popup=gm['popup'],

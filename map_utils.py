@@ -327,7 +327,7 @@ def transform_collection(collection, layer_dict, lat, long):
                         lat-degrees(d['vy'][0]*gy)),
                         )
         elif d['ent'] == 'line':
-            object['type'] = 'linestring'
+            object['type'] = 'line'
             object['coords'] = object['coords'] + ((long+degrees(d['10']*gx),
                 lat-degrees(d['20']*gy)), )
             object['coords'] = object['coords'] + ((long+degrees(d['11']*gx),
@@ -336,6 +336,7 @@ def transform_collection(collection, layer_dict, lat, long):
             coords.append( ( d['10'], d['20'], d['30'] ) )
             coords.append( ( d['11'], d['21'], d['31'] ) )
             object['coordz']['coords'] = coords
+            object['coordz']['type'] = 'line'
         elif d['ent'] == 'circle':
             object['type'] = 'polygon'
             segm = 36 #increase this to have smoother circle
