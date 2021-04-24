@@ -276,11 +276,6 @@ def transform_collection(collection, layer_dict, lat, long):
         #coordinates, position and rotation for threejs
         object['coordz'] = {}
         if d['ent'] == 'poly':
-            #is it closed or open
-            if d['70']:
-                object['type'] = 'polygon'
-            else:
-                object['type'] = 'linestring'
             if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
                 #simple case, polyline is parallel to floor, no coordz
                 for i in range(d['90']):
@@ -290,10 +285,13 @@ def transform_collection(collection, layer_dict, lat, long):
                         )
                 #eventually close ring
                 if d['70']:
+                    object['type'] = 'polygon'
                     object['coords'] = object['coords'] + (
                         (long+degrees(d['vx'][0]*gx),
                         lat-degrees(d['vy'][0]*gy)),
                         )
+                else:
+                    object['type'] = 'polyline'
             else:
                 #polyline is incident to floor
                 #polyline elevation
@@ -307,8 +305,10 @@ def transform_collection(collection, layer_dict, lat, long):
                 #eventually close ring
                 if d['70']:
                     coords.append( ( 0,0 ) )
+                    object['type'] = 'polygon'
                     object['coordz']['type'] = 'polygon'
                 else:
+                    object['type'] = 'polyline'
                     object['coordz']['type'] = 'polyline'
                 object['coordz']['coords'] = coords
                 object['coordz']['position'] = ( d['10'], d['20'], d['30'] )

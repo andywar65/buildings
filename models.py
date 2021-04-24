@@ -121,21 +121,24 @@ class Building(models.Model):
                 gmd['coords'] = []
                 gmd['id'] = 'geom_' + str(gm.id)
                 gmd['color'] = gm.color
+                gmd['position'] = (0,0,0)
                 gmd['rotation'] = (0,0,0)
                 if gm.is3d:
                     for crd in gm.geomjson['coords']:
                         gmd['coords'].append( ( crd[0]*sc, crd[1]*sc ) )
                     gmd['type'] = gm.geomjson['type']
-                    gmd['position'] = (
-                        gm.geomjson['position'][0]*sc,
-                        gm.geomjson['position'][2]*sc,
-                        gm.geomjson['position'][1]*sc
-                        )
-                    gmd['rotation'] = (
-                        radians(gm.geomjson['rotation'][0]),
-                        radians(gm.geomjson['rotation'][1]),
-                        radians(gm.geomjson['rotation'][2])
-                        )
+                    if 'position' in gm.geomjson:
+                        gmd['position'] = (
+                            gm.geomjson['position'][0]*sc,
+                            gm.geomjson['position'][2]*sc,
+                            gm.geomjson['position'][1]*sc
+                            )
+                    if 'rotation' in gm.geomjson:
+                        gmd['rotation'] = (
+                            radians(gm.geomjson['rotation'][0]),
+                            radians(gm.geomjson['rotation'][1]),
+                            radians(gm.geomjson['rotation'][2])
+                            )
                 else:
                     if gm.geometry.geom_typeid == 1:
                         gmd['type'] = 'polyline'
@@ -240,7 +243,7 @@ class Plan(models.Model):
                         popup=gm['popup'],
                         geometry=Polygon(gm['coords']),
                         geomjson=gm['coordz'],)
-                elif gm['type'] == 'linestring' or gm['type'] == 'line':
+                elif gm['type'] == 'polyline' or gm['type'] == 'line':
                     PlanGeometry.objects.create(plan_id=self.id,
                         color=gm['color'],
                         popup=gm['popup'],
