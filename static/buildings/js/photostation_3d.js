@@ -171,11 +171,37 @@ function init() {
 				scene.add(mesh)
 				break;
 			case 'polyline':
-				//var object = L.polyline( obj.coords, {color: obj.color});
+				let points = [];
+				let p;
+				for( p of gm.coords ){
+					points.push( new THREE.Vector2( p[0],  p[1] ) );
+				}
+				let geometry = new THREE.BufferGeometry().setFromPoints( points );
+				let pmaterial = new THREE.LineBasicMaterial( {
+					color: gm.color,
+				 } );
+				let line = new THREE.Line( geometry, pmaterial );
+				line.rotateX( - Math.PI / 2 );
+				let ppos = gm.position
+				line.position.set( ppos[0], ppos[1], ppos[2], );
+				line.rotateZ( gm.rotation[2] );
+				line.rotateX( gm.rotation[0] );
+				line.rotateY( gm.rotation[1] );
+				scene.add(line)
 				break;
-			case 'circle':
-				//var object = L.circle( obj.coords, {radius: obj.radius,
-					//color: obj.color, fillcolor: obj.color, fillOpacity: 0.5});
+			case 'line':
+			let lpoints = [];
+			let l;
+				for( l of gm.coords ){
+					lpoints.push( new THREE.Vector2( l[0],  l[1] ) );
+				}
+				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
+				let lmaterial = new THREE.LineBasicMaterial( {
+					color: gm.color,
+				 } );
+				let lline = new THREE.Line( lgeometry, lmaterial );
+				lline.rotateX( - Math.PI / 2 );
+				scene.add(lline)
 				break;
 		}
 	}
