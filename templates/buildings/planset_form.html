@@ -9,18 +9,20 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     {% include "buildings/includes/building_alerts.html" %}
-    <div class="row">
-      <div class="col">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
         <h4><strong>{% translate "Add plan set" %}</strong></h4>
+      </div>
+      <div class="card-body">
         {% if perms.buildings.add_planset %}
-        {% include "buildings/includes/hello_formula.html" %}
-        <hr class="mb-4">
-        {% include "buildings/includes/form_errors.html" %}
         <form action="" method="post" class="needs-validation" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
             {{ form|crispy }}
             <hr class="mb-4">
               {% include "buildings/includes/add_buttons.html" %}
-            <hr class="mb-4">
           {% csrf_token %}
         </form>
         {% else %}
