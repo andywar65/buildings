@@ -332,7 +332,7 @@ def transform_collection(collection, layer_dict, lat, long):
                 object['coordz']['rotation'] = ( d['210'], d['220'], d['50'] )
                 object['coordz']['depth'] = d.get('39', 0)
                 #prepare transformed polyline for postgis
-                transform_polyline_vertices(d)
+                d = transform_polyline_vertices(d)
                 for i in range(d['90']):
                     object['coords'] = object['coords'] + (
                         (long+degrees(d['vx'][i]*gx),
@@ -374,7 +374,6 @@ def transform_collection(collection, layer_dict, lat, long):
     return map_objects
 
 def transform_polyline_vertices(d):
-    d['vz'].append(d['30'])
     #angles straight out from a_a_a
     sx = sin(radians(-d['210']))
     cx = cos(radians(-d['210']))
@@ -384,16 +383,16 @@ def transform_polyline_vertices(d):
     cz = cos(radians(-d['50']))
     for i in range( 1, d['90'] ):
         #difference between vertex and origin
-        dx = d['vx'][i] - d['10']
-        dy = d['vy'][i] - d['20']
-        dz = 0 - d['30']
+        dx = d['vx'][i] - d['vx'][0]
+        dy = d['vy'][i] - d['vy'][0]
+        dz = 0
         #Euler angles, yaw (Z), pitch (X), roll (Y)
         d['vx'][i] = ( d['10'] + (cy*cz-sx*sy*sz)*dx +
             (-cx*sz)*dy + (cz*sy+cy*sx*sz)*dz )
         d['vy'][i] = ( d['20'] + (cz*sx*sy+cy*sz)*dx +
             (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
-        d['vz'].append( d['30'] + (-cx*sy)*dx +
-            (sx)*dy + (cx*cy)*dz )
+    d['vx'][0] = d['10']
+    d['vy'][0] = d['20']
 
     return d
 
