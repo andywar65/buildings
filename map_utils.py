@@ -276,8 +276,10 @@ def transform_collection(collection, layer_dict, lat, long):
         #coordinates, position and rotation for threejs
         object['coordz'] = {}
         if d['ent'] == 'poly':
-            if d['50'] == 0 and d['210'] == 0 and d['220'] == 0 and d['39'] == 0:
-                #simple case, polyline is flat and parallel to floor, no coordz
+            #polyline elevation
+            d['30'] = d.get('38', 0)
+            if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
+                #simple case, polyline is flat, no coordz
                 for i in range(d['90']):
                     object['coords'] = object['coords'] + (
                         (long+degrees(d['vx'][i]*gx),
@@ -292,15 +294,31 @@ def transform_collection(collection, layer_dict, lat, long):
                         )
                 else:
                     object['type'] = 'polyline'
+                if not d['30'] == 0 or not d['39'] == 0:
+                    #poly is elevated or thick
+                    #prepare data for threejs
+                    coords = []
+                    for i in range(d['90']):
+                        coords.append(
+                            ( d['vx'][i] , -d['vy'][i] )
+                            )
+                    #eventually close ring
+                    if d['70']:
+                        coords.append( ( d['vx'][0] , -d['vy'][0] ) )
+                        object['coordz']['type'] = 'polygon'
+                    else:
+                        object['coordz']['type'] = 'polyline'
+                    object['coordz']['coords'] = coords
+                    object['coordz']['position'] = ( 0, 0, d['30'] )
+                    object['coordz']['rotation'] = ( 0, 0, 0 )
+                    object['coordz']['depth'] = d.get('39', 0)
             else:
-                #polyline is incident to floor
-                #polyline elevation
-                d['30'] = d.get('38', 0)
+                #polyline incident to floor
                 #prepare data for threejs
                 coords = []
                 for i in range(d['90']):
                     coords.append(
-                        ( d['vx'][i]-d['vx'][0] , d['vy'][i]-d['vy'][0] )
+                        ( d['vx'][i]-d['vx'][0] , -(d['vy'][i]-d['vy'][0]) )
                         )
                 #eventually close ring
                 if d['70']:
