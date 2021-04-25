@@ -40,6 +40,20 @@ function init() {
 	const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
 	light.position.set( 0.5, 1, 0.75 );
 	scene.add( light );
+	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+	dirLight.position.set( -50, 100, 50 );
+	dirLight.castShadow = true;
+	dirLight.shadow.camera.left = -100;
+	dirLight.shadow.camera.right = 100;
+	dirLight.shadow.camera.bottom = -100;
+	dirLight.shadow.camera.top = 100;
+	dirLight.shadow.mapSize.width = 512*4; // default
+	dirLight.shadow.mapSize.height = 512*4; // default
+	dirLight.shadow.camera.near = 0.5; // default
+	dirLight.shadow.camera.far = 500; // default
+	scene.add( dirLight );
+	//const cameraHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+	//scene.add(cameraHelper);
 
 	controls = new PointerLockControls( camera, document.body );
 
@@ -138,9 +152,10 @@ function init() {
 
 	const geometry = new THREE.PlaneGeometry( 2000, 2000, 32 );
 	geometry.rotateX( - Math.PI / 2 );
-	const material = new THREE.MeshBasicMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
+	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
 	floor.position.set( 0, -.01, 0 )
+	floor.receiveShadow = true;
 	scene.add( floor );
 
 	let position = geometry.attributes.position;
@@ -160,18 +175,20 @@ function init() {
 				if (gm.depth){
 					let extrudeSettings = { amount: gm.depth, bevelEnabled: false };
 					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
-					material = new THREE.MeshBasicMaterial( {
+					material = new THREE.MeshStandardMaterial( {
 						color: gm.color
 					 } );
 				} else {
 					objgeometry = new THREE.ShapeGeometry( objshape )
-					material = new THREE.MeshBasicMaterial( {
+					material = new THREE.MeshStandardMaterial( {
 						color: gm.color,
 						side: THREE.DoubleSide
 					 } );
 				}
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
+				mesh.receiveShadow = true;
+				mesh.castShadow = true;
 				let pos = gm.position
 				mesh.position.set( pos[0], pos[1], pos[2], );
 				mesh.rotateZ( gm.rotation[2] );
@@ -219,6 +236,8 @@ function init() {
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 	//
