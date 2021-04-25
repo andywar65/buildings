@@ -276,7 +276,6 @@ def transform_collection(collection, layer_dict, lat, long):
         #coordinates, position and rotation for threejs
         object['coordz'] = {}
         if d['ent'] == 'poly':
-            #polyline elevation
             if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
                 #simple case, polyline is flat, no coordz
                 for i in range(d['90']):
@@ -385,12 +384,12 @@ def transform_polyline_vertices(d):
         #difference between vertex and origin
         dx = d['vx'][i] - d['vx'][0]
         dy = d['vy'][i] - d['vy'][0]
-        dz = 0
+        #dz = 0
         #Euler angles, yaw (Z), pitch (X), roll (Y)
         d['vx'][i] = ( d['10'] + (cy*cz-sx*sy*sz)*dx +
-            (-cx*sz)*dy + (cz*sy+cy*sx*sz)*dz )
+            (-cx*sz)*dy )#+ (cz*sy+cy*sx*sz)*dz )
         d['vy'][i] = ( d['20'] + (cz*sx*sy+cy*sz)*dx +
-            (cx*cz)*dy + (-cy*cz*sx+sy*sz)*dz )
+            (cx*cz)*dy )#+ (-cy*cz*sx+sy*sz)*dz )
     d['vx'][0] = d['10']
     d['vy'][0] = d['20']
 
