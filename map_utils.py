@@ -277,7 +277,6 @@ def transform_collection(collection, layer_dict, lat, long):
         object['coordz'] = {}
         if d['ent'] == 'poly':
             #polyline elevation
-            d['30'] = d.get('38', 0)
             if d['50'] == 0 and d['210'] == 0 and d['220'] == 0:
                 #simple case, polyline is flat, no coordz
                 for i in range(d['90']):
