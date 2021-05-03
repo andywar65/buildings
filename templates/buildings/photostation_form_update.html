@@ -12,36 +12,65 @@
 {% endblock extra-head %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    {% include "buildings/includes/building_alerts.html" %}
-    <h4><strong>{% translate "Modify photo station" %}: {{ object.title }}</strong></h4>
-    {% if perms.buildings.change_photostation %}
-    <div class="row">
-      <div class="col col-md-8">
-        {% include "buildings/includes/hello_formula.html" %}
+{% include "buildings/includes/building_alerts.html" %}
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Modify photo station" %}: {{ object.title }}</strong></h4>
       </div>
-      <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:station_delete' build_slug=object.build.slug stat_slug=object.slug %}">{% translate 'Delete' %}</a>
+      <div class="card-body">
+        <div id="mapid" style="height: 600px;"></div>
       </div>
     </div>
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-        <div class="row">
-          <div class="col" id="mapid" style="height: 480px;"></div>
-        </div>
-        <hr class="mb-4">
+  </div>
+  <div class="col">
+    <div class="card-group">
+      {% if perms.buildings.change_photostation %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-danger" href="#photostation-change" title="{% translate "Modify" %}">
+          <i class="fa fa-pencil"></i></a>
+      </div>
+      {% endif %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=object.build.slug %}" title="{% translate "Back to building" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
+      </div>
+      {% if perms.buildings.delete_photostation %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-danger" href="{% url 'buildings:station_delete' build_slug=object.build.slug stat_slug=object.slug %}" title="{% translate "Modify" %}">
+          <i class="fa fa-trash-o"></i></a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div class="row" id="photostation-change" style="height: 65px;">
+</div>
+<div class="row" id="photostation-change-form">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <p>{% translate "Click on the map above to set location." %}</p>
+      </div>
+      <div class="card-body">
+        {% if perms.buildings.change_photostation %}
+        <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+          {{ form|crispy }}
+          <hr class="mb-4">
           {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to change photo stations" %}.
-    {% endif %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to change photo stations" %}.
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 {% endblock content %}
