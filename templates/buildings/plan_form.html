@@ -9,21 +9,24 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     {% include "buildings/includes/building_alerts.html" %}
-    <h4><strong>{% translate "Add building plan" %}</strong></h4>
-    {% if perms.buildings.add_plan %}
-    {% include "buildings/includes/hello_formula.html" %}
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-          {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to add building plans" %}.
-    {% endif %}
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Add building plan" %}</strong></h4>
+      </div>
+      <div class="card-body">
+        {% if perms.buildings.add_plan %}
+        <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+          {% include "buildings/includes/form_errors.html" %}
+            {{ form|crispy }}
+            <hr class="mb-4">
+              {% include "buildings/includes/add_buttons.html" %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to add building plans" %}.
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 {% endblock content %}

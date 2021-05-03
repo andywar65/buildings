@@ -10,28 +10,31 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     {% include "buildings/includes/building_alerts.html" %}
-    <h4><strong>{% translate "Modify building plan" %}</strong></h4>
-    {% if perms.buildings.change_plan %}
-    <div class="row">
-      <div class="col col-md-8">
-        {% include "buildings/includes/hello_formula.html" %}
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Modify building plan: " %}</strong>{{ object.title }}</h4>
       </div>
-      <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:plan_delete' build_slug=object.build.slug plan_slug=object.slug %}">{% translate 'Delete' %}</a>
+      <div class="card-body">
+        {% if perms.buildings.change_plan %}
+        <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+          <div class="row">
+            <div class="col col-md-8"></div>
+            <div class="col col-md-4">
+              <a class="btn btn-danger btn-block" href="{% url 'buildings:plan_delete' build_slug=object.build.slug plan_slug=object.slug %}" title="{% translate 'Delete' %}">
+              {% translate "Delete" %}</a>
+            </div>
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+            {{ form|crispy }}
+            <hr class="mb-4">
+              {% include "buildings/includes/add_buttons.html" %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to modify building plans" %}.
+        {% endif %}
       </div>
     </div>
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-          {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to modify building plans" %}.
-    {% endif %}
   </div>
 </div>
 {% endblock content %}
