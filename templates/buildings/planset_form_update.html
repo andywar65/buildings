@@ -5,32 +5,35 @@
 {% block title %}{{ website.acro }} | {% translate "Modify Plan set" %}{% endblock title %}
 
 {% block content %}
-{% include "buildings/includes/building_alerts.html" %}
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    <h4><strong>{% translate "Modify Plan set: " %}</strong>{{ object.title }}</h4>
-    {% if perms.buildings.change_planset %}
-    <div class="row">
-      <div class="col col-md-8">
-        {% include "buildings/includes/hello_formula.html" %}
+    {% include "buildings/includes/building_alerts.html" %}
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Modify Plan set: " %}</strong>{{ object.title }}</h4>
       </div>
-      <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:planset_delete' build_slug=build.slug set_slug=object.slug %}">{% translate 'Delete' %}</a>
+      <div class="card-body">
+        {% if perms.buildings.change_planset %}
+        <form action="" method="post" class="needs-validation" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+            <div class="col">
+              <a class="btn btn-danger btn-lg btn-block" href="{% url 'buildings:planset_delete' build_slug=build.slug set_slug=object.slug %}" title="{% translate 'Delete' %}">
+              <i class="fa fa-trash-o"></i></a>
+            </div>
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+            {{ form|crispy }}
+            <hr class="mb-4">
+              {% include "buildings/includes/add_buttons.html" %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to modify plan sets" %}.
+        {% endif %}
       </div>
     </div>
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <form action="" method="post" class="needs-validation" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
-          {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to modify plan sets" %}.
-    {% endif %}
   </div>
 </div>
 {% endblock content %}
