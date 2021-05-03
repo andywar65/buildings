@@ -34,6 +34,7 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context = self.add_alerts_to_context(context)
+        context['build'] = self.build
         #we add the following to feed the map
         #building data
         build = self.build.map_dictionary()
