@@ -30,11 +30,11 @@
         <a class="btn btn-danger" href="#photostation-add" title="{% translate "Add" %}">
           <i class="fa fa-plus"></i></a>
       </div>
+      {% endif %}
       <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
         <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=build.slug %}" title="{% translate "Back to building" %}">
           <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
       </div>
-      {% endif %}
     </div>
   </div>
 </div>

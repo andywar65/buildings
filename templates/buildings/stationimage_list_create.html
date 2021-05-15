@@ -6,65 +6,81 @@
 
 {% block content %}
 {% include "buildings/includes/building_alerts.html" %}
-<div class="row">
-  <div class="col col-md-8">
-    <h4><strong>{% translate "Photo station" %}: {{ stat.title }} @
-      <a href="{% url 'buildings:building_detail' build_slug=stat.build.slug set_slug=stat.build.get_base_slug %}">{{ stat.build.title }}</a>
-    </strong></h4>
-    <p><em>{{ stat.intro }}</em></p>
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="slide-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Photo station" %}: {{ stat.title }}</strong></h4>
+        <p><em>{{ stat.intro }}</em></p>
+      </div>
+      <div class="card-body">
+        {% if images %}
+          {% include 'buildings/includes/station_gallery.html' %}
+        {% else %}
+          <p>{% translate "There are no images available for this station" %}.</p>
+        {% endif %}
+      </div>
+    </div>
   </div>
-  <div class="col col-md-4 text-right">
-    {% if reverse %}
-      <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}" title="{% translate "Bakcwards in time" %}">
-        <i class="fa fa-sort-numeric-desc"></i></a>
-    {% else %}
-      <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}?reverse=True" title="{% translate "Forwards in time" %}">
-        <i class="fa fa-sort-numeric-asc"></i></a>
-    {% endif %}
-    {% if perms.buildings.add_stationimage %}
-      <a class="btn btn-success" href="#stationimage-create" title="{% translate "Add image" %}">
-       + <i class="fa fa-picture-o"></i></a>
-    {% endif %}
+  <div class="col">
+    <div class="card-group">
+      {% if reverse %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}" title="{% translate "Bakcwards in time" %}">
+          <i class="fa fa-sort-numeric-desc"></i></a>
+      </div>
+      {% else %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}?reverse=True" title="{% translate "Forwards in time" %}">
+          <i class="fa fa-sort-numeric-asc"></i></a>
+      </div>
+      {% endif %}
+      {% if perms.buildings.add_stationimage %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-success" href="#stationimage-create" title="{% translate "Add image" %}">
+         + <i class="fa fa-picture-o"></i></a>
+      </div>
+      {% endif %}
+      {% if perms.buildings.change_photostation %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-primary" href="{% url 'buildings:station_change' build_slug=stat.build.slug stat_slug=stat.slug%}" title="{% translate "Modify photo station" %}">
+          <i class="fa fa-pencil"></i> <i class="fa fa-camera"></i></a>
+      </div>
+      {% endif %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-warning" href="{{ request.get_full_path }}3d/" title="{% translate "Watch in 3D!" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-street-view"></i></a>
+      </div>
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{{ stat.get_building_redirection }}" title="{% translate "Back to building" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
+      </div>
+    </div>
   </div>
 </div>
-{% if images %}
-  {% include 'buildings/includes/station_gallery.html' %}
-{% else %}
-  <p>{% translate "There are no images available for this station" %}.</p>
-{% endif %}
-<hr class="mb-4">
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-4">
-    {% if perms.buildings.change_photostation %}
-      <a class="btn btn-primary" href="{% url 'buildings:station_change' build_slug=stat.build.slug stat_slug=stat.slug%}" title="{% translate "Modify photo station" %}">
-        <i class="fa fa-pencil"></i> <i class="fa fa-camera"></i></a>
-    {% endif %}
-  </div>
-  <div class="col-md-4 text-right">
-    <a class="btn btn-secondary" href="{{ stat.get_building_redirection }}" title="{% translate "Back to building" %}">
-      <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
-  </div>
+<div class="row" id="stationimage-create" style="height: 65px;">
 </div>
-<hr class="mb-4">
-<div class="row" id="stationimage-create">
+<div class="row" id="stationimage-add-form">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    <h4><strong>{% translate "Add an image" %}</strong></h4>
-    {% if perms.buildings.add_stationimage %}
-    {% include "buildings/includes/hello_formula.html" %}
-    <hr class="mb-4">
-    {% include "buildings/includes/form_errors.html" %}
-    <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
-        {{ form|crispy }}
-        <hr class="mb-4">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title">{% translate "Add an image" %}</h4>
+      </div>
+      <div class="card-body">
+        {% if perms.buildings.add_stationimage %}
+        <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+          {% include "buildings/includes/form_errors.html" %}
+          {{ form|crispy }}
+          <hr class="mb-4">
           {% include "buildings/includes/add_buttons.html" %}
-        <hr class="mb-4">
-      {% csrf_token %}
-    </form>
-    {% else %}
-    {% translate "You don't have permissions to add images" %}.
-    {% endif %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to add images" %}.
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 {% endblock content %}
