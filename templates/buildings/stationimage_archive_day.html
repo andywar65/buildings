@@ -4,27 +4,38 @@
 {% block title %}{{ website.acro }} | {{ build.title }} {{ day }}{% endblock title %}
 
 {% block content %}
-  <div class="row">
-    <div class="col">
-      <h4><strong>{% translate "Images by day" %}: {{ day }} @
-        <a href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=build.get_base_slug %}">{{ build.title }}</a>
-      </strong></h4>
-      <p><em>{{ build.intro }}</em></p>
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="slide-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Images by day" %}: {{ day }}</strong></h4>
+        <p><em>{{ build.intro }}</em></p>
+      </div>
+      <div class="card-body">
+        {% if images %}
+          {% include 'buildings/includes/station_gallery.html' %}
+        {% else %}
+        <p>{% translate "No images today" %}.</p>
+        {% endif %}
+        <hr class="mb-4">
+        <div class="row">
+          <div class="col-md-6">
+            <a href="{% url 'buildings:image_day' slug=build.slug year=previous_day.year month=previous_day.month day=previous_day.day %}" class="btn btn-secondary">&laquo; {% translate "PREVIOUS" %} </a>
+          </div>
+          <div class="col-md-6 text-right">
+            <a href="{% url 'buildings:image_day' slug=build.slug year=next_day.year month=next_day.month day=next_day.day %}" class="btn btn-secondary"> {% translate "NEXT" %} &raquo;</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-    {% if images %}
-      {% include 'buildings/includes/station_gallery.html' %}
-    {% else %}
-    <p>{% translate "No images today" %}.</p>
-    {% endif %}
-    <hr class="mb-4">
-    <div class="row">
-      <div class="col-md-6">
-        <a href="{% url 'buildings:image_day' slug=build.slug year=previous_day.year month=previous_day.month day=previous_day.day %}" class="btn btn-secondary">&laquo; {% translate "PREVIOUS" %} </a>
-      </div>
-      <div class="col-md-6 text-right">
-        <a href="{% url 'buildings:image_day' slug=build.slug year=next_day.year month=next_day.month day=next_day.day %}" class="btn btn-secondary"> {% translate "NEXT" %} &raquo;</a>
+  <div class="col">
+    <div class="card-group">
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_detail' build_slug=build.slug set_slug=build.get_base_slug %}" title="{% translate "Back to building" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
       </div>
     </div>
-    <hr class="mb-4">
+  </div>
+</div>
 {% endblock content %}
