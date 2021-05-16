@@ -9,29 +9,28 @@
   <div class="col-md-2"></div>
   <div class="col-md-8">
     {% include "buildings/includes/building_alerts.html" %}
-    <div class="row">
-      <div class="col col-md-8">
-        <h4><strong>{% translate "Modify element family" %}</strong></h4>
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Modify element family: " %}</strong>{{ object.title }}</h4>
       </div>
-      <div class="col col-md-4 text-right">
-        <a class="btn btn-danger" href="{% url 'buildings:family_delete' build_slug=object.build.slug fam_slug=object.slug %}">{% translate 'Delete' %}</a>
-      </div>
-    </div>
-    <div class="row" id="add-family">
-      <div class="col">
+      <div class="card-body">
         {% if perms.buildings.change_family %}
-        {% include "buildings/includes/hello_formula.html" %}
-        <hr class="mb-4">
-        {% include "buildings/includes/form_errors.html" %}
         <form action="" method="post" class="needs-validation" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+            <div class="col">
+              <a class="btn btn-danger btn-lg btn-block" href="{% url 'buildings:family_delete' build_slug=object.build.slug fam_slug=object.slug %}" title="{% translate 'Delete' %}">
+              <i class="fa fa-trash-o"></i></a>
+            </div>
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
             {{ form|crispy }}
             <hr class="mb-4">
               {% include "buildings/includes/add_buttons.html" %}
-            <hr class="mb-4">
           {% csrf_token %}
         </form>
         {% else %}
-        {% translate "You don't have permissions to change element families" %}.
+        {% translate "You don't have permissions to modify element families" %}.
         {% endif %}
       </div>
     </div>
