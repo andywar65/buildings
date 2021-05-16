@@ -15,7 +15,9 @@
 			<br /><br />
 			{% trans "Move: WASD" %}<br/>
 			{% trans "Jump: SPACE" %}<br/>
-			{% trans "Look: MOUSE" %}
+			{% trans "Look: MOUSE" %}<br/>
+			{% trans "Exit: ESC" %}<br/>
+			<a href="{% url 'buildings:station_detail' build_slug=stat.build.slug stat_slug=stat.slug %}">{% trans "Back to Photo station" %}</a>
 		</div>
 </div>
 {% endblock content %}
