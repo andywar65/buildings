@@ -33,7 +33,7 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #planset alerts
+        context['build'] = self.build
         context['annotated_list'] = self.build.get_family_annotated_list()
         context = self.add_alerts_to_context(context)
         return context

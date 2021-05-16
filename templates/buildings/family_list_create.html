@@ -5,40 +5,51 @@
 {% block title %}{{ website.acro }} | {% translate "Create element family" %}{% endblock title %}
 
 {% block content %}
-<div class="row">
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h5 class="card-title">{% trans "Element family list"%}</h5>
+      </div>
+      <div class="card-body">
+        {% include "buildings/includes/family_annotated_list.html" %}
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card-group">
+      {% if perms.buildings.add_family %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-success" href="#family-add" title="{% translate "Add" %}">
+          <i class="fa fa-plus"></i></a>
+      </div>
+      {% endif %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=build.slug %}" title="{% translate "Back to building" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" id="family-add" style="height: 65px;">
+</div>
+<div class="row" id="element-add-form">
   <div class="col-md-2"></div>
   <div class="col-md-8">
-    {% include "buildings/includes/building_alerts.html" %}
-    <div class="row">
-      <div class="col text-right">
-        <a class="btn btn-secondary" data-toggle="collapse" href="#family-list" title="{% translate "Add element family" %}">
-          + <i class="fa fa-folder-open"></i></a>
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h5 class="card-title">{% trans "Add element family"%}</h5>
       </div>
-    </div>
-    <div class="row" id="family-list">
-      <div class="col">
-        <div class="card" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
-          <div class="card-header">
-            <h5 class="card-title">{% trans "Element family list"%}</h5>
-          </div>
-          <div class="card-body">
-            {% include "buildings/includes/family_annotated_list.html" %}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row" id="add-family">
-      <div class="col">
-        <h4><strong>{% translate "Add element family" %}</strong></h4>
+      <div class="card-body">
         {% if perms.buildings.add_family %}
-        {% include "buildings/includes/hello_formula.html" %}
-        <hr class="mb-4">
-        {% include "buildings/includes/form_errors.html" %}
         <form action="" method="post" class="needs-validation" novalidate>
-            {{ form|crispy }}
-            <hr class="mb-4">
-              {% include "buildings/includes/add_buttons.html" %}
-            <hr class="mb-4">
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+          {{ form|crispy }}
+          <hr class="mb-4">
+          {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}
         </form>
         {% else %}
