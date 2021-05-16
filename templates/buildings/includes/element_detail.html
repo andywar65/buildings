@@ -1,45 +1,33 @@
 {% load i18n %}
 {% load fb_versions %}
 
-<div class="card" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
-  <div class="card-header">
-    <h5 class="card-title">{% trans "Actual data"%}</h5>
-  </div>
-  {% if object.fb_image %}
-  <img class="card-img-top"
-    src="{% version object.fb_image 'landscape' %}"
-    alt="{{ object.intro }}">
+<ul>
+  <li>
+    {% trans "Building: " %}<a href="{% url 'buildings:building_slug' slug=object.build.slug %}">
+      <strong>{{ object.build.title }}</strong></a>
+  </li>
+  {% if object.plan %}
+    <li>
+      {% trans "Plan: " %}<a href="{% url 'buildings:plan_detail' build_slug=object.build.slug plan_slug=object.plan.slug %}">
+        <strong>{{ object.plan.title }}</strong></a>
+    </li>
   {% endif %}
-  <div class="card-body">
-    <ul>
-      <li>
-        {% trans "Building: " %}<a href="{{ object.get_building_redirection }}">
-          <strong>{{ object.build.title }}</strong></a>
-      </li>
-      {% if object.plan %}
-        <li>
-          {% trans "Plan: " %}<a href="{% url 'buildings:plan_detail' build_slug=object.build.slug plan_slug=object.plan.slug %}">
-            <strong>{{ object.plan.title }}</strong></a>
-        </li>
-      {% endif %}
-      <li>
-        {% trans "Family: " %}<a href="{% url 'buildings:family_change' build_slug=object.build.slug fam_slug=object.family.slug %}">
-          <strong>{{ object.family.title }}</strong></a>
-      </li>
-      <li>
-        {% trans "Description: " %}{{ object.intro }}
-      </li>
-      <li>
-        {% trans "Latitude (see map below): " %}<strong>{{ object.lat }}</strong>
-      </li>
-      <li>
-        {% trans "Longitude: " %}<strong>{{ object.long }}</strong>
-      </li>
-      {% for key, value in object.sheet.items %}
-        <li>
-          {{ key }}: <strong>{{ value }}</strong>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
+  <li>
+    {% trans "Family: " %}<a href="{% url 'buildings:family_change' build_slug=object.build.slug fam_slug=object.family.slug %}">
+      <strong>{{ object.family.title }}</strong></a>
+  </li>
+  <li>
+    {% trans "Description: " %}{{ object.intro }}
+  </li>
+  <li>
+    {% trans "Latitude: " %}<strong>{{ object.location.coords.1 }}</strong>
+  </li>
+  <li>
+    {% trans "Longitude: " %}<strong>{{ object.location.coords.0 }}</strong>
+  </li>
+  {% for key, value in object.sheet.items %}
+    <li>
+      {{ key }}: <strong>{{ value }}</strong>
+    </li>
+  {% endfor %}
+</ul>

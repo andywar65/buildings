@@ -253,7 +253,7 @@ class ElementUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 f'?modified={self.object.__str__()}&model={_("Element")}')
         elif 'continue' in self.request.POST:
             return (reverse('buildings:element_change',
-                kwargs={'build_slug': self.build.slug,
+                kwargs={'slug': self.build.slug,
                 'pk': self.object.id }) +
                 f'?modified={self.object.__str__()}&model={_("Element")}')
         else:
