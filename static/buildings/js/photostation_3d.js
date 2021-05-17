@@ -26,11 +26,13 @@ init();
 animate();
 
 function init() {
+	//camera plane
+	const elev = (map_data.camera[1]-1.6)*6.25;
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
 	camera.position.x = map_data.camera[0]*6.25;
-	camera.position.y = map_data.camera[1]*6.25;
+	camera.position.y = map_data.camera[1]*6.25-elev;
 	camera.position.z = map_data.camera[2]*6.25;
 
 	scene = new THREE.Scene();
@@ -38,14 +40,14 @@ function init() {
 	scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
 	const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
-	light.position.set( 0.5, 1, 0.75 );
+	light.position.set( 0.5, 1-elev, 0.75 );
 	scene.add( light );
 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 	dirLight.position.set( -50 + map_data.camera[0]*6.25,
-		100,
+		100-elev,
 		50 + map_data.camera[2]*6.25 );
 	dirLight.target.position.set( map_data.camera[0]*6.25,
-		0,
+		0-elev,
 		map_data.camera[2]*6.25 )
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.left = -100;
@@ -160,7 +162,7 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
-	floor.position.set( 0, map_data.floor-.01, 0 )
+	floor.position.set( 0, map_data.floor-.01-elev, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
 
@@ -196,7 +198,7 @@ function init() {
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
 				let pos = gm.position
-				mesh.position.set( pos[0], pos[1], pos[2], );
+				mesh.position.set( pos[0], pos[1]-elev, pos[2], );
 				mesh.rotateZ( gm.rotation[2] );
 				mesh.rotateX( gm.rotation[0] );
 				mesh.rotateY( gm.rotation[1] );
@@ -215,7 +217,7 @@ function init() {
 				let line = new THREE.Line( geometry, pmaterial );
 				line.rotateX( - Math.PI / 2 );
 				let ppos = gm.position
-				line.position.set( ppos[0], ppos[1], ppos[2], );
+				line.position.set( ppos[0], ppos[1]-elev, ppos[2], );
 				line.rotateZ( gm.rotation[2] );
 				line.rotateX( gm.rotation[0] );
 				line.rotateY( gm.rotation[1] );
@@ -225,7 +227,7 @@ function init() {
 			let lpoints = [];
 			let l;
 				for( l of gm.coords ){
-					lpoints.push( new THREE.Vector3( l[0],  l[2],  l[1] ) );
+					lpoints.push( new THREE.Vector3( l[0],  l[2]-elev,  l[1] ) );
 				}
 				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
 				let lmaterial = new THREE.LineBasicMaterial( {
