@@ -41,7 +41,12 @@ function init() {
 	light.position.set( 0.5, 1, 0.75 );
 	scene.add( light );
 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	dirLight.position.set( -50, 100, 50 );
+	dirLight.position.set( -50 + map_data.camera[0]*6.25,
+		100,
+		50 + map_data.camera[2]*6.25 );
+	dirLight.target.position.set( map_data.camera[0]*6.25,
+		0,
+		map_data.camera[2]*6.25 )
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.left = -100;
 	dirLight.shadow.camera.right = 100;
@@ -52,6 +57,7 @@ function init() {
 	dirLight.shadow.camera.near = 0.5; // default
 	dirLight.shadow.camera.far = 500; // default
 	scene.add( dirLight );
+	scene.add( dirLight.target );
 	//const cameraHelper = new THREE.CameraHelper(dirLight.shadow.camera);
 	//scene.add(cameraHelper);
 
