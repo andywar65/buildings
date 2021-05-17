@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-16 16:57+0200\n"
+"POT-Creation-Date: 2021-05-17 22:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,9 +20,9 @@ msgstr ""
 
 #: .\buildings\admin.py:27 .\buildings\admin.py:132 .\buildings\forms.py:16
 #: .\buildings\forms.py:59 .\buildings\models.py:56 .\buildings\models.py:58
-#: .\buildings\models.py:408 .\buildings\models.py:410
-#: .\buildings\models.py:426 .\buildings\models.py:473
-#: .\buildings\models.py:475 .\buildings\views\element.py:298
+#: .\buildings\models.py:472 .\buildings\models.py:474
+#: .\buildings\models.py:490 .\buildings\models.py:537
+#: .\buildings\models.py:539 .\buildings\views\element.py:299
 msgid "Image"
 msgstr "Immagine"
 
@@ -36,13 +36,13 @@ msgstr "File"
 
 #: .\buildings\admin.py:85 .\buildings\forms.py:36 .\buildings\forms.py:44
 #: .\buildings\forms.py:74 .\buildings\forms.py:88 .\buildings\forms.py:104
-#: .\buildings\forms.py:117 .\buildings\forms.py:128 .\buildings\models.py:141
-#: .\buildings\models.py:144 .\buildings\models.py:151
-#: .\buildings\models.py:260 .\buildings\models.py:333
-#: .\buildings\models.py:432 .\buildings\models.py:467
+#: .\buildings\forms.py:117 .\buildings\forms.py:128 .\buildings\models.py:199
+#: .\buildings\models.py:202 .\buildings\models.py:209
+#: .\buildings\models.py:324 .\buildings\models.py:397
+#: .\buildings\models.py:496 .\buildings\models.py:531
 #: .\buildings\templates\buildings\building_detail.html:18
-#: .\buildings\templates\buildings\plan_detail.html:17
-#: .\buildings\views\element.py:298
+#: .\buildings\templates\buildings\plan_detail.html:18
+#: .\buildings\views\element.py:299
 msgid "Building"
 msgstr "Edificio"
 
@@ -70,12 +70,12 @@ msgstr "Elimina l'edificio"
 msgid "Caution, can't undo this."
 msgstr "Attenzione, non si può tornare indietro."
 
-#: .\buildings\forms.py:57 .\buildings\forms.py:66 .\buildings\models.py:399
-#: .\buildings\templates\buildings\stationimage_list_create.html:11
+#: .\buildings\forms.py:57 .\buildings\forms.py:66 .\buildings\models.py:463
+#: .\buildings\templates\buildings\stationimage_list_create.html:13
 msgid "Photo station"
 msgstr "Stazione fotografica"
 
-#: .\buildings\forms.py:90 .\buildings\models.py:261
+#: .\buildings\forms.py:90 .\buildings\models.py:325
 msgid "Parent set"
 msgstr "Set genitore"
 
@@ -83,7 +83,7 @@ msgstr "Set genitore"
 msgid "Can be changed only by staff in admin"
 msgstr "Può essere cambiato solo dallo staff in amministrazione"
 
-#: .\buildings\forms.py:119 .\buildings\models.py:433
+#: .\buildings\forms.py:119 .\buildings\models.py:497
 msgid "Parent family"
 msgstr "Famiglia genitore"
 
@@ -92,8 +92,8 @@ msgstr "Famiglia genitore"
 msgid "Another Building by %(website)s!"
 msgstr "Un altro edificio di %(website)s!"
 
-#: .\buildings\models.py:61 .\buildings\models.py:266 .\buildings\models.py:337
-#: .\buildings\models.py:438
+#: .\buildings\models.py:61 .\buildings\models.py:330 .\buildings\models.py:401
+#: .\buildings\models.py:502
 msgid "Title"
 msgstr "Titolo"
 
@@ -121,13 +121,13 @@ msgstr "Indirizzo"
 msgid "Something like \"Rome - Monteverde\" is ok"
 msgstr "Qualcosa tipo \"Rome - Monteverde\" va bene"
 
-#: .\buildings\models.py:73 .\buildings\models.py:343 .\buildings\models.py:480
-#: .\buildings\views\element.py:299
+#: .\buildings\models.py:73 .\buildings\models.py:407 .\buildings\models.py:544
+#: .\buildings\views\element.py:300
 msgid "Latitude"
 msgstr "Latitudine"
 
-#: .\buildings\models.py:74 .\buildings\models.py:344 .\buildings\models.py:481
-#: .\buildings\views\element.py:299
+#: .\buildings\models.py:74 .\buildings\models.py:408 .\buildings\models.py:545
+#: .\buildings\views\element.py:300
 msgid "Longitude"
 msgstr "Longitudine"
 
@@ -139,95 +139,95 @@ msgstr ""
 "Coordinate da Google Maps\n"
 "            oppure https://openstreetmap.org"
 
-#: .\buildings\models.py:79 .\buildings\models.py:549
+#: .\buildings\models.py:79 .\buildings\models.py:613
 msgid "Zoom factor"
 msgstr "Fattore di zoom"
 
-#: .\buildings\models.py:80 .\buildings\models.py:550
+#: .\buildings\models.py:80 .\buildings\models.py:614
 msgid "Maximum should be 23"
 msgstr "Al massimo 23"
 
-#: .\buildings\models.py:116
+#: .\buildings\models.py:174
 #, python-format
 msgid "Building-%(date)s"
 msgstr "Edificio-%(date)s"
 
-#: .\buildings\models.py:135
+#: .\buildings\models.py:193
 msgid "Base plan set"
 msgstr "Set di planimetrie di base"
 
-#: .\buildings\models.py:140
+#: .\buildings\models.py:198
 msgid "Base element family"
 msgstr "Famiglie di elementi di base"
 
-#: .\buildings\models.py:145
+#: .\buildings\models.py:203
 #: .\buildings\templates\buildings\building_list_create.html:7
-#: .\buildings\views\element.py:316
+#: .\buildings\views\element.py:317
 msgid "Buildings"
 msgstr "Edifici"
 
-#: .\buildings\models.py:152
+#: .\buildings\models.py:210
 msgid "Name"
 msgstr "Nome"
 
-#: .\buildings\models.py:153
+#: .\buildings\models.py:211
 msgid "Name of the building plan"
 msgstr "Nome della planimetria"
 
-#: .\buildings\models.py:155
+#: .\buildings\models.py:213
 msgid "Elevation in meters"
 msgstr "Livello in metri"
 
-#: .\buildings\models.py:156
+#: .\buildings\models.py:214
 msgid "DXF file"
 msgstr "File DXF"
 
-#: .\buildings\models.py:160
+#: .\buildings\models.py:218
 msgid "Refresh geometry"
 msgstr "Ripristina la geometria"
 
-#: .\buildings\models.py:235 .\buildings\models.py:317
-#: .\buildings\models.py:335 .\buildings\models.py:469
+#: .\buildings\models.py:294 .\buildings\models.py:381
+#: .\buildings\models.py:399 .\buildings\models.py:533
 msgid "Building plan"
 msgstr "Planimetria"
 
-#: .\buildings\models.py:236
+#: .\buildings\models.py:295
 msgid "Building plans"
 msgstr "Planimetrie"
 
-#: .\buildings\models.py:241 .\buildings\models.py:255
+#: .\buildings\models.py:300 .\buildings\models.py:319
 msgid "Plan geometry"
 msgstr "Geometria della planimetria"
 
-#: .\buildings\models.py:243
+#: .\buildings\models.py:302
 msgid "Popup"
 msgstr "Popup"
 
-#: .\buildings\models.py:244
+#: .\buildings\models.py:303
 msgid "Geometry description in popup"
 msgstr "Descrizione della geometria nel popup"
 
-#: .\buildings\models.py:245
+#: .\buildings\models.py:304
 msgid "Geometry"
 msgstr "Geometria"
 
-#: .\buildings\models.py:246
+#: .\buildings\models.py:305
 msgid "can be LineString or Polygon"
 msgstr "può essere LineString o Polygon"
 
-#: .\buildings\models.py:248
+#: .\buildings\models.py:307
 msgid "Is 3D"
 msgstr "E' 3D"
 
-#: .\buildings\models.py:249
+#: .\buildings\models.py:308
 msgid "Use third dimension in camera view"
 msgstr "Usa la terza dimensione nella vista in soggettiva"
 
-#: .\buildings\models.py:256
+#: .\buildings\models.py:320
 msgid "Plan geometries"
 msgstr "Geometrie della planimetria"
 
-#: .\buildings\models.py:263 .\buildings\models.py:435
+#: .\buildings\models.py:327 .\buildings\models.py:499
 msgid ""
 "Choose carefully,\n"
 "            can be changed only by staff in admin"
@@ -235,122 +235,122 @@ msgstr ""
 "Scegli con attenzione,\n"
 "            può essere modificato solo dallo staff in amministrazione"
 
-#: .\buildings\models.py:267
+#: .\buildings\models.py:331
 msgid "Set name"
 msgstr "Nome del set"
 
-#: .\buildings\models.py:269 .\buildings\models.py:340
-#: .\buildings\models.py:441 .\buildings\models.py:478
-#: .\buildings\views\element.py:299
+#: .\buildings\models.py:333 .\buildings\models.py:404
+#: .\buildings\models.py:505 .\buildings\models.py:542
+#: .\buildings\views\element.py:300
 msgid "Description"
 msgstr "Descrizione"
 
-#: .\buildings\models.py:271
+#: .\buildings\models.py:335
 msgid "Few words to describe the set"
 msgstr "Poche parole per descrivere il set"
 
-#: .\buildings\models.py:275
+#: .\buildings\models.py:339
 #: .\buildings\templates\buildings\building_detail.html:41
-#: .\buildings\templates\buildings\plan_detail.html:66
+#: .\buildings\templates\buildings\plan_detail.html:54
 msgid "Plans"
 msgstr "Planimetrie"
 
-#: .\buildings\models.py:277
+#: .\buildings\models.py:341
 msgid "Choose plans to show in this set"
 msgstr "Scegli le planimetrie da mostrare nel set"
 
-#: .\buildings\models.py:311 .\buildings\models.py:319
+#: .\buildings\models.py:375 .\buildings\models.py:383
 msgid "Plan set"
 msgstr "Set di planimetrie"
 
-#: .\buildings\models.py:312
-#: .\buildings\templates\buildings\plan_detail.html:58
+#: .\buildings\models.py:376
+#: .\buildings\templates\buildings\plan_detail.html:46
 msgid "Plan sets"
 msgstr "Set di planimetrie"
 
-#: .\buildings\models.py:320
+#: .\buildings\models.py:384
 msgid "Visible"
 msgstr "Visibile"
 
-#: .\buildings\models.py:321
+#: .\buildings\models.py:385
 msgid "Check if plan is visible in this plan set"
 msgstr "Spunta se la planimetria è visibile in questo set"
 
-#: .\buildings\models.py:324
+#: .\buildings\models.py:388
 msgid "Plan visibility"
 msgstr "Visibilità della planimetria"
 
-#: .\buildings\models.py:327
+#: .\buildings\models.py:391
 #, python-format
 msgid "Another photo station by %(sitename)s!"
 msgstr "Un'altra stazione fotografica di %(sitename)s!"
 
-#: .\buildings\models.py:338
+#: .\buildings\models.py:402
 msgid "Title of the photo station"
 msgstr "Titolo della stazione fotografica"
 
-#: .\buildings\models.py:400
+#: .\buildings\models.py:464
 msgid "Photo stations"
 msgstr "Stazioni fotografiche"
 
-#: .\buildings\models.py:406
+#: .\buildings\models.py:470
 msgid "Station"
 msgstr "Stazione"
 
-#: .\buildings\models.py:407
+#: .\buildings\models.py:471
 msgid "Date:"
 msgstr "Data:"
 
-#: .\buildings\models.py:413
+#: .\buildings\models.py:477
 msgid "Caption"
 msgstr "Didascalia"
 
-#: .\buildings\models.py:427
+#: .\buildings\models.py:491
 msgid "Images"
 msgstr "Immagini"
 
-#: .\buildings\models.py:439
+#: .\buildings\models.py:503
 msgid "Family name"
 msgstr "Nome della famiglia"
 
-#: .\buildings\models.py:443
+#: .\buildings\models.py:507
 msgid "Few words to describe the family"
 msgstr "Poche parole per descrivere la famiglia"
 
-#: .\buildings\models.py:446 .\buildings\models.py:483
-#: .\buildings\views\element.py:299
+#: .\buildings\models.py:510 .\buildings\models.py:547
+#: .\buildings\views\element.py:300
 msgid "Data sheet"
 msgstr "Foglio dati"
 
-#: .\buildings\models.py:447 .\buildings\models.py:484
+#: .\buildings\models.py:511 .\buildings\models.py:548
 msgid "A dictionary of element features"
 msgstr "Un dizionario di caratteristiche dell'elemento"
 
-#: .\buildings\models.py:461
+#: .\buildings\models.py:525
 msgid "Element Family"
 msgstr "Famiglia di elementi"
 
-#: .\buildings\models.py:462
+#: .\buildings\models.py:526
 msgid "Element Families"
 msgstr "Famiglie di elementi"
 
-#: .\buildings\models.py:472 .\buildings\views\element.py:298
+#: .\buildings\models.py:536 .\buildings\views\element.py:299
 msgid "Family"
 msgstr "Famiglia"
 
-#: .\buildings\models.py:542
+#: .\buildings\models.py:606
 msgid "Element"
 msgstr "Elemento"
 
-#: .\buildings\models.py:543
+#: .\buildings\models.py:607
 msgid "Elements"
 msgstr "Elementi"
 
-#: .\buildings\models.py:556
+#: .\buildings\models.py:620
 msgid "City"
 msgstr "Città"
 
-#: .\buildings\models.py:557
+#: .\buildings\models.py:621
 msgid "Cities"
 msgstr "Città"
 
@@ -363,12 +363,12 @@ msgid "No plans in active set"
 msgstr "Nessuna planimetria nel set attivo"
 
 #: .\buildings\templates\buildings\building_detail.html:53
-#: .\buildings\templates\buildings\plan_detail.html:76
+#: .\buildings\templates\buildings\plan_detail.html:64
 msgid "Images by date"
 msgstr "Immagini per data"
 
 #: .\buildings\templates\buildings\building_detail.html:63
-#: .\buildings\templates\buildings\plan_detail.html:86
+#: .\buildings\templates\buildings\plan_detail.html:74
 msgid "No images available"
 msgstr "Nessun immagine disponibile"
 
@@ -389,7 +389,6 @@ msgstr "Non hai le credenziali per cancellare edifici"
 #: .\buildings\templates\buildings\building_form_update_old.html:7
 #: .\buildings\templates\buildings\building_form_update_old.html:18
 #: .\buildings\templates\buildings\includes\edit_buttons.html:6
-#: .\buildings\templates\buildings\plan_detail.html:33
 msgid "Modify building"
 msgstr "Modifica l'edificio"
 
@@ -397,25 +396,37 @@ msgstr "Modifica l'edificio"
 msgid "Update"
 msgstr "Aggiorna"
 
-#: .\buildings\templates\buildings\building_form_update.html:45
+#: .\buildings\templates\buildings\building_form_update.html:35
+#: .\buildings\templates\buildings\element_form.html:35
+#: .\buildings\templates\buildings\element_form_update.html:34
+#: .\buildings\templates\buildings\family_list_create.html:28
+#: .\buildings\templates\buildings\photostation_form.html:35
+#: .\buildings\templates\buildings\photostation_form_update.html:36
+#: .\buildings\templates\buildings\plan_detail.html:37
+#: .\buildings\templates\buildings\stationimage_archive_day.html:35
+#: .\buildings\templates\buildings\stationimage_list_create.html:55
+msgid "Back to building"
+msgstr "Torna all'edificio"
+
+#: .\buildings\templates\buildings\building_form_update.html:49
 #: .\buildings\templates\buildings\building_list_create.html:51
 msgid "Click on the map above to set Latitude, Longitude and Zoom factor."
 msgstr ""
 "Fai click sulla mappa qui sopra per definire coordinate e fattore di zoom."
 
-#: .\buildings\templates\buildings\building_form_update.html:53
+#: .\buildings\templates\buildings\building_form_update.html:57
 #: .\buildings\templates\buildings\building_form_update_old.html:25
-#: .\buildings\templates\buildings\element_form_update.html:23
-#: .\buildings\templates\buildings\family_form_update.html:17
+#: .\buildings\templates\buildings\family_form_update.html:22
 #: .\buildings\templates\buildings\includes\delete_buttons.html:8
-#: .\buildings\templates\buildings\photostation_form_update.html:26
-#: .\buildings\templates\buildings\plan_form_update.html:20
-#: .\buildings\templates\buildings\planset_form_update.html:19
-#: .\buildings\templates\buildings\stationimage_form_update.html:20
+#: .\buildings\templates\buildings\plan_form_update.html:23
+#: .\buildings\templates\buildings\plan_form_update.html:24
+#: .\buildings\templates\buildings\planset_form_update.html:22
+#: .\buildings\templates\buildings\stationimage_form_update.html:23
+#: .\buildings\templates\buildings\stationimage_form_update.html:24
 msgid "Delete"
 msgstr "Cancella"
 
-#: .\buildings\templates\buildings\building_form_update.html:70
+#: .\buildings\templates\buildings\building_form_update.html:74
 #: .\buildings\templates\buildings\building_form_update_old.html:48
 msgid "You don't have permissions to modify buildings"
 msgstr "Non hai le credenziali per modificare edifici"
@@ -438,12 +449,26 @@ msgid "You don't have permissions to add buildings"
 msgstr "Non hai le credenziali per aggiungere edifici"
 
 #: .\buildings\templates\buildings\element_form.html:7
-#: .\buildings\templates\buildings\element_form.html:18
+#: .\buildings\templates\buildings\element_form.html:19
 #: .\buildings\templates\buildings\includes\edit_buttons.html:40
 msgid "Add element"
 msgstr "Aggiungi elemento"
 
-#: .\buildings\templates\buildings\element_form.html:35
+#: .\buildings\templates\buildings\element_form.html:30
+#: .\buildings\templates\buildings\family_list_create.html:23
+#: .\buildings\templates\buildings\photostation_form.html:30
+msgid "Add"
+msgstr "Aggiungi"
+
+#: .\buildings\templates\buildings\element_form.html:48
+#: .\buildings\templates\buildings\element_form_update.html:53
+#: .\buildings\templates\buildings\photostation_form.html:48
+#: .\buildings\templates\buildings\photostation_form_update.html:55
+msgid "Click on the map above to set location."
+msgstr ""
+"Fai click sulla mappa qui sopra per definire la posizione."
+
+#: .\buildings\templates\buildings\element_form.html:63
 msgid "You don't have permissions to add elements"
 msgstr "Non hai le credenziali per aggiungere elementi"
 
@@ -463,11 +488,19 @@ msgstr "Non hai le credenziali per cancellare elementi"
 msgid "Modify element"
 msgstr "Modifica elemento"
 
-#: .\buildings\templates\buildings\element_form_update.html:19
+#: .\buildings\templates\buildings\element_form_update.html:18
 msgid "Review / modify element"
 msgstr "Verifica / modifica l'elemento"
 
-#: .\buildings\templates\buildings\element_form_update.html:52
+#: .\buildings\templates\buildings\element_form_update.html:29
+#: .\buildings\templates\buildings\element_form_update.html:39
+#: .\buildings\templates\buildings\includes\building_detail_plans.html:7
+#: .\buildings\templates\buildings\photostation_form_update.html:31
+#: .\buildings\templates\buildings\photostation_form_update.html:41
+msgid "Modify"
+msgstr "Modifica"
+
+#: .\buildings\templates\buildings\element_form_update.html:73
 msgid "You don't have permissions to change elements"
 msgstr "Non hai le credenziali per modificare elementi"
 
@@ -492,28 +525,27 @@ msgid "Update element family"
 msgstr "Modifica famiglia"
 
 #: .\buildings\templates\buildings\family_form_update.html:14
-msgid "Modify element family"
-msgstr "Modifica la famiglia di elementi"
+msgid "Modify element family: "
+msgstr "Modifica la famiglia di elementi: "
 
-#: .\buildings\templates\buildings\family_form_update.html:34
-msgid "You don't have permissions to change element families"
+#: .\buildings\templates\buildings\family_form_update.html:33
+msgid "You don't have permissions to modify element families"
 msgstr "Non hai le credenziali per modificare famiglie di elementi"
 
 #: .\buildings\templates\buildings\family_list_create.html:5
 msgid "Create element family"
 msgstr "Crea famiglia"
 
-#: .\buildings\templates\buildings\family_list_create.html:14
-#: .\buildings\templates\buildings\family_list_create.html:32
+#: .\buildings\templates\buildings\family_list_create.html:12
+msgid "Element family list"
+msgstr "Lista di famiglie di elementi"
+
+#: .\buildings\templates\buildings\family_list_create.html:41
 #: .\buildings\templates\buildings\includes\edit_buttons.html:34
 msgid "Add element family"
 msgstr "Aggiungi famiglia di elementi"
 
-#: .\buildings\templates\buildings\family_list_create.html:22
-msgid "Element family list"
-msgstr "Lista di famiglie di elementi"
-
-#: .\buildings\templates\buildings\family_list_create.html:45
+#: .\buildings\templates\buildings\family_list_create.html:56
 msgid "You don't have permissions to add element families"
 msgstr "Non hai le credenziali per aggiungere famiglie di elementi"
 
@@ -569,10 +601,6 @@ msgstr ""
 "    %(model_name)s <strong>%(object)s</strong> cancellato/a con successo!\n"
 "    "
 
-#: .\buildings\templates\buildings\includes\building_detail_plans.html:7
-msgid "Modify"
-msgstr "Modifica"
-
 #: .\buildings\templates\buildings\includes\building_detail_plans.html:8
 msgid "Elevation (mt)"
 msgstr "Quota (m)"
@@ -594,30 +622,26 @@ msgid "WARNING, we can't undo this!"
 msgstr "ATTENZIONE, non si può tornare indietro!"
 
 #: .\buildings\templates\buildings\includes\delete_buttons.html:12
-msgid "Cancel"
-msgstr "Annulla"
+msgid "Don't!"
+msgstr "Non farlo!"
 
 #: .\buildings\templates\buildings\includes\edit_buttons.html:11
-#: .\buildings\templates\buildings\plan_detail.html:36
 msgid "Back to all buildings"
 msgstr "Torna a tutti gli edifici"
 
 #: .\buildings\templates\buildings\includes\edit_buttons.html:16
-#: .\buildings\templates\buildings\plan_detail.html:41
 msgid "Add Plan set"
 msgstr "Aggiungi set di planimetrie"
 
 #: .\buildings\templates\buildings\includes\edit_buttons.html:22
-#: .\buildings\templates\buildings\plan_detail.html:45
 #: .\buildings\templates\buildings\plan_form.html:5
-#: .\buildings\templates\buildings\plan_form.html:12
+#: .\buildings\templates\buildings\plan_form.html:14
 msgid "Add building plan"
 msgstr "Aggiungi planimetria"
 
 #: .\buildings\templates\buildings\includes\edit_buttons.html:28
 #: .\buildings\templates\buildings\photostation_form.html:7
-#: .\buildings\templates\buildings\photostation_form.html:18
-#: .\buildings\templates\buildings\plan_detail.html:49
+#: .\buildings\templates\buildings\photostation_form.html:19
 msgid "Add photo station"
 msgstr "Aggiungi stazione fotografica"
 
@@ -626,30 +650,26 @@ msgid "Download elements"
 msgstr "Scarica elementi"
 
 #: .\buildings\templates\buildings\includes\element_detail.html:6
-msgid "Actual data"
-msgstr "Dati attuali"
-
-#: .\buildings\templates\buildings\includes\element_detail.html:16
 msgid "Building: "
 msgstr "Edificio: "
 
-#: .\buildings\templates\buildings\includes\element_detail.html:21
+#: .\buildings\templates\buildings\includes\element_detail.html:11
 msgid "Plan: "
 msgstr "Planimetria: "
 
-#: .\buildings\templates\buildings\includes\element_detail.html:26
+#: .\buildings\templates\buildings\includes\element_detail.html:16
 msgid "Family: "
 msgstr "Famiglia: "
 
-#: .\buildings\templates\buildings\includes\element_detail.html:30
+#: .\buildings\templates\buildings\includes\element_detail.html:20
 msgid "Description: "
 msgstr "Descrizione: "
 
-#: .\buildings\templates\buildings\includes\element_detail.html:33
-msgid "Latitude (see map below): "
-msgstr "Latitudine (vedi mappa qui sotto):"
+#: .\buildings\templates\buildings\includes\element_detail.html:23
+msgid "Latitude: "
+msgstr "Latitudine: "
 
-#: .\buildings\templates\buildings\includes\element_detail.html:36
+#: .\buildings\templates\buildings\includes\element_detail.html:26
 msgid "Longitude: "
 msgstr "Longitudine: "
 
@@ -692,7 +712,7 @@ msgid "Next"
 msgstr "Prossimi"
 
 #: .\buildings\templates\buildings\includes\station_gallery.html:35
-#: .\buildings\views\element.py:302
+#: .\buildings\views\element.py:303
 msgid "No description"
 msgstr "Nessuna descrizione"
 
@@ -712,7 +732,15 @@ msgstr "Salta: SPAZIO"
 msgid "Look: MOUSE"
 msgstr "Guarda: MOUSE"
 
-#: .\buildings\templates\buildings\photostation_form.html:35
+#: .\buildings\templates\buildings\photostation_3d.html:19
+msgid "Exit: ESC"
+msgstr "Esci: ESC"
+
+#: .\buildings\templates\buildings\photostation_3d.html:20
+msgid "Back to Photo station"
+msgstr "Torna alla Stazione fotografica"
+
+#: .\buildings\templates\buildings\photostation_form.html:63
 msgid "You don't have permissions to add photo stations"
 msgstr "Non hai le credenziali per aggiungere stazioni fotografiche"
 
@@ -729,28 +757,29 @@ msgid "You don't have permissions to delete photo stations"
 msgstr "Non hai le credenziali per eliminare stazioni fotografiche"
 
 #: .\buildings\templates\buildings\photostation_form_update.html:8
-#: .\buildings\templates\buildings\photostation_form_update.html:19
-#: .\buildings\templates\buildings\stationimage_list_create.html:40
+#: .\buildings\templates\buildings\photostation_form_update.html:20
+#: .\buildings\templates\buildings\stationimage_list_create.html:46
 msgid "Modify photo station"
 msgstr "Modifica stazione"
 
-#: .\buildings\templates\buildings\photostation_form_update.html:43
+#: .\buildings\templates\buildings\photostation_form_update.html:70
 msgid "You don't have permissions to change photo stations"
 msgstr "Non hai le credenziali per modificare stazioni fotografiche"
 
-#: .\buildings\templates\buildings\plan_detail.html:18
+#: .\buildings\templates\buildings\plan_detail.html:19
 msgid "plan"
 msgstr "planimetria"
 
-#: .\buildings\templates\buildings\plan_detail.html:20
+#: .\buildings\templates\buildings\plan_detail.html:21
 msgid "Elevation (m)"
 msgstr "Quota (m)"
 
-#: .\buildings\templates\buildings\plan_detail.html:23
-msgid "Modify features"
-msgstr "Modifica le caratteristiche"
+#: .\buildings\templates\buildings\plan_detail.html:32
+#: .\buildings\templates\buildings\plan_form_update.html:6
+msgid "Modify building plan"
+msgstr "Modifica planimetria"
 
-#: .\buildings\templates\buildings\plan_form.html:25
+#: .\buildings\templates\buildings\plan_form.html:26
 msgid "You don't have permissions to add building plans"
 msgstr "Non hai le credenziali per aggiungere planimetrie"
 
@@ -766,12 +795,11 @@ msgstr "Elimina planimetria:"
 msgid "You don't have permissions to delete building plans"
 msgstr "Non hai le credenziali per eliminare planimetrie"
 
-#: .\buildings\templates\buildings\plan_form_update.html:6
-#: .\buildings\templates\buildings\plan_form_update.html:13
-msgid "Modify building plan"
-msgstr "Modifica planimetria"
+#: .\buildings\templates\buildings\plan_form_update.html:15
+msgid "Modify building plan: "
+msgstr "Modifica la planimetria: "
 
-#: .\buildings\templates\buildings\plan_form_update.html:33
+#: .\buildings\templates\buildings\plan_form_update.html:34
 msgid "You don't have permissions to modify building plans"
 msgstr "Non hai le credenziali per modificare planimetrie"
 
@@ -783,7 +811,7 @@ msgstr "Crea set"
 msgid "Add plan set"
 msgstr "Aggiungi set di planimetrie"
 
-#: .\buildings\templates\buildings\planset_form.html:27
+#: .\buildings\templates\buildings\planset_form.html:29
 msgid "You don't have permissions to add plan sets"
 msgstr "Non hai le credenziali per aggiungere set di planimetrie"
 
@@ -807,15 +835,15 @@ msgstr "Non hai le credenziali per eliminare set di planimetrie"
 msgid "Modify Plan set"
 msgstr "Modifica Set"
 
-#: .\buildings\templates\buildings\planset_form_update.html:12
+#: .\buildings\templates\buildings\planset_form_update.html:14
 msgid "Modify Plan set: "
-msgstr "Modifica set di planimetrie:"
+msgstr "Modifica set di planimetrie: "
 
-#: .\buildings\templates\buildings\planset_form_update.html:32
+#: .\buildings\templates\buildings\planset_form_update.html:33
 msgid "You don't have permissions to modify plan sets"
 msgstr "Non hai le credenziali per modificare set di planimetrie"
 
-#: .\buildings\templates\buildings\stationimage_archive_day.html:9
+#: .\buildings\templates\buildings\stationimage_archive_day.html:11
 msgid "Images by day"
 msgstr "Immagini per data"
 
@@ -837,46 +865,49 @@ msgstr "Elimina immagine"
 
 #: .\buildings\templates\buildings\stationimage_form_delete.html:10
 msgid "Delete image:"
-msgstr "Elimina immagine:"
+msgstr "Elimina l'immagine:"
 
 #: .\buildings\templates\buildings\stationimage_form_delete.html:14
 msgid "You don't have permissions to delete images"
 msgstr "Non hai le credenziali per eliminare le immagini"
 
 #: .\buildings\templates\buildings\stationimage_form_update.html:6
-#: .\buildings\templates\buildings\stationimage_form_update.html:13
 msgid "Modify image"
 msgstr "Modifica immagine"
 
-#: .\buildings\templates\buildings\stationimage_form_update.html:37
+#: .\buildings\templates\buildings\stationimage_form_update.html:15
+msgid "Modify image: "
+msgstr "Modifica l'immagine: "
+
+#: .\buildings\templates\buildings\stationimage_form_update.html:38
 msgid "You don't have permissions to modify images"
 msgstr "Non hai le credenziali per modificare le immagini"
 
-#: .\buildings\templates\buildings\stationimage_list_create.html:18
-msgid "Bakcwards in time"
-msgstr "Indietro nel tempo"
-
-#: .\buildings\templates\buildings\stationimage_list_create.html:21
-msgid "Forwards in time"
-msgstr "Avanti nel tempo"
-
-#: .\buildings\templates\buildings\stationimage_list_create.html:25
-msgid "Add image"
-msgstr "Aggiungi immagine"
-
-#: .\buildings\templates\buildings\stationimage_list_create.html:33
+#: .\buildings\templates\buildings\stationimage_list_create.html:20
 msgid "There are no images available for this station"
 msgstr "Non ci sono immagini disponibili per questa stazione"
 
-#: .\buildings\templates\buildings\stationimage_list_create.html:45
-msgid "Back to building"
-msgstr "Torna all'edificio"
+#: .\buildings\templates\buildings\stationimage_list_create.html:29
+msgid "Bakcwards in time"
+msgstr "Indietro nel tempo"
 
-#: .\buildings\templates\buildings\stationimage_list_create.html:53
+#: .\buildings\templates\buildings\stationimage_list_create.html:34
+msgid "Forwards in time"
+msgstr "Avanti nel tempo"
+
+#: .\buildings\templates\buildings\stationimage_list_create.html:40
+msgid "Add image"
+msgstr "Aggiungi immagine"
+
+#: .\buildings\templates\buildings\stationimage_list_create.html:51
+msgid "Watch in 3D!"
+msgstr "Guarda in 3D!"
+
+#: .\buildings\templates\buildings\stationimage_list_create.html:68
 msgid "Add an image"
-msgstr "Aggiungi un immagine"
+msgstr "Aggiungi un'immagine"
 
-#: .\buildings\templates\buildings\stationimage_list_create.html:66
+#: .\buildings\templates\buildings\stationimage_list_create.html:80
 msgid "You don't have permissions to add images"
 msgstr "Non hai le credenziali per aggiungere immagini"
 
@@ -1002,31 +1033,46 @@ msgstr "La planimetria non appartiene all'edificio"
 msgid "Element family does not belong to Building"
 msgstr "La famiglia di elementi non appartiene all'edificio"
 
-#: .\buildings\views\element.py:211 .\buildings\views\element.py:275
+#: .\buildings\views\element.py:212 .\buildings\views\element.py:276
 msgid "Element does not belong to Building"
 msgstr "L'elemento' non appartiene all'edificio"
 
-#: .\buildings\views\element.py:298
+#: .\buildings\views\element.py:299
 msgid "Plan"
 msgstr "Planimetria"
 
-#: .\buildings\views\element.py:301
+#: .\buildings\views\element.py:302
 msgid "No image"
 msgstr "Nessuna immagine"
 
-#: .\buildings\views\station.py:86 .\buildings\views\station.py:151
-#: .\buildings\views\station.py:184 .\buildings\views\station.py:209
-#: .\buildings\views\station.py:261 .\buildings\views\station.py:296
+#: .\buildings\views\station.py:87 .\buildings\views\station.py:152
+#: .\buildings\views\station.py:185 .\buildings\views\station.py:211
+#: .\buildings\views\station.py:263 .\buildings\views\station.py:298
 msgid "Station does not belong to Building"
 msgstr "La stazione non appartiene all'edificio"
 
-#: .\buildings\views\station.py:232
+#: .\buildings\views\station.py:234
 msgid "User has no permission to add images"
 msgstr "L'utente non ha le credenziali per aggiungere immagini"
 
-#: .\buildings\views\station.py:263 .\buildings\views\station.py:298
+#: .\buildings\views\station.py:265 .\buildings\views\station.py:300
 msgid "Image does not belong to Photo Station"
 msgstr "L'immagine' non appartiene alla stazione fotografica"
+
+#~ msgid "You don't have permissions to change element families"
+#~ msgstr "Non hai le credenziali per modificare famiglie di elementi"
+
+#~ msgid "Cancel"
+#~ msgstr "Annulla"
+
+#~ msgid "Actual data"
+#~ msgstr "Dati attuali"
+
+#~ msgid "Latitude (see map below): "
+#~ msgstr "Latitudine (vedi mappa qui sotto):"
+
+#~ msgid "Modify features"
+#~ msgstr "Modifica le caratteristiche"
 
 #~ msgid "Check if plan is immediately visible"
 #~ msgstr "Spunta se la planimetria è subito visibile"
