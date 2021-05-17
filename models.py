@@ -160,6 +160,15 @@ class Building(models.Model):
                 geom.append(gmd)
         return geom
 
+    def get_floor_elevation(self):
+        #scale factor
+        sc = 6.25
+        plan = self.building_plan.all().reverse().first()
+        if plan:
+            return plan.elev * sc
+        else:
+            return 0
+
     def save(self, *args, **kwargs):
         if not self.title:
             self.title = _('Building-%(date)s') % {

@@ -160,7 +160,7 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
-	floor.position.set( 0, -.01, 0 )
+	floor.position.set( 0, map_data.floor-.01, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
 
