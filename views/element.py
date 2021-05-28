@@ -1,4 +1,5 @@
 import csv
+from math import radians, cos
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.conf import settings
@@ -296,12 +297,20 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
             f'?deleted={self.title}&model={_("Element")}')
 
 def csv_writer(writer, qs):
-    writer.writerow([_('Building'), _('Family'), _('Plan'), _('Image'),
-        _('Description'), _('Latitude'), _('Longitude'), _('Data sheet')])
+    writer.writerow([_('ID'),_('Building'), _('Family'),
+        _('Plan'), _('Image'),
+        _('Description'), _('Latitude'), _('Longitude'),
+        _('X'), _('Y'), _('Data sheet')])
     for e in qs:
         image = e.fb_image.url if e.fb_image else _('No image')
         intro = e.intro if e.intro else _('No description')
-        row = [e.build, e.family, e.plan, image, intro, e.lat, e.long]
+        x = ( - 6371000 * ( radians( e.build.location.coords[0] -
+            e.location.coords[0] ) ) *
+            cos( radians( e.build.location.coords[1] ) ) )
+        y = ( - 6371000 * ( radians( e.build.location.coords[1] -
+            e.location.coords[1] ) ) )#verify
+        row = [ e.id, e.build, e.family, e.plan, image, intro,
+            e.location.coords[1], e.location.coords[0], x, y ]
         for key, value in e.sheet.items():
             row.append(key)
             row.append(value)
