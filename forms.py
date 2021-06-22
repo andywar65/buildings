@@ -17,15 +17,15 @@ class BuildingCreateForm(ModelForm):
 
     class Meta:
         model = Building
-        fields = ( 'image', 'title', 'intro', 'date', 'address', 'lat', 'long',
-            'zoom', )
+        fields = ( 'image', 'title', 'intro', 'date', 'address', 'private',
+            'lat', 'long', 'zoom', )
 
 class BuildingUpdateForm(ModelForm):
 
     class Meta:
         model = Building
-        fields = ( 'image', 'title', 'intro', 'date', 'address', 'lat', 'long',
-            'zoom', )
+        fields = ( 'image', 'title', 'intro', 'date', 'address', 'private',
+            'lat', 'long', 'zoom', )
 
 class BuildingDeleteForm(forms.Form):
     delete = forms.BooleanField( label=_("Delete the building"),

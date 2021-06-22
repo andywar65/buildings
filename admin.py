@@ -28,7 +28,7 @@ class BuildingAdmin(admin.ModelAdmin):
             'fields': ('fb_image', ),
         }),
         (None, {
-            'fields': ('title', 'date', 'intro', 'address'),
+            'fields': ('title', 'date', 'intro', 'address', 'private'),
         }),
         (_('Map'), {
             'fields': ('location', 'zoom', ),
