@@ -135,14 +135,19 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'set_slug': self.object.get_base_slug() }) +
                 f'?created={self.object.title}&model={_("Building")}')
 
-class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
+class BuildingDetailView(AlertMixin, DetailView):
     model = Building
-    permission_required = 'buildings.view_building'
+    #permission_required = 'buildings.view_building'
     context_object_name = 'build'
     slug_url_kwarg = 'build_slug'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
+        if self.get_object().private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_building'):
+                raise Http404(_("User has no permission to view building"))
         self.set = get_object_or_404( PlanSet,
             slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
