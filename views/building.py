@@ -44,6 +44,9 @@ class BuildingListView( PermissionRequiredMixin, AlertMixin, ListView ):
     def setup(self, request, *args, **kwargs):
         super(BuildingListView, self).setup(request, *args, **kwargs)
         self.city = City.objects.first()
+        if request.user.profile.location:
+            self.city.location = request.user.profile.location
+            self.city.zoom = request.user.profile.zoom
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
