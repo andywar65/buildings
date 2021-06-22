@@ -171,14 +171,19 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.stat.title}&model={_("Photo station")}')
 
-class PhotoStation3dView( PermissionRequiredMixin, TemplateView ):
-    permission_required = 'buildings.view_photostation'
+class PhotoStation3dView( TemplateView ):
+    #permission_required = 'buildings.view_photostation'
     template_name = 'buildings/photostation_3d.html'
 
     def setup(self, request, *args, **kwargs):
         super(PhotoStation3dView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_photostation'):
+                raise Http404(_("User has no permission to view photostation"))
         self.stat = get_object_or_404( PhotoStation,
             slug = self.kwargs['stat_slug'] )
         if not self.build == self.stat.build:
@@ -193,10 +198,10 @@ class PhotoStation3dView( PermissionRequiredMixin, TemplateView ):
         context['map_data']['floor'] = self.build.get_floor_elevation()
         return context
 
-class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
+class StationImageListCreateView( AlertMixin,
     CreateView ):
     model = StationImage
-    permission_required = 'buildings.view_photostation'
+    #permission_required = 'buildings.view_photostation'
     form_class = StationImageCreateForm
     template_name = 'buildings/stationimage_list_create.html'
 
@@ -205,6 +210,11 @@ class StationImageListCreateView( PermissionRequiredMixin, AlertMixin,
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_photostation'):
+                raise Http404(_("User has no permission to view photostation"))
         self.stat = get_object_or_404( PhotoStation,
             slug = self.kwargs['stat_slug'] )
         if not self.stat.build == self.build:
