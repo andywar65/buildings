@@ -78,25 +78,22 @@ class BuildingListView( PermissionRequiredMixin, AlertMixin, ListView ):
 
 class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
-    permission_required = 'buildings.view_building'
+    permission_required = 'buildings.add_building'
     form_class = BuildingCreateForm
-    template_name = 'buildings/building_list_create.html'
+    template_name = 'buildings/building_form.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingCreateView, self).setup(request, *args, **kwargs)
         self.city = City.objects.first()
+        if request.user.profile.location:
+            self.city.location = request.user.profile.location
+            self.city.zoom = request.user.profile.zoom
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #list all buildings
-        context['builds'] = Building.objects.all()
         #building alerts
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
-        #not using values() because we have to manipulate entries
-        builds = []
-        for build in context['builds']:
-            builds.append( build.map_dictionary() )
         if self.city:
             city_long = self.city.location.coords[0]
             city_lat = self.city.location.coords[1]
@@ -106,7 +103,6 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             city_lat = settings.CITY_LAT
             city_zoom = settings.CITY_ZOOM
         context['map_data'] = {
-            'builds': builds,
             'on_map_click': True,
             'on_map_zoom': True,
             'city_lat': city_lat,
@@ -117,7 +113,7 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         return context
 
     def get_initial(self):
-        initial = super( BuildingListCreateView, self ).get_initial()
+        initial = super( BuildingCreateView, self ).get_initial()
         if self.city:
             initial['lat'] = self.city.location.coords[1]
             initial['long'] = self.city.location.coords[0]
@@ -126,14 +122,9 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             initial['long'] = settings.CITY_LONG
         return initial
 
-    def form_valid(self, form):
-        if not self.request.user.has_perm('buildings.add_building'):
-            raise Http404(_("User has no permission to add buildings"))
-        return super(BuildingListCreateView, self).form_valid(form)
-
     def get_success_url(self):
         if 'add_another' in self.request.POST:
-            return (reverse('buildings:building_list') +
+            return (reverse('buildings:building_create') +
                 f'?created={self.object.title}&model={_("Building")}')
         elif 'continue' in self.request.POST:
             return (reverse('buildings:building_change',

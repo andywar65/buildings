@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load fb_versions %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ website.acro }} | {% translate "Add building" %}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+{% include "buildings/includes/building_alerts.html" %}
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Add building" %}</strong></h4>
+      </div>
+      <div class="card-body">
+        <div id="mapid" style="height: 600px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card-group">
+      {% if perms.buildings.add_building %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-primary" href="#building-create" title="{% translate "Add" %}">
+          + <i class="fa fa-building"></i></a>
+      </div>
+      {% endif %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_list' %}" title="{% translate "Back to city" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" id="building-create" style="height: 65px;">
+</div>
+<div class="row" id="building-create-form">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4><strong>{% translate "Add building" %}</strong></h4>
+        <p>{% translate "Click on the map above to set Latitude, Longitude and Zoom factor." %}</p>
+      </div>
+      <div class="card-body">
+        {% if perms.buildings.add_building %}
+        <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
+          <div class="row" style="margin-bottom: 20px;">
+            {% include "buildings/includes/add_buttons_icons.html" %}
+          </div>
+          {% include "buildings/includes/form_errors.html" %}
+          {{ form|crispy }}
+          <hr class="mb-4">
+          {% include "buildings/includes/add_buttons.html" %}
+          {% csrf_token %}
+        </form>
+        {% else %}
+        {% translate "You don't have permissions to add buildings" %}.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'buildings/js/buildings.js'%}"></script>
+{% endblock extra-js %}

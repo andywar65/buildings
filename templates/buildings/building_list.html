@@ -27,7 +27,7 @@
     <div class="card-group">
       {% if perms.buildings.add_building %}
       <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
-        <a class="btn btn-secondary" href="#building-create" title="{% translate "Add building" %}">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_create'%}" title="{% translate "Add building" %}">
           + <i class="fa fa-building"></i></a>
       </div>
       {% endif %}
