@@ -170,7 +170,7 @@ class BuildingDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
             get_self_and_ancestor_plans())
         plan_list = context['plans'].values_list('id', flat=True)
         #add families
-        context['annotated_list'] = self.object.get_family_annotated_list()
+        context['fam_annotated_list'] = self.object.get_family_annotated_list()
         #add elements
         context['elements'] = self.object.building_element.filter(Q(plan=None)|
             Q(plan_id__in=plan_list))
