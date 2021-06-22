@@ -17,6 +17,17 @@ def create_buildings_group(sender, **kwargs):
             'view_family', 'add_family', 'change_family', 'delete_family',
             ))
         grp.permissions.set(permissions)
+    grp, created = Group.objects.get_or_create(name=_('Building Guest'))
+    if created:
+        permissions = Permission.objects.filter(codename__in=(
+            'view_building',
+            'view_plan',
+            'view_photostation',
+            'view_stationimage',
+            'view_planset',
+            'view_family', 
+            ))
+        grp.permissions.set(permissions)
 
 def create_plansets(sender, **kwargs):
     from buildings.models import PlanSet
