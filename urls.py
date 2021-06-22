@@ -5,7 +5,7 @@ from .views import *
 
 app_name = 'buildings'
 urlpatterns = [
-    path('', BuildingListCreateView.as_view(), name = 'building_list'),
+    path('', BuildingListView.as_view(), name = 'building_list'),
     path(_('<slug>/'), BuildingRedirectView.as_view(), name = 'building_slug'),
     path(_('<slug>/change/'), BuildingUpdateView.as_view(),
         name = 'building_change'),

@@ -36,14 +36,51 @@ class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
             kwargs={'build_slug': build.slug,
             'set_slug': build.get_base_slug() }))
 
-class BuildingListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class BuildingListView( PermissionRequiredMixin, AlertMixin, ListView ):
+    model = Building
+    permission_required = 'buildings.view_building'
+    template_name = 'buildings/building_list.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingListView, self).setup(request, *args, **kwargs)
+        self.city = City.objects.first()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #list all buildings
+        context['builds'] = Building.objects.all()
+        #building alerts
+        context = self.add_alerts_to_context(context)
+        #we add the following to feed the map
+        #not using values() because we have to manipulate entries
+        builds = []
+        for build in context['builds']:
+            builds.append( build.map_dictionary() )
+        if self.city:
+            city_long = self.city.location.coords[0]
+            city_lat = self.city.location.coords[1]
+            city_zoom = self.city.zoom
+        else:
+            city_long = settings.CITY_LONG
+            city_lat = settings.CITY_LAT
+            city_zoom = settings.CITY_ZOOM
+        context['map_data'] = {
+            'builds': builds,
+            'city_lat': city_lat,
+            'city_long': city_long,
+            'city_zoom': city_zoom,
+            'mapbox_token': settings.MAPBOX_TOKEN
+            }
+        return context
+
+class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
     permission_required = 'buildings.view_building'
     form_class = BuildingCreateForm
     template_name = 'buildings/building_list_create.html'
 
     def setup(self, request, *args, **kwargs):
-        super(BuildingListCreateView, self).setup(request, *args, **kwargs)
+        super(BuildingCreateView, self).setup(request, *args, **kwargs)
         self.city = City.objects.first()
 
     def get_context_data(self, **kwargs):

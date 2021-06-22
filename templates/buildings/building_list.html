@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load fb_versions %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ website.acro }} | {% translate "Buildings" %}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+{% include "buildings/includes/building_alerts.html" %}
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Map of all buildings" %}</strong></h4>
+      </div>
+      <div class="card-body">
+        <div id="mapid" style="height: 600px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card-group">
+      {% if perms.buildings.add_building %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="#building-create" title="{% translate "Add building" %}">
+          + <i class="fa fa-building"></i></a>
+      </div>
+      {% endif %}
+      {% if perms.buildings.add_city and user.is_staff %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-warning" href="/admin/buildings/city/" title="{% translate "Manage cities (in admin)" %}">
+          <i class="fa fa-pencil"></i> <i class="fa fa-globe"></i></a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'buildings/js/buildings.js'%}"></script>
+{% endblock extra-js %}
