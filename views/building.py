@@ -36,15 +36,14 @@ class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
             kwargs={'build_slug': build.slug,
             'set_slug': build.get_base_slug() }))
 
-class BuildingListView( PermissionRequiredMixin, AlertMixin, ListView ):
+class BuildingListView( AlertMixin, ListView ):
     model = Building
-    permission_required = 'buildings.view_building'
     template_name = 'buildings/building_list.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingListView, self).setup(request, *args, **kwargs)
         self.city = City.objects.first()
-        if request.user.profile.location:
+        if request.user.is_authenticated and request.user.profile.location:
             self.city.location = request.user.profile.location
             self.city.zoom = request.user.profile.zoom
 
