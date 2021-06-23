@@ -186,6 +186,8 @@ class BuildingDetailView(AlertMixin, DetailView):
         #add dates for images by date
         context['dates'] = StationImage.objects.filter(stat_id__in=stat_list)
         context['dates'] = context['dates'].dates('date', 'day')
+        #add journals
+        context['journals'] = self.object.building_journal.all()
         #add alerts
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map

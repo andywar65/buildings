@@ -627,7 +627,7 @@ def default_intro():
 
 class Journal(models.Model):
     build = models.ForeignKey(Building, on_delete=models.CASCADE,
-        verbose_name = _('Building'))
+        related_name='building_journal', verbose_name = _('Building'))
     slug = models.SlugField(max_length=50, editable=False, null=True)
     title = models.CharField(_('Title'),
         help_text=_("The title of the building log entry"),

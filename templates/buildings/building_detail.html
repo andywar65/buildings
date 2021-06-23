@@ -72,6 +72,22 @@
       {% endif %}
     </div>
   </div>
+  <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
+    <div class="card-header">
+      <h5 class="card-title">{% trans "Building Log entries"%}</h5>
+    </div>
+    <div class="card-body">
+      {% if journals %}
+      <ul>
+        {% for journal in journals %}
+        <li>{{ journal.date|date:"Y M d" }} - {{ journal.intro }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+        {% trans "No Building Log entries available"%}
+      {% endif %}
+    </div>
+  </div>
 </div>
 
 {% endblock content %}
