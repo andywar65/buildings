@@ -8,7 +8,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City, PlanGeometry)
+    PlanSet, Family, Element, City, PlanGeometry, Journal)
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -146,3 +146,27 @@ class CityAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.PointField: {"widget": OSMWidget},
     }
+
+@admin.register(Journal)
+class JournalAdmin(admin.ModelAdmin):
+    list_display = ('build', 'title', 'date', )
+    search_fields = ('title', 'date', 'intro', )
+
+    class Media:
+        js = [
+            '/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js',
+            '/static/js/tinymce_setup.js',
+        ]
+
+    fieldsets = (
+        (None, {
+            'fields': ('build', 'title', 'date', 'intro'),
+        }),
+        ('Testo', {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': ('body', ),
+        }),
+        (None, {
+            'fields': ('tags', ),
+        }),
+        )
