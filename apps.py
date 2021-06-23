@@ -15,6 +15,7 @@ def create_buildings_group(sender, **kwargs):
             'delete_stationimage',
             'view_planset', 'add_planset', 'change_planset', 'delete_planset',
             'view_family', 'add_family', 'change_family', 'delete_family',
+            'view_journal', 'add_journal', 'change_journal', 'delete_journal',
             ))
         grp.permissions.set(permissions)
     grp, created = Group.objects.get_or_create(name=_('Building Guest'))
@@ -25,7 +26,8 @@ def create_buildings_group(sender, **kwargs):
             'view_photostation',
             'view_stationimage',
             'view_planset',
-            'view_family', 
+            'view_family',
+            'view_journal',
             ))
         grp.permissions.set(permissions)
 
