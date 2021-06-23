@@ -16,10 +16,9 @@ from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
 from treebeard.mp_tree import MP_Node
 from colorfield.fields import ColorField
+from taggit.managers import TaggableManager
 
 from .map_utils import workflow
-
-from django.utils.text import slugify
 
 def generate_unique_slug(klass, field):
     """
@@ -621,3 +620,32 @@ class City(models.Model):
     class Meta:
         verbose_name = _('City')
         verbose_name_plural = _('Cities')
+
+def default_intro():
+    return (_('Another building log entry by %(name)s!') %
+        {'name': settings.WEBSITE_NAME})
+
+class Journal(models.Model):
+    build = models.ForeignKey(Building, on_delete=models.CASCADE,
+        verbose_name = _('Building'))
+    slug = models.SlugField(max_length=50, editable=False, null=True)
+    title = models.CharField(_('Title'),
+        help_text=_("The title of the building log entry"),
+        max_length = 50)
+    intro = models.CharField(_('Introduction'),
+        default = default_intro,
+        max_length = 100)
+    body = models.TextField(_('Text'), null=True)
+    date = models.DateField(_('Date'), default = now, )
+    last_updated = models.DateTimeField(editable=False, null=True)
+    tags = TaggableManager(verbose_name=_("Categories"),
+        help_text=_("Comma separated list of categories"),
+        blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('Building log entry')
+        verbose_name_plural = _('Building log entries')
+        ordering = ('-date', )
