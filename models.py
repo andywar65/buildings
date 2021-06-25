@@ -648,7 +648,7 @@ class Journal(models.Model):
         if isinstance(temp, str):
             temp = temp.split(' ')[0]
             temp = datetime.strptime(temp, '%Y-%m-%d')
-        return ( _('/buildings/') + self.build.slug + _('/journal/') +
+        return ( '/' + _('buildings/') + self.build.slug + '/' + _('journal/') +
             temp.strftime("%Y/%m/%d") + '/' + self.slug )
 
     def save(self, *args, **kwargs):

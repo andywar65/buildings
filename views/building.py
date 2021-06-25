@@ -610,7 +610,7 @@ class JournalDetailView( DetailView ):
                 raise Http404(_("Building is private"))
             if not request.user.has_perm('buildings.view_journal'):
                 raise Http404(_("User has no permission to view the journal"))
-        self.jour = get_object_or_404( PhotoStation,
+        self.jour = get_object_or_404( Journal,
             slug = self.kwargs['jour_slug'] )
         if not self.jour.build == self.build:
             raise Http404(_("Journal does not belong to Building"))
