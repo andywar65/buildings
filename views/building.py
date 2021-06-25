@@ -597,7 +597,7 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
 
 class JournalDetailView( DetailView ):
     model = Journal
-    context_object_name = 'journal'
+    context_object_name = 'jour'
     slug_url_kwarg = 'jour_slug'
 
     def setup(self, request, *args, **kwargs):
@@ -614,3 +614,13 @@ class JournalDetailView( DetailView ):
             slug = self.kwargs['jour_slug'] )
         if not self.jour.build == self.build:
             raise Http404(_("Journal does not belong to Building"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #we add the following to feed the gallery
+        context['main_gal_slug'] = get_random_string(7)
+        #get all images belonging to this building with same date as journal
+        stations = self.build.building_station.values_list('id', flat = True)
+        context['images'] = StationImage.objects.filter(date=self.object.date,
+            stat__in = stations)
+        return context
