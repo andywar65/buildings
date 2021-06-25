@@ -642,6 +642,21 @@ class Journal(models.Model):
         help_text=_("Comma separated list of categories"),
         blank=True)
 
+    def get_path(self):
+        temp = self.date
+        #conditional added for test to work
+        if isinstance(temp, str):
+            temp = temp.split(' ')[0]
+            temp = datetime.strptime(temp, '%Y-%m-%d')
+        return ( _('/buildings/') + self.build.slug + _('/journal/') +
+            temp.strftime("%Y/%m/%d") + '/' + self.slug)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(Journal, self.title)
+        self.last_updated = now()
+        super(Journal, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 

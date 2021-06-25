@@ -80,7 +80,7 @@
       {% if journals %}
       <ul>
         {% for journal in journals %}
-        <li>{{ journal.date|date:"Y M d" }} - {{ journal.intro }}</li>
+        <li>{{ journal.date|date:"Y M d" }} - <a href="{{ journal.get_path }}">{{ journal.title }}</a> - <em>{{ journal.intro }}</em></li>
         {% endfor %}
       </ul>
       {% else %}
