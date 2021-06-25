@@ -621,6 +621,8 @@ class JournalDetailView( DetailView ):
         context['main_gal_slug'] = get_random_string(7)
         #get all images belonging to this building with same date as journal
         stations = self.build.building_station.values_list('id', flat = True)
-        context['images'] = StationImage.objects.filter(date=self.object.date,
-            stat__in = stations)
+        context['images'] = StationImage.objects.filter(
+            date__date = self.object.date, stat__in = stations)
+        context['day'] = self.object.date
+        context['build'] = self.build
         return context
