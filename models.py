@@ -649,7 +649,7 @@ class Journal(models.Model):
             temp = temp.split(' ')[0]
             temp = datetime.strptime(temp, '%Y-%m-%d')
         return ( _('/buildings/') + self.build.slug + _('/journal/') +
-            temp.strftime("%Y/%m/%d") + '/' + self.slug)
+            temp.strftime("%Y/%m/%d") + '/' + self.slug )
 
     def save(self, *args, **kwargs):
         if not self.slug:

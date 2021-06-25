@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from buildings.models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, City, PlanVisibility)
+    PlanSet, City, PlanVisibility, Journal)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm)
@@ -594,3 +594,23 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.set.title}&model={_("Plan set")}')
+
+class JournalDetailView( DetailView ):
+    model = Journal
+    context_object_name = 'journal'
+    slug_url_kwarg = 'jour_slug'
+
+    def setup(self, request, *args, **kwargs):
+        super(JournalDetailView, self).setup(request, *args, **kwargs)
+        #here we get the project by the slug
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_journal'):
+                raise Http404(_("User has no permission to view the journal"))
+        self.jour = get_object_or_404( PhotoStation,
+            slug = self.kwargs['jour_slug'] )
+        if not self.jour.build == self.build:
+            raise Http404(_("Journal does not belong to Building"))
