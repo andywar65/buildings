@@ -1,4 +1,5 @@
 import html
+import os
 from pathlib import Path
 from math import radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 
@@ -412,7 +413,7 @@ def extract_elements(collection, layer_dict, lat, long):
     return map_elements
 
 def workflow(dxf, lat, long):
-    with open(Path(settings.MEDIA_ROOT / dxf.path)) as dxf_f:
+    with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:#breaks
         #extract layer names and colors
         layer_dict = get_layer_dict(dxf_f)
         #rewind dxf file
