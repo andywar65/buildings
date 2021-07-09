@@ -1,4 +1,7 @@
 import json
+import io
+
+from django.http import FileResponse
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.conf import settings
@@ -11,6 +14,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
+
+from reportlab.pdfgen import canvas
 
 from buildings.models import (Building, Plan, PhotoStation, StationImage,
     PlanSet, City, PlanVisibility, Journal)
@@ -626,3 +631,23 @@ class JournalDetailView( DetailView ):
         context['day'] = self.object.date
         context['build'] = self.build
         return context
+
+def journal_pdf_view(request, build_slug, year, month, day, jour_slug):
+    # Create a file-like buffer to receive PDF data.
+    buffer = io.BytesIO()
+
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(100, 100, "Hello world.")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='hello.pdf')

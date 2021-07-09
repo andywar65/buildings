@@ -413,7 +413,7 @@ def extract_elements(collection, layer_dict, lat, long):
     return map_elements
 
 def workflow(dxf, lat, long):
-    with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:#breaks
+    with open(os.path.join(settings.MEDIA_ROOT, dxf.path)) as dxf_f:
         #extract layer names and colors
         layer_dict = get_layer_dict(dxf_f)
         #rewind dxf file

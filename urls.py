@@ -60,4 +60,6 @@ urlpatterns = [
         name = 'element_download'),
     path(_('<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/'),
         JournalDetailView.as_view(), name = 'journal_detail'),
+    path(_('<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/pdf/'),
+        journal_pdf_view, name = 'journal_pdf'),
     ]

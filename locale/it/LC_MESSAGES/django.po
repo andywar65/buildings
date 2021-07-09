@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-28 18:32+0200\n"
+"POT-Creation-Date: 2021-07-09 18:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -369,6 +369,7 @@ msgid "Cities"
 msgstr "Città"
 
 #: .\buildings\models.py:625
+#, python-format
 msgid "Another building log entry by %(name)s!"
 msgstr "Un altro giornale di cantiere di %(name)s!"
 
@@ -1088,38 +1089,44 @@ msgid "<slug>/element/download/"
 msgstr "<slug>/elemento/scarica/"
 
 #: .\buildings\urls.py:61
-
 msgid "<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/"
-msgstr "<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/"
+msgstr ""
+"<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/"
 
-#: .\buildings\views\building.py:148 .\buildings\views\building.py:610
+#: .\buildings\urls.py:63
+msgid ""
+"<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/pdf/"
+msgstr ""
+"<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/pdf/"
+
+#: .\buildings\views\building.py:153 .\buildings\views\building.py:615
 #: .\buildings\views\station.py:184 .\buildings\views\station.py:215
 msgid "Building is private"
 msgstr "L'edificio è privato"
 
-#: .\buildings\views\building.py:150
+#: .\buildings\views\building.py:155
 msgid "User has no permission to view building"
 msgstr "L'utente non ha le credenziali per vedere gli edifici"
 
-#: .\buildings\views\building.py:154 .\buildings\views\building.py:532
-#: .\buildings\views\building.py:575
+#: .\buildings\views\building.py:159 .\buildings\views\building.py:537
+#: .\buildings\views\building.py:580
 msgid "Plan set does not belong to Building"
 msgstr "Il set di planimetrie non appartiene all'edificio"
 
-#: .\buildings\views\building.py:223 .\buildings\views\building.py:432
+#: .\buildings\views\building.py:228 .\buildings\views\building.py:437
 msgid "No plan"
 msgstr "Nessuna planimetria"
 
-#: .\buildings\views\building.py:349 .\buildings\views\building.py:386
-#: .\buildings\views\building.py:450
+#: .\buildings\views\building.py:354 .\buildings\views\building.py:391
+#: .\buildings\views\building.py:455
 msgid "Plan does not belong to Building"
 msgstr "La planimetria non appartiene all'edificio"
 
-#: .\buildings\views\building.py:612
+#: .\buildings\views\building.py:617
 msgid "User has no permission to view the journal"
 msgstr "L'utente non ha le credenziali per vedere il giornale"
 
-#: .\buildings\views\building.py:616
+#: .\buildings\views\building.py:621
 msgid "Journal does not belong to Building"
 msgstr "Il giornale non appartiene all'edificio"
 
