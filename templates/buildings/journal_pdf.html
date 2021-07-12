@@ -1,1 +1,32 @@
-<h1>Hello World!</h1>
+{% extends 'base.html' %}
+{% load fb_versions %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {{ jour.title }}{% endblock title %}
+
+{% block content %}
+<div class="row" id="journal-body">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{{ jour.date|date:"Y M d" }}: {{ jour.title }}</strong></h4>
+        <p><em>{{ jour.intro }}</em></p>
+        <p>{% translate "Building" %}: {{ build.title }}, {{ build.address }}</p>
+      </div>
+      <div class="card-body">
+        {{ jour.body|safe }}
+        {% if images %}
+          {% translate "No description" as default %}
+          {% for image in images %}
+            <div class="row">
+              <img src="{% version image.fb_image 'large' %}" width="100%" >
+              <p>{{ image.stat.title }} - {{ image.caption|default_if_none:default }}</p>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
