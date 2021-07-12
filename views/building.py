@@ -630,6 +630,11 @@ class JournalDetailView( DetailView ):
         context['build'] = self.build
         return context
 
+    def get_template_names(self):
+        if 'PDF' in self.request.GET:
+            return ['buildings/journal_pdf.html', ]
+        return ['buildings/journal_detail.html', ]
+
 class JournalPDFView(PDFTemplateView):
     filename = 'journal.pdf'
     template_name = 'buildings/journal_pdf.html'
