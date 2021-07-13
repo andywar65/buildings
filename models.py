@@ -651,6 +651,18 @@ class Journal(models.Model):
         return ( '/' + _('buildings/') + self.build.slug + '/' + _('journal/') +
             temp.strftime("%Y/%m/%d") + '/' + self.slug )
 
+    def get_previous(self):
+        prev = Journal.objects.filter(build=self.build,
+            date__lt=self.date).first()
+        if prev:
+            return prev.get_path()
+
+    def get_next(self):
+        next = Journal.objects.filter(build=self.build,
+            date__gt=self.date).last()
+        if next:
+            return next.get_path()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Journal, self.title)

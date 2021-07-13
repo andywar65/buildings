@@ -26,6 +26,18 @@
         <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=jour.build.slug %}" title="{% translate "Back to building" %}">
           <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
       </div>
+      {% if prev %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{{ prev }}" title="{% translate "Previous" %}">
+          <i class="fa fa-angle-double-left"></i></a>
+      </div>
+      {% endif %}
+      {% if next %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{{ next }}" title="{% translate "Next" %}">
+          <i class="fa fa-angle-double-right"></i></a>
+      </div>
+      {% endif %}
       <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
         <a class="btn btn-danger" href="{{ request.path }}?PDF=True" title="{% translate "PDF friendly layout" %}">
           <i class="fa fa-file-pdf-o"></i></a>

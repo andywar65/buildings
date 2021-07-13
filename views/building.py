@@ -627,6 +627,8 @@ class JournalDetailView( DetailView ):
         context['images'] = StationImage.objects.filter(
             date__date = self.object.date, stat__in = stations)
         context['day'] = self.object.date
+        context['prev'] = self.object.get_previous()
+        context['next'] = self.object.get_next()
         context['build'] = self.build
         return context
 
