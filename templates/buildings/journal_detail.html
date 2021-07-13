@@ -22,6 +22,12 @@
   </div>
   <div class="col">
     <div class="card-group">
+      {% if user.is_staff %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-warning" href="/admin/buildings/journal/{{ object.id }}/change/" title="{% translate "Modify" %}">
+          <i class="fa fa-pencil"></i></a>
+      </div>
+      {% endif %}
       <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
         <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=jour.build.slug %}" title="{% translate "Back to building" %}">
           <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
