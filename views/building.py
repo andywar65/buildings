@@ -188,7 +188,7 @@ class BuildingDetailView(AlertMixin, DetailView):
         stat_list = stat_list.values_list('id', flat=True)
         #add dates for images by date
         context['dates'] = StationImage.objects.filter(stat_id__in=stat_list)
-        context['dates'] = context['dates'].dates('date', 'day')
+        context['dates'] = context['dates'].dates('date', 'day').reverse()
         #add journals
         context['journals'] = self.object.building_journal.all()
         #add alerts
