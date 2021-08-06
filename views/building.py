@@ -626,6 +626,7 @@ class JournalDetailView( DetailView ):
         stations = self.build.building_station.values_list('id', flat = True)
         context['images'] = StationImage.objects.filter(
             date__date = self.object.date, stat__in = stations)
+        context['rev_images'] = context['images'].reverse()
         context['day'] = self.object.date
         context['prev'] = self.object.get_previous()
         context['next'] = self.object.get_next()
