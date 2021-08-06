@@ -16,9 +16,9 @@
       </div>
       <div class="card-body">
         {{ jour.body|safe }}
-        {% if rev_images %}
+        {% if images %}
           {% translate "No description" as default %}
-          {% for image in rev_images %}
+          {% for image in images %}
             <div class="row">
               <img src="{% version image.fb_image 'large' %}" width="100%" >
               <p>{{ image.stat.title }} - {{ image.caption|default_if_none:default }}</p>
