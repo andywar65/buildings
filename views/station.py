@@ -350,7 +350,7 @@ class StationImageDayArchiveView( PermissionRequiredMixin, DayArchiveView ):
         qs = super(StationImageDayArchiveView, self).get_queryset()
         #here we get the station ids by project related name
         stations = self.build.building_station.values_list('id', flat = True)
-        return qs.filter( stat__in = stations )
+        return qs.filter( stat__in = stations ).reverse()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
