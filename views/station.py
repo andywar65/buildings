@@ -330,9 +330,9 @@ class StationImageDeleteView(PermissionRequiredMixin, FormView):
             'stat_slug': self.stat.slug}) +
             f'?deleted={self.title}&model={_("Image")}')
 
-class StationImageDayArchiveView( PermissionRequiredMixin, DayArchiveView ):
+class StationImageDayArchiveView( DayArchiveView ):
     model = StationImage
-    permission_required = 'buildings.view_stationimage'
+    #permission_required = 'buildings.view_stationimage'
     date_field = 'date'
     allow_future = True
     context_object_name = 'images'
@@ -345,6 +345,11 @@ class StationImageDayArchiveView( PermissionRequiredMixin, DayArchiveView ):
         super(StationImageDayArchiveView, self).setup(request, *args, **kwargs)
         #here we get the project by the slug
         self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_stationimage'):
+                raise Http404(_("User has no permission to view station images"))
 
     def get_queryset(self):
         qs = super(StationImageDayArchiveView, self).get_queryset()
