@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {{ build.title }}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title">
+          {% translate "Building:" %}
+          <strong><a href="{% url 'buildings:building_slug' slug=build.slug %}">{{ build.title }}</a></strong>,
+          {% translate "all images by date" %}
+        </h4>
+      </div>
+      <div class="card-body">
+        {% if dates %}
+        <ul>
+          {% for date in dates %}
+          <li><a href="{% url 'buildings:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+          {% trans "No images available"%}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -363,3 +363,29 @@ class StationImageDayArchiveView( DayArchiveView ):
         context['main_gal_slug'] = get_random_string(7)
         context['build'] = self.build
         return context
+
+class StationImageDayArchiveListView( ListView ):
+    model = StationImage
+    template_name = 'buildings/stationimage_archive_day_list.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(StationImageDayArchiveListView, self).setup(request, *args,
+            **kwargs)
+        #here we get the project by the slug
+        self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_stationimage'):
+                raise Http404(_("User has no permission to view station images"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['build'] = self.build
+        #add station list
+        stat_list = PhotoStation.objects.filter(build_id=self.build.id)
+        stat_list = stat_list.values_list('id', flat=True)
+        #add dates for images by date
+        context['dates'] = StationImage.objects.filter(stat_id__in=stat_list)
+        context['dates'] = context['dates'].dates('date', 'day').reverse()
+        return context
