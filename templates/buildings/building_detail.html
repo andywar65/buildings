@@ -67,6 +67,9 @@
         <li><a href="{% url 'buildings:image_day' slug=build.slug year=date.year month=date.month day=date.day %}">{{ date|date:"Y M d" }}</a></li>
         {% endfor %}
       </ul>
+        {% if dates_link %}
+          <a href="{% url 'buildings:image_day_all' slug=build.slug %}">{% trans "All images by date"%}</a>
+        {% endif %}
       {% else %}
         {% trans "No images available"%}
       {% endif %}
