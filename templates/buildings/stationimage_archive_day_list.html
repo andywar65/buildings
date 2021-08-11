@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{{ website.acro }} | {{ build.title }}{% endblock title %}
+{% block title %}{{ website.acro }} | {{ build.title }}, {% translate "images by date" %}{% endblock title %}
 
 {% block content %}
 <div class="row">
