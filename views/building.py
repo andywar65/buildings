@@ -642,3 +642,25 @@ class JournalDetailView( DetailView ):
 class JournalPDFView(PDFTemplateView):
     filename = 'journal.pdf'
     template_name = 'buildings/journal_pdf.html'
+
+class JournalListView( ListView ):
+    model = Journal
+    template_name = 'buildings/journal_list.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(JournalListView, self).setup(request, *args, **kwargs)
+        #here we get the project by the slug
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_journal'):
+                raise Http404(_("User has no permission to view journals"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['build'] = self.build
+        #add journals
+        context['journals'] = self.build.building_journal.all()
+        return context
