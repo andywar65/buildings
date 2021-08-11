@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 18:20+0200\n"
+"POT-Creation-Date: 2021-08-11 22:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,6 +42,7 @@ msgstr "File"
 #: .\buildings\models.py:497 .\buildings\models.py:532
 #: .\buildings\models.py:630
 #: .\buildings\templates\buildings\building_detail.html:18
+#: .\buildings\templates\buildings\journal_pdf.html:15
 #: .\buildings\templates\buildings\plan_detail.html:18
 #: .\buildings\views\element.py:300
 msgid "Building"
@@ -397,11 +398,11 @@ msgstr "edifici/"
 msgid "journal/"
 msgstr "giornale/"
 
-#: .\buildings\models.py:664
+#: .\buildings\models.py:676
 msgid "Building log entry"
 msgstr "Giornale di cantiere"
 
-#: .\buildings\models.py:665
+#: .\buildings\models.py:677
 msgid "Building log entries"
 msgstr "Giornali di cantiere"
 
@@ -424,15 +425,25 @@ msgid "Images by date"
 msgstr "Immagini per data"
 
 #: .\buildings\templates\buildings\building_detail.html:71
+msgid "All images by date"
+msgstr "Tutte le immagini per data"
+
+#: .\buildings\templates\buildings\building_detail.html:74
 #: .\buildings\templates\buildings\plan_detail.html:74
+#: .\buildings\templates\buildings\stationimage_archive_day_list.html:26
 msgid "No images available"
 msgstr "Nessun immagine disponibile"
 
-#: .\buildings\templates\buildings\building_detail.html:77
+#: .\buildings\templates\buildings\building_detail.html:80
 msgid "Building Log entries"
 msgstr "Giornali di cantiere"
 
-#: .\buildings\templates\buildings\building_detail.html:87
+#: .\buildings\templates\buildings\building_detail.html:90
+msgid "All journals"
+msgstr "Tutti i giornali di cantiere"
+
+#: .\buildings\templates\buildings\building_detail.html:93
+#: .\buildings\templates\buildings\journal_list.html:26
 msgid "No Building Log entries available"
 msgstr "Nessun giornale di cantiere disponibile"
 
@@ -494,7 +505,7 @@ msgstr "Aggiorna"
 #: .\buildings\templates\buildings\element_form.html:35
 #: .\buildings\templates\buildings\element_form_update.html:34
 #: .\buildings\templates\buildings\family_list_create.html:28
-#: .\buildings\templates\buildings\journal_detail.html:27
+#: .\buildings\templates\buildings\journal_detail.html:32
 #: .\buildings\templates\buildings\photostation_form.html:35
 #: .\buildings\templates\buildings\photostation_form_update.html:36
 #: .\buildings\templates\buildings\plan_detail.html:37
@@ -568,6 +579,7 @@ msgstr "Verifica / modifica l'elemento"
 #: .\buildings\templates\buildings\element_form_update.html:29
 #: .\buildings\templates\buildings\element_form_update.html:39
 #: .\buildings\templates\buildings\includes\building_detail_plans.html:7
+#: .\buildings\templates\buildings\journal_detail.html:27
 #: .\buildings\templates\buildings\photostation_form_update.html:31
 #: .\buildings\templates\buildings\photostation_form_update.html:41
 msgid "Modify"
@@ -773,21 +785,38 @@ msgid "Modify plan set"
 msgstr "Modifica il set"
 
 #: .\buildings\templates\buildings\includes\station_gallery.html:15
+#: .\buildings\templates\buildings\journal_detail.html:37
 msgid "Previous"
 msgstr "Precedenti"
 
 #: .\buildings\templates\buildings\includes\station_gallery.html:19
+#: .\buildings\templates\buildings\journal_detail.html:43
 msgid "Next"
 msgstr "Prossimi"
 
 #: .\buildings\templates\buildings\includes\station_gallery.html:35
+#: .\buildings\templates\buildings\journal_pdf.html:20
 #: .\buildings\views\element.py:306
 msgid "No description"
 msgstr "Nessuna descrizione"
 
-#: .\buildings\templates\buildings\journal_detail.html:19
+#: .\buildings\templates\buildings\journal_detail.html:18
 msgid "There are no images available for this journal entry"
 msgstr "Non ci sono immagini disponibili per questo giornale di cantiere"
+
+#: .\buildings\templates\buildings\journal_detail.html:48
+msgid "PDF friendly layout"
+msgstr "Ottimizzato per PDF"
+
+#: .\buildings\templates\buildings\journal_list.html:4
+#: .\buildings\templates\buildings\journal_list.html:15
+msgid "all journals"
+msgstr "tutti i giornali di cantiere"
+
+#: .\buildings\templates\buildings\journal_list.html:13
+#: .\buildings\templates\buildings\stationimage_archive_day_list.html:13
+msgid "Building:"
+msgstr "Edificio:"
 
 #: .\buildings\templates\buildings\photostation_3d.html:14
 msgid "Click to navigate"
@@ -932,6 +961,14 @@ msgstr "PRECEDENTE"
 msgid "NEXT"
 msgstr "PROSSIMO"
 
+#: .\buildings\templates\buildings\stationimage_archive_day_list.html:4
+msgid "images by date"
+msgstr "immagini per data"
+
+#: .\buildings\templates\buildings\stationimage_archive_day_list.html:15
+msgid "all images by date"
+msgstr "tutte le immagini per data"
+
 #: .\buildings\templates\buildings\stationimage_form_delete.html:4
 msgid "Delete image"
 msgstr "Elimina immagine"
@@ -1061,74 +1098,82 @@ msgid "<slug>/stations/<int:year>/<int:month>/<int:day>/"
 msgstr "<slug>/stazioni/<int:year>/<int:month>/<int:day>/"
 
 #: .\buildings\urls.py:47
+msgid "<slug>/stations/all-days/"
+msgstr "<slug>/stazione/immagini-per-giorno/"
+
+#: .\buildings\urls.py:49
 msgid "<slug>/family/add/"
 msgstr "<slug>/famiglia/aggiungi/"
 
-#: .\buildings\urls.py:49
+#: .\buildings\urls.py:51
 msgid "<slug:build_slug>/family/<slug:fam_slug>/change/"
 msgstr "<slug:build_slug>/famiglia/<slug:fam_slug>/modifica/"
 
-#: .\buildings\urls.py:51
+#: .\buildings\urls.py:53
 msgid "<slug:build_slug>/family/<slug:fam_slug>/delete/"
 msgstr "<slug:build_slug>/famiglia/<slug:fam_slug>/elimina/"
 
-#: .\buildings\urls.py:53
+#: .\buildings\urls.py:55
 msgid "<slug>/element/add/"
 msgstr "<slug>/elemento/aggiungi/"
 
-#: .\buildings\urls.py:55
+#: .\buildings\urls.py:57
 msgid "<slug>/element/<pk>/change/"
 msgstr "<slug>/elemento/<pk>/modifica/"
 
-#: .\buildings\urls.py:57
+#: .\buildings\urls.py:59
 msgid "<slug>/element/<pk>/delete/"
 msgstr "<slug>/elemento/<pk>/elimina/"
 
-#: .\buildings\urls.py:59
+#: .\buildings\urls.py:61
 msgid "<slug>/element/download/"
 msgstr "<slug>/elemento/scarica/"
 
-#: .\buildings\urls.py:61
+#: .\buildings\urls.py:63
 msgid "<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/"
 msgstr ""
 "<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/"
 
-#: .\buildings\urls.py:63
-msgid ""
-"<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/pdf/"
-msgstr ""
-"<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/pdf/"
+#: .\buildings\urls.py:65
+msgid "<slug:slug>/journal/all/"
+msgstr "<slug:slug>/giornale/tutti/"
 
-#: .\buildings\views\building.py:153 .\buildings\views\building.py:615
-#: .\buildings\views\station.py:184 .\buildings\views\station.py:215
+#: .\buildings\views\building.py:151 .\buildings\views\building.py:618
+#: .\buildings\views\building.py:660 .\buildings\views\station.py:184
+#: .\buildings\views\station.py:215 .\buildings\views\station.py:350
+#: .\buildings\views\station.py:378
 msgid "Building is private"
 msgstr "L'edificio è privato"
 
-#: .\buildings\views\building.py:155
+#: .\buildings\views\building.py:153
 msgid "User has no permission to view building"
 msgstr "L'utente non ha le credenziali per vedere gli edifici"
 
-#: .\buildings\views\building.py:159 .\buildings\views\building.py:537
-#: .\buildings\views\building.py:580
+#: .\buildings\views\building.py:157 .\buildings\views\building.py:540
+#: .\buildings\views\building.py:583
 msgid "Plan set does not belong to Building"
 msgstr "Il set di planimetrie non appartiene all'edificio"
 
-#: .\buildings\views\building.py:228 .\buildings\views\building.py:437
+#: .\buildings\views\building.py:231 .\buildings\views\building.py:440
 msgid "No plan"
 msgstr "Nessuna planimetria"
 
-#: .\buildings\views\building.py:354 .\buildings\views\building.py:391
-#: .\buildings\views\building.py:455
+#: .\buildings\views\building.py:357 .\buildings\views\building.py:394
+#: .\buildings\views\building.py:458
 msgid "Plan does not belong to Building"
 msgstr "La planimetria non appartiene all'edificio"
 
-#: .\buildings\views\building.py:617
+#: .\buildings\views\building.py:620
 msgid "User has no permission to view the journal"
 msgstr "L'utente non ha le credenziali per vedere il giornale"
 
-#: .\buildings\views\building.py:621
+#: .\buildings\views\building.py:624
 msgid "Journal does not belong to Building"
 msgstr "Il giornale non appartiene all'edificio"
+
+#: .\buildings\views\building.py:662
+msgid "User has no permission to view journals"
+msgstr "L'utente non ha le credenziali per vedere i giornali di cantiere"
 
 #: .\buildings\views\element.py:80 .\buildings\views\element.py:122
 msgid "Element family does not belong to Building"
@@ -1175,3 +1220,14 @@ msgstr "L'utente non ha le credenziali per aggiungere immagini"
 #: .\buildings\views\station.py:275 .\buildings\views\station.py:310
 msgid "Image does not belong to Photo Station"
 msgstr "L'immagine' non appartiene alla stazione fotografica"
+
+#: .\buildings\views\station.py:352 .\buildings\views\station.py:380
+msgid "User has no permission to view station images"
+msgstr "L'utente non ha le credenziali per vedere le immagini"
+
+#~ msgid ""
+#~ "<slug:build_slug>/journal/<int:year>/<int:month>/<int:day>/<jour_slug>/"
+#~ "pdf/"
+#~ msgstr ""
+#~ "<slug:build_slug>/giornale/<int:year>/<int:month>/<int:day>/<jour_slug>/"
+#~ "pdf/"
