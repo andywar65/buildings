@@ -193,6 +193,9 @@ class BuildingDetailView(AlertMixin, DetailView):
         context['dates'] = context['dates'].dates('date', 'day').reverse()[:5]
         #add journals
         context['journals'] = self.object.building_journal.all()
+        if context['journals'].count() > 5:
+            context['jour_link'] = True
+        context['journals'] = context['journals'][:5]
         #add alerts
         context = self.add_alerts_to_context(context)
         #we add the following to feed the map
