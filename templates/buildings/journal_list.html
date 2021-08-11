@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {{ build.title }}, {% translate "all journals" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title">
+          {% translate "Building:" %}
+          <strong><a href="{% url 'buildings:building_slug' slug=build.slug %}">{{ build.title }}</a></strong>,
+          {% translate "all journals" %}
+        </h4>
+      </div>
+      <div class="card-body">
+        {% if journals %}
+        <ul>
+          {% for journal in journals %}
+          <li>{{ journal.date|date:"Y M d" }} - <a href="{{ journal.get_path }}">{{ journal.title }}</a> - <em>{{ journal.intro }}</em></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+          {% trans "No Building Log entries available"%}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
