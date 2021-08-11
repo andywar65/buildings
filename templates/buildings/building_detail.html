@@ -86,6 +86,9 @@
         <li>{{ journal.date|date:"Y M d" }} - <a href="{{ journal.get_path }}">{{ journal.title }}</a> - <em>{{ journal.intro }}</em></li>
         {% endfor %}
       </ul>
+        {% if jour_link %}
+          <a href="{% url 'buildings:journal_list' slug=build.slug %}">{% trans "All journals"%}</a>
+        {% endif %}
       {% else %}
         {% trans "No Building Log entries available"%}
       {% endif %}
