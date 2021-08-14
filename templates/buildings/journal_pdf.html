@@ -16,6 +16,9 @@
       </div>
       <div class="card-body">
         {{ jour.body|safe }}
+        {% if jour.author %}
+          <p class="text-right">{% trans "Signed" %}: {{ jour.author.get_full_name }}</p>
+        {% endif %}
         {% if images %}
           {% translate "No description" as default %}
           {% for image in images %}

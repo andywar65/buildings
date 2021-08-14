@@ -57,6 +57,9 @@
     <div class="card" style="margin-bottom: 20px;">
       <div class="card-body">
         {{ jour.body|safe }}
+        {% if jour.author %}
+          <p class="text-right">{% trans "Signed" %}: {{ jour.author.get_full_name }}</p>
+        {% endif %}
       </div>
     </div>
   </div>
