@@ -163,10 +163,10 @@ class JournalAdmin(admin.ModelAdmin):
             'fields': ('build', 'title', 'date', 'intro'),
         }),
         ('Testo', {
-            'classes': ('grp-collapse grp-closed', ),
+            'classes': ('grp-collapse', ),
             'fields': ('body', ),
         }),
         (None, {
-            'fields': ('tags', ),
+            'fields': ('tags', 'author' ),
         }),
         )

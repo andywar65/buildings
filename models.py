@@ -19,6 +19,7 @@ from colorfield.fields import ColorField
 from taggit.managers import TaggableManager
 
 from .map_utils import workflow
+from users.models import User
 
 def generate_unique_slug(klass, field):
     """
@@ -641,6 +642,8 @@ class Journal(models.Model):
     tags = TaggableManager(verbose_name=_("Categories"),
         help_text=_("Comma separated list of categories"),
         blank=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL,
+        blank= True, null=True, verbose_name = _('Author'))
 
     def get_path(self):
         temp = self.date
