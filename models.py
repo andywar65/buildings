@@ -585,6 +585,8 @@ class Element(models.Model):
             self.lat = None
         if not self.location:
             self.location = self.build.location
+        if not self.intro:
+            self.intro = _("No description")
         sheet = {}
         for ancestor in self.family.get_ancestors():
             if isinstance(ancestor.sheet, dict):
