@@ -87,13 +87,18 @@ if (map_data.hasOwnProperty('stations')){
 if (map_data.hasOwnProperty('elements')){
   if (map_data.elements){
     for (elem of map_data.elements){
+      var sheet = ""
+      for (const [key, value] of Object.entries(elem.sheet)) {
+        sheet = sheet + "<li>" + key + " - " + value + "</li>"
+      }
       if (elem.fb_path){
         var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
           "</a></h5><img src=\"" + elem.fb_path + "\"><br><small>" +
-            elem.intro + "</small>";
+            elem.intro + "<ul>" + sheet + "</ul></small>";
       } else {
         var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
-          "</a></h5><br><small>" + elem.intro + "</small>";
+          "</a></h5><br><small>" + elem.intro +
+          "<ul>" + sheet + "</ul></small>";
       }
       var marker = L.marker([elem.lat, elem.long ], {icon: elemMarker})
         .bindPopup( content, {minWidth: 300});
