@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fb_versions %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {{ build.title }}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+<div class="row" id="main-container">
+  <div class="col col-xl-11 col-lg-11 col-md-12 col-sm-12 col-12">
+    <div class="card" id="map-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h4 class="card-title">{% trans "Building"%}: <strong>{{ build.title }}</strong></h4>
+        <p><em>{% trans "Elements by family"%}: {{ family.title }}</em></p>
+      </div>
+      <div class="card-body">
+        <div id="mapid" style="height: 600px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card-group">
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-secondary" href="{% url 'buildings:building_slug' slug=jour.build.slug %}" title="{% translate "Back to building" %}">
+          <i class="fa fa-angle-double-left"></i> <i class="fa fa-building"></i></a>
+      </div>
+      {% if perms.buildings.add_family %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-success" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
+          + <i class="fa fa-folder-open"></i></a>
+      </div>
+      {% endif %}
+      {% if perms.buildings.add_element %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-success" href="{% url 'buildings:element_create' slug=build.slug %}" title="{% translate "Add element" %}">
+          + <i class="fa fa-thumb-tack"></i></a>
+      </div>
+      {% endif %}
+      <div class="card" style="min-width: 3rem; margin-bottom: 10px;">
+        <a class="btn btn-success" href="{% url 'buildings:element_download' slug=build.slug %}" title="{% translate "Download elements" %}">
+          <i class="fa fa-thumb-tack"></i><i class="fa fa-download"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block extra-js %}
+  {{ map_data|json_script:"map_data"}}
+  <script src="{% static 'buildings/js/buildings.js'%}"></script>
+{% endblock extra-js %}
