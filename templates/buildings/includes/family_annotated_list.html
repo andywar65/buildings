@@ -6,9 +6,13 @@
   {% else %}
       </li><li>
   {% endif %}
+    {% if fam == active_family %}
+      {{ fam.title }}
+    {% else %}
     <a href="{% url 'buildings:elements_by_family' build_slug=fam.build.slug fam_slug=fam.slug %}" title="{% trans "Elements by family" %}">
       {{ fam.title }}
     </a>
+    {% endif %}
     {% if fam.intro %}<em>- {{ fam.intro }}</em>{% endif %}
     <a href="{% url 'buildings:family_change' build_slug=fam.build.slug fam_slug=fam.slug %}" title="{% trans "Modify family" %}">
       <i class="fa fa-pencil"></i>
