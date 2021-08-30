@@ -518,11 +518,11 @@ class Family(MP_Node):
             prefix = prefix + '-'
         return prefix + self.title
 
-    def get_self_and_descendent_elements(self):
+    def get_self_and_descendant_elements(self):
         elements = self.family_element.all()
-        descendents = self.get_descendents()
-        for descendent in descendents:
-            elements |= descendent.family_element.all()
+        descendants = self.get_descendants()
+        for descendant in descendants:
+            elements |= descendant.family_element.all()
         return elements
 
     def save(self, *args, **kwargs):
