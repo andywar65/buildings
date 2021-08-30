@@ -4,7 +4,7 @@ from math import radians, cos
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.views.generic import ( CreateView, UpdateView, FormView,)
+from django.views.generic import ( CreateView, UpdateView, FormView, ListView )
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
@@ -295,6 +295,37 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
             kwargs={'build_slug': self.build.slug,
             'set_slug': self.build.get_base_slug()}) +
             f'?deleted={self.title}&model={_("Element")}')
+
+class ElementByFamilyListView( ListView ):
+    model = Element
+    template_name = 'buildings/elements_by_family_list.html'
+
+    def setup(self, request, *args, **kwargs):
+        super(ElementByFamilyListView, self).setup(request, *args, **kwargs)
+        #here we get the project by the slug
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+        self.family = get_object_or_404( Family,
+            slug = self.kwargs['fam_slug'] )
+        if self.build.private:
+            if not request.user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not request.user.has_perm('buildings.view_element'):
+                raise Http404(_("User has no permission to view Elements"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['build'] = self.build
+        context['family'] = self.family
+        context['elements'] = self.family.get_self_and_descendent_elements()
+        #we add the following to feed the map
+        #building data
+        build = self.object.map_dictionary()
+        #element data
+        elements = []
+        for elem in context['elements']:
+            elements.append(elem.map_dictionary())
+        return context
 
 def csv_writer(writer, qs):
     writer.writerow([_('ID'),_('Building'), _('Family'),

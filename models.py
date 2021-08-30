@@ -518,6 +518,13 @@ class Family(MP_Node):
             prefix = prefix + '-'
         return prefix + self.title
 
+    def get_self_and_descendent_elements(self):
+        elements = self.family_element.all()
+        descendents = self.get_descendents()
+        for descendent in descendents:
+            elements |= descendent.family_element.all()
+        return elements
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Family, self.title)
