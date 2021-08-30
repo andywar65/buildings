@@ -317,21 +317,27 @@ class ElementByFamilyListView( ListView ):
         context = super().get_context_data(**kwargs)
         context['build'] = self.build
         context['family'] = self.family
-        context['elements'] = self.family.get_self_and_descendant_elements()
+        context['elements'], context['plans'] = self.family.get_self_and_descendant_elements()
         #we add the following to feed the map
         #building data
         build = self.build.map_dictionary()
+        #plan data
+        plans = []
+        for plan in context['plans'].reverse():
+            plan_temp = plan.map_dictionary()
+            plan_temp['visible'] = True
+            plans.append(plan_temp)
         #element data
         elements = []
         for elem in context['elements']:
             elements.append(elem.map_dictionary())
-        #are there stations that don't belong to plans?
+        #are there elements that don't belong to plans?
         no_plan_status = False
         if context['elements'].filter(plan_id=None):
             no_plan_status = True
         context['map_data'] = {
             'build': build,
-            #'plans': plans,
+            'plans': plans,
             'elements': elements,
             'no_plan_status': no_plan_status,
             'no_plan_trans': _("No plan"),

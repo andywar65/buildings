@@ -523,7 +523,12 @@ class Family(MP_Node):
         descendants = self.get_descendants()
         for descendant in descendants:
             elements |= descendant.family_element.all()
-        return elements
+        plan_ids = []
+        for element in elements:
+            if element.plan:
+                plan_ids.append(element.plan.id)
+        plans = Plan.objects.filter(id__in=plan_ids).distinct()
+        return elements, plans
 
     def save(self, *args, **kwargs):
         if not self.slug:
