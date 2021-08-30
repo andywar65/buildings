@@ -316,7 +316,9 @@ class ElementByFamilyListView( ListView ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['build'] = self.build
-        context['family'] = self.family
+        context['active_family'] = self.family
+        #add families
+        context['fam_annotated_list'] = self.build.get_family_annotated_list()
         context['elements'], context['plans'] = self.family.get_self_and_descendant_elements()
         #we add the following to feed the map
         #building data

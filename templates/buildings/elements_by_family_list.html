@@ -47,6 +47,16 @@
     </div>
   </div>
 </div>
+<div class="card-deck">
+  <div class="card" style="margin-bottom: 20px; min-width: 24rem;">
+    <div class="card-header">
+      <h5 class="card-title">{% trans "Element family list"%}</h5>
+    </div>
+    <div class="card-body">
+      {% include "buildings/includes/family_annotated_list.html" %}
+    </div>
+  </div>
+</div>
 
 {% endblock content %}
 {% block extra-js %}
