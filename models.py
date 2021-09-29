@@ -705,11 +705,12 @@ class Comuni(models.Model):
     geom = models.MultiPolygonField(srid=4326)
 
     def __str__(self):
-        return self.comune_bel
+        return self.comune_com
 
     class Meta:
         verbose_name = _('Comune')
         verbose_name_plural = _('Comuni')
+        ordering = ('comune_com', )
 
 
 # Auto-generated `LayerMapping` dictionary for Comuni model

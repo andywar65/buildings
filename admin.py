@@ -8,7 +8,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City, PlanGeometry, Journal)
+    PlanSet, Family, Element, City, PlanGeometry, Journal, Comuni)
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -56,6 +56,13 @@ class PlanAdmin(admin.ModelAdmin):
             'fields': ('file', 'refresh', ),
         }),
         )
+
+@admin.register(Comuni)
+class ComuniAdmin(admin.ModelAdmin):
+    list_display = ('comune_com', )
+    formfield_overrides = {
+        models.GeometryField: {"widget": OSMWidget},
+    }
 
 #@admin.register(PlanGeometry)
 #class PlanGeometryAdmin(OSMGeoAdmin):
