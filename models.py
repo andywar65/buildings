@@ -693,3 +693,33 @@ class Journal(models.Model):
         verbose_name = _('Building log entry')
         verbose_name_plural = _('Building log entries')
         ordering = ('-date', )
+
+class Comuni(models.Model):
+    gid = models.BigIntegerField()
+    gid2 = models.BigIntegerField()
+    comune_bel = models.CharField(max_length=254)
+    avdicm = models.CharField(max_length=254)
+    classid = models.CharField(max_length=254)
+    comune_ist = models.CharField(max_length=254)
+    comune_com = models.CharField(max_length=100)
+    geom = models.MultiPolygonField(srid=4326)
+
+    def __str__(self):
+        return self.comune_bel
+
+    class Meta:
+        verbose_name = _('Comune')
+        verbose_name_plural = _('Comuni')
+
+
+# Auto-generated `LayerMapping` dictionary for Comuni model
+comuni_mapping = {
+    'gid': 'gid',
+    'gid2': '__gid',
+    'comune_bel': 'comune_bel',
+    'avdicm': 'avdicm',
+    'classid': 'classid',
+    'comune_ist': 'comune_ist',
+    'comune_com': 'comune_com',
+    'geom': 'MULTIPOLYGON',
+}

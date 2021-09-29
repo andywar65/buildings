@@ -13,8 +13,6 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from wkhtmltopdf.views import PDFTemplateView
-
 from buildings.models import (Building, Plan, PhotoStation, StationImage,
     PlanSet, City, PlanVisibility, Journal)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
@@ -641,10 +639,6 @@ class JournalDetailView( DetailView ):
         if 'PDF' in self.request.GET:
             return ['buildings/journal_pdf.html', ]
         return ['buildings/journal_detail.html', ]
-
-class JournalPDFView(PDFTemplateView):
-    filename = 'journal.pdf'
-    template_name = 'buildings/journal_pdf.html'
 
 class JournalListView( ListView ):
     model = Journal
