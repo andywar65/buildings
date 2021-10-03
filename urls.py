@@ -66,4 +66,5 @@ urlpatterns = [
         JournalDetailView.as_view(), name = 'journal_detail'),
     path(_('<slug:slug>/journal/all/'),
         JournalListView.as_view(), name = 'journal_list'),
+    path("comuni/", ComuniMapView.as_view()),
     ]
