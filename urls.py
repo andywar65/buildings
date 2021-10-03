@@ -7,6 +7,7 @@ app_name = 'buildings'
 urlpatterns = [
     path('', BuildingListView.as_view(), name = 'building_list'),
     path(_('add/'), BuildingCreateView.as_view(), name = 'building_create'),
+    path("comuni/", ComuniMapView.as_view()),
     path(_('<slug>/'), BuildingRedirectView.as_view(), name = 'building_slug'),
     path(_('<slug>/change/'), BuildingUpdateView.as_view(),
         name = 'building_change'),
@@ -66,5 +67,4 @@ urlpatterns = [
         JournalDetailView.as_view(), name = 'journal_detail'),
     path(_('<slug:slug>/journal/all/'),
         JournalListView.as_view(), name = 'journal_list'),
-    path("comuni/", ComuniMapView.as_view()),
     ]

@@ -2,6 +2,6 @@ from django.views.generic.base import TemplateView
 
 
 class ComuniMapView(TemplateView):
-    """Markers map view."""
+    """Comuni map view."""
 
-    template_name = "comuni_map.html"
+    template_name = "buildings\comuni_map.html"
