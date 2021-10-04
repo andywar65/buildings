@@ -5,4 +5,15 @@ const map = L.map('map', {
   center: [ 41.8988 , 12.5451 ],
   zoom: 9,
   layers: [osm] })
-//map.fitWorld();
+
+async function load_comuni() {
+  const comuni_url = `/edifici/comuni/api/?in_bbox=${map.getBounds().toBBoxString()}`
+  const response = await fetch(comuni_url)
+  const geojson = await response.json()
+  return geojson
+}
+async function render_comuni() {
+  const comuni = await load_comuni()
+  L.geoJSON(comuni).bindPopup(layer => layer.feature.properties.comune_com).addTo(map)
+}
+map.on('moveend', render_comuni)

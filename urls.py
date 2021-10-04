@@ -8,7 +8,7 @@ urlpatterns = [
     path('', BuildingListView.as_view(), name = 'building_list'),
     path(_('add/'), BuildingCreateView.as_view(), name = 'building_create'),
     path("comuni/", ComuniMapView.as_view()),
-    path("api/", include("buildings.api_urls")),
+    path("comuni/api/", include("buildings.api_urls")),
     path(_('<slug>/'), BuildingRedirectView.as_view(), name = 'building_slug'),
     path(_('<slug>/change/'), BuildingUpdateView.as_view(),
         name = 'building_change'),
