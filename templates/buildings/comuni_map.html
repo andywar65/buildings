@@ -1,9 +1,21 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <title>Comuni Map</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% load fb_versions %}
+{% load i18n %}
+
+{% block title %}{{ website.acro }} | {% trans "Comuni map"%}{% endblock title %}
+
+{% block extra-head %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
+{% endblock extra-head %}
+
+{% block content %}
+<div class="row" >
+  <div class="col">
+    <div id="map" style="height: 600px; margin-bottom: 15px"></div>
+  </div>
+</div>
+{% endblock content %}
+{% block extra-js %}
+  <script src="{% static 'buildings/js/comuni_map.js' %}"></script>
+{% endblock extra-js %}
