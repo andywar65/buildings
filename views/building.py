@@ -461,12 +461,8 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
 
     def get_success_url(self):
         if 'cancel' in self.request.POST:
-            return reverse('buildings:building_detail',
-                kwargs={'build_slug': self.build.slug,
-                'set_slug': self.build.get_base_slug() })
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug,
-            'set_slug': self.build.get_base_slug() }) +
+            return self.build.get_full_path()
+        return ( self.build.get_full_path() +
             f'?deleted={self.plan.title}&model={_("Plan")}')
 
 class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
@@ -590,9 +586,7 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
             return reverse('buildings:planset_change',
                 kwargs={'build_slug': self.build.slug,
                 'set_slug': self.set.slug})
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug,
-            'set_slug': self.build.get_base_slug()}) +
+        return ( self.build.get_full_path() +
             f'?deleted={self.set.title}&model={_("Plan set")}')
 
 class JournalDetailView( DetailView ):
