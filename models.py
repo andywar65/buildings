@@ -88,9 +88,14 @@ class Building(models.Model):
         return 'base_'+str(self.id)
 
     def get_full_path(self):
+        active = self.building_planset.filter(active=True)
+        if active:
+            set_slug = active.first().slug
+        else:
+            set_slug = self.get_base_slug()
         return reverse('buildings:building_detail',
             kwargs={'build_slug': self.slug,
-            'set_slug': self.get_base_slug()})
+            'set_slug': set_slug })
 
     def map_dictionary(self):
         self.fb_image.version_generate("medium")

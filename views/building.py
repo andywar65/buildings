@@ -33,9 +33,7 @@ class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': build.slug,
-            'set_slug': build.get_base_slug() }))
+        return build.get_full_path()
 
 class BuildingListView( AlertMixin, ListView ):
     model = Building
