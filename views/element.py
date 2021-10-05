@@ -59,9 +59,7 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'fam_slug': self.object.slug }) +
                 f'?created={self.object.title}&model={_("Element family")}')
         else:
-            return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.build.slug,
-                'set_slug': self.build.get_base_slug()}) +
+            return ( self.build.get_full_path() +
                 f'?created={self.object.title}&model={_("Element family")}')
 
 class FamilyUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
@@ -102,9 +100,7 @@ class FamilyUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 'fam_slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Element family")}')
         else:
-            return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.build.slug,
-                'set_slug': self.build.get_base_slug()}) +
+            return ( self.build.get_full_path() +
                 f'?modified={self.object.title}&model={_("Element family")}')
 
 class FamilyDeleteView(PermissionRequiredMixin, FormView):
@@ -137,9 +133,7 @@ class FamilyDeleteView(PermissionRequiredMixin, FormView):
             return reverse('buildings:family_change',
                 kwargs={'build_slug': self.build.slug,
                 'fam_slug': self.fam.slug})
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug,
-            'set_slug': self.build.get_base_slug()}) +
+        return ( self.build.get_full_path() +
             f'?deleted={self.fam.title}&model={_("Element family")}')
 
 class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
@@ -291,9 +285,7 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
             return reverse('buildings:element_change',
                 kwargs={'slug': self.build.slug,
                 'pk': self.elem.id})
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug,
-            'set_slug': self.build.get_base_slug()}) +
+        return ( self.build.get_full_path() +
             f'?deleted={self.title}&model={_("Element")}')
 
 class ElementByFamilyListView( ListView ):

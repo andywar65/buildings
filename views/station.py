@@ -166,9 +166,7 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
             return reverse( 'buildings:station_detail',
                 kwargs={'build_slug': self.build.slug,
                 'stat_slug': self.stat.slug})
-        return (reverse('buildings:building_detail',
-            kwargs={'build_slug': self.build.slug,
-            'set_slug': self.build.get_base_slug()}) +
+        return ( self.build.get_full_path() +
             f'?deleted={self.stat.title}&model={_("Photo station")}')
 
 class PhotoStation3dView( TemplateView ):

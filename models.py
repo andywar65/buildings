@@ -456,9 +456,7 @@ class PhotoStation(models.Model):
                 kwargs={'build_slug': self.build.slug,
                 'plan_slug': self.plan.slug})
         else:
-            return reverse('buildings:building_detail',
-                kwargs={'build_slug': self.build.slug,
-                'set_slug': self.build.get_base_slug()})
+            return self.build.get_full_path()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -580,9 +578,7 @@ class Element(models.Model):
                 kwargs={'build_slug': self.build.slug,
                 'plan_slug': self.plan.slug})
         else:
-            return reverse('buildings:building_detail',
-                kwargs={'build_slug': self.build.slug,
-                'set_slug': self.build.get_base_slug()})
+            return self.build.get_full_path()
 
     def map_dictionary(self):
         if self.fb_image is not None:
