@@ -341,6 +341,7 @@ class PlanSet(MP_Node):
         blank = True, verbose_name = _('Plans'),
         through = 'PlanVisibility',
         help_text=_("Choose plans to show in this set") )
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         prefix = ''
