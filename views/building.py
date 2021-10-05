@@ -129,10 +129,8 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 kwargs={'slug': self.object.slug }) +
                 f'?created={self.object.title}&model={_("Building")}')
         else:
-            return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.object.slug,
-                'set_slug': self.object.get_base_slug() }) +
-                f'?created={self.object.title}&model={_("Building")}')
+            return ( self.object.get_full_path() +
+                f'?created={self.object.title}&model={_("Building")}' )
 
 class BuildingDetailView(AlertMixin, DetailView):
     model = Building
@@ -265,9 +263,7 @@ class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
                 kwargs={'slug': self.object.slug }) +
                 f'?modified={self.object.title}&model={_("Building")}')
         else:
-            return (reverse('buildings:building_detail',
-                kwargs={'build_slug': self.object.slug,
-                'set_slug': self.object.get_base_slug() }) +
+            return ( self.object.get_full_path() +
                 f'?modified={self.object.title}&model={_("Building")}')
 
 class BuildingDeleteView(PermissionRequiredMixin, FormView):
