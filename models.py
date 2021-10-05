@@ -192,7 +192,7 @@ class Building(models.Model):
             PlanSet.objects.get(slug=self.get_base_slug())
         except:
             PlanSet.add_root(title=self.title, slug=self.get_base_slug(),
-                intro = _("Base plan set"), build=self)
+                intro = _("Base plan set"), build=self, active=True)
         try:
             Family.objects.get(slug=self.get_base_slug())
         except:
@@ -372,6 +372,10 @@ class PlanSet(MP_Node):
         if not self.slug:
             self.slug = generate_unique_slug(PlanSet, self.title)
         self.last_updated = now()
+        if self.active:
+            deactivate = self.build.building_planset.filter(
+                active=True).exclude(slug=self.slug)
+            deactivate.update(active=False)
         super(PlanSet, self).save(*args, **kwargs)
 
     class Meta:

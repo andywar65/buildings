@@ -82,7 +82,7 @@ class PlanSetCreateForm(ModelForm):
 
     class Meta:
         model = PlanSet
-        fields = ('build', 'parent', 'title', 'intro', 'plans')
+        fields = ('build', 'parent', 'title', 'intro', 'plans', 'active')
 
 class PlanSetUpdateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
@@ -98,7 +98,7 @@ class PlanSetUpdateForm(ModelForm):
 
     class Meta:
         model = PlanSet
-        fields = ('build', 'parent', 'title', 'intro', 'plans')
+        fields = ('build', 'parent', 'title', 'intro', 'plans', 'active')
 
 class FamilyCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
