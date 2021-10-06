@@ -1,35 +1,78 @@
-{% extends 'base.html' %}
 {% load fb_versions %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{{ website.acro }} | {{ jour.title }}{% endblock title %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" type='image/x-icon' href="{% static 'images/favicon.ico' %}">
+    <!-- Bootstrap CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
 
-{% block content %}
-<div class="row" id="journal-body">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    <div class="card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h4 class="card-title"><strong>{{ jour.date|date:"Y M d" }}: {{ jour.title }}</strong></h4>
-        <p><em>{{ jour.intro }}</em></p>
-        <p>{% translate "Building" %}: {{ build.title }}, {{ build.address }}</p>
-      </div>
-      <div class="card-body">
-        {{ jour.body|safe }}
-        {% if jour.author %}
-          <p class="text-right">{% trans "Signed" %}: {{ jour.author.get_full_name }}</p>
-        {% endif %}
-        {% if images %}
-          {% translate "No description" as default %}
-          {% for image in images %}
-            <div class="row">
-              <img src="{% version image.fb_image 'large' %}" width="100%" >
-              <p>{{ image.stat.title }} - {{ image.caption|default_if_none:default }}</p>
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <title>{% block title %}{{ website.acro }} | {{ jour.title }}{% endblock title %}</title>
+    {% block extra-head %}{% endblock extra-head %}
+  </head>
+  <body class="d-flex flex-column h-100">
+    {% block image_header %}{% endblock image_header %}
+    <main role="main" class="flex-shrink-0">
+      <div class="container">
+        {% block content %}
+        <div class="row" id="journal-body">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <div class="card" style="margin-bottom: 20px;">
+              <div class="card-header">
+                <h4 class="card-title"><strong>{{ jour.date|date:"Y M d" }}: {{ jour.title }}</strong></h4>
+                <p><em>{{ jour.intro }}</em></p>
+                <p>{% translate "Building" %}: {{ build.title }}, {{ build.address }}</p>
+              </div>
+              <div class="card-body">
+                {{ jour.body|safe }}
+                {% if jour.author %}
+                  <p class="text-right">{% trans "Signed" %}: {{ jour.author.get_full_name }}</p>
+                {% endif %}
+                {% if images %}
+                  {% translate "No description" as default %}
+                  {% for image in images %}
+                    <div class="row">
+                      <img src="{% version image.fb_image 'large' %}" width="100%" >
+                      <p>{{ image.stat.title }} - {{ image.caption|default_if_none:default }}</p>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
             </div>
-          {% endfor %}
-        {% endif %}
+          </div>
+        </div>
+        {% endblock content %}
       </div>
-    </div>
-  </div>
-</div>
-{% endblock content %}
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    {% block extra-js %}{% endblock extra-js %}
+  </body>
+</html>
