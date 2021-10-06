@@ -5,6 +5,7 @@ const map = L.map('map', {
   center: [ 41.8988 , 12.5451 ],
   zoom: 9,
   layers: [osm] })
+const layerGroup = L.layerGroup().addTo(map)
 
 async function load_comuni() {
   const comuni_url = `/edifici/comuni/api/?in_bbox=${map.getBounds().toBBoxString()}`
@@ -14,6 +15,7 @@ async function load_comuni() {
 }
 async function render_comuni() {
   const comuni = await load_comuni()
-  L.geoJSON(comuni).bindPopup(layer => layer.feature.properties.comune_com).addTo(map)
+  layerGroup.clearLayers()
+  L.geoJSON(comuni).bindPopup(layer => layer.feature.properties.comune_com).addTo(layerGroup)
 }
 map.on('moveend', render_comuni)
