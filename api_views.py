@@ -12,3 +12,4 @@ class ComuniViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.InBBoxFilter,)
     queryset = Comuni.objects.all()
     serializer_class = ComuniSerializer
+    bbox_filter_include_overlapping = True
