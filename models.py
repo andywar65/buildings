@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point, Polygon, LineString
+from django.contrib.gis.geos import Point, Polygon, LineString, MultiPolygon
 
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
@@ -709,6 +709,16 @@ class Comuni(models.Model):
     comune_ist = models.CharField(max_length=254)
     comune_com = models.CharField(max_length=100)
     geom = models.MultiPolygonField(srid=4326)
+    geom_lo = models.MultiPolygonField(srid=4326, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        a = self.geom.simplify(tolerance=0.01)
+        if a:
+            if isinstance( a, ( Polygon, )):
+                self.geom_lo = MultiPolygon(a)
+            elif isinstance( a, ( MultiPolygon, )):
+                self.geom_lo = a
+        super(Comuni, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.comune_com
