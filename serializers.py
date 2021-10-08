@@ -12,3 +12,13 @@ class ComuniSerializer(serializers.GeoFeatureModelSerializer):
         fields = ("id", "comune_com")
         geo_field = "geom"
         model = Comuni
+
+class ComuniLoSerializer(serializers.GeoFeatureModelSerializer):
+    """Comuni GeoJSON serializer, low resolution."""
+
+    class Meta:
+        """Comuni serializer meta class."""
+
+        fields = ("id", "comune_com")
+        geo_field = "geom_lo"
+        model = Comuni

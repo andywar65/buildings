@@ -1,8 +1,9 @@
 from rest_framework import routers
 
-from .api_views import ComuniViewSet
+from .api_views import *
 
 router = routers.DefaultRouter()
-router.register(r"", ComuniViewSet)
+router.register("hi", ComuniViewSet)
+router.register("lo", ComuniLoViewSet)
 
 urlpatterns = router.urls
