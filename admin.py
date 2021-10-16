@@ -8,7 +8,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City, PlanGeometry, Journal, Comuni)
+    PlanSet, Family, Element, City, PlanGeometry, Journal, )
 
 class PlanInline(admin.TabularInline):
     model = Plan
