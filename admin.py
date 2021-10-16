@@ -57,13 +57,6 @@ class PlanAdmin(admin.ModelAdmin):
         }),
         )
 
-@admin.register(Comuni)
-class ComuniAdmin(admin.ModelAdmin):
-    list_display = ('comune_com', )
-    formfield_overrides = {
-        models.GeometryField: {"widget": OSMWidget},
-    }
-
 #@admin.register(PlanGeometry)
 #class PlanGeometryAdmin(OSMGeoAdmin):
     #list_display = ('id', 'plan', )
