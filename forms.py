@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import (Building, Plan, PhotoStation, StationImage,
     PlanSet, Family, Element)
