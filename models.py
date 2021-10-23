@@ -666,13 +666,19 @@ class Journal(models.Model):
         blank= True, null=True, verbose_name = _('Author'))
 
     def get_path(self):
-        temp = self.date
+        #temp = self.date
         #conditional added for test to work
-        if isinstance(temp, str):
-            temp = temp.split(' ')[0]
-            temp = datetime.strptime(temp, '%Y-%m-%d')
-        return ( '/' + _('buildings/') + self.build.slug + '/' + _('journal/') +
-            temp.strftime("%Y/%m/%d") + '/' + self.slug )
+        #if isinstance(temp, str):
+            #temp = temp.split(' ')[0]
+            #temp = datetime.strptime(temp, '%Y-%m-%d')
+        #return ( '/' + _g('buildings/') + self.build.slug + '/' + _g('journal/') +
+            #temp.strftime("%Y/%m/%d") + '/' + self.slug )
+        return reverse('buildings:journal_detail', kwargs={
+            'build_slug': self.build.slug,
+            'jour_slug': self.slug,
+            'year': self.date.year,
+            'month': self.date.month,
+            'day': self.date.day,})
 
     def get_previous(self):
         prev = Journal.objects.filter(build=self.build,
