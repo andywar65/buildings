@@ -705,3 +705,15 @@ class Journal(models.Model):
         verbose_name = _('Building log entry')
         verbose_name_plural = _('Building log entries')
         ordering = ('-date', )
+
+class DxfImport(models.Model):
+    layer = models.CharField(max_length=254)
+    olinetype = models.CharField(max_length=254)
+    color = models.CharField(max_length=254)
+    width = models.FloatField()
+    thickness = models.FloatField()
+    geom = models.LineStringField(srid=4326)
+
+    class Meta:
+        verbose_name = _('DXF Import')
+        verbose_name_plural = _('DXF Imports')

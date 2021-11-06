@@ -8,7 +8,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City, PlanGeometry, Journal, )
+    PlanSet, Family, Element, City, PlanGeometry, Journal, DxfImport, )
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -170,3 +170,10 @@ class JournalAdmin(admin.ModelAdmin):
             'fields': ('tags', 'author' ),
         }),
         )
+
+@admin.register(DxfImport)
+class DxfImportAdmin(admin.ModelAdmin):
+    list_display = ('id', 'layer', )
+    formfield_overrides = {
+        models.LineStringField: {"widget": OSMWidget},
+    }
