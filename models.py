@@ -222,6 +222,26 @@ class Plan(models.Model):
         upload_to="uploads/buildings/plans/dxf/",
         validators=[FileExtensionValidator(allowed_extensions=['dxf', ])],
         null=True, blank=True )
+    cpg_file = models.FileField(_("CPG file"), max_length=200,
+        upload_to="uploads/buildings/plans/shapes/",
+        validators=[FileExtensionValidator(allowed_extensions=['cpg', ])],
+        null=True, blank=True )
+    dbf_file = models.FileField(_("DBF file"), max_length=200,
+        upload_to="uploads/buildings/plans/shapes/",
+        validators=[FileExtensionValidator(allowed_extensions=['dbf', ])],
+        null=True, blank=True )
+    prj_file = models.FileField(_("PRJ file"), max_length=200,
+        upload_to="uploads/buildings/plans/shapes/",
+        validators=[FileExtensionValidator(allowed_extensions=['prj', ])],
+        null=True, blank=True )
+    shp_file = models.FileField(_("Shape files"), max_length=200,
+        upload_to="uploads/buildings/plans/shapes/",
+        validators=[FileExtensionValidator(allowed_extensions=['shp', ])],
+        null=True, blank=True )
+    shx_file = models.FileField(_("SHX file"), max_length=200,
+        upload_to="uploads/buildings/plans/shapes/",
+        validators=[FileExtensionValidator(allowed_extensions=['shx', ])],
+        null=True, blank=True )
     refresh = models.BooleanField(_("Refresh geometry"), default=True)
 
     def __str__(self):
