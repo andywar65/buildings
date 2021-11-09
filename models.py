@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point, Polygon, LineString, MultiPolygon
+from django.contrib.gis.utils import LayerMapping
 
 from filebrowser.fields import FileBrowseField
 from filebrowser.base import FileObject
@@ -319,6 +320,7 @@ class Plan(models.Model):
                     elm.sheet = element['sheet']
                     elm.save()
         if self.refresh and self.shp_file:
+            #change all shape filenames to same random name
             random = get_random_string(7)
             shapes = "uploads/buildings/plans/shapes/"
             cpg = Path(settings.MEDIA_ROOT / str(self.cpg_file) )
@@ -346,6 +348,21 @@ class Plan(models.Model):
                 random_shx = random + '.shx'
                 shx.replace(settings.MEDIA_ROOT / shapes / random_shx )
                 self.shx_file = shapes + random_shx
+
+            poly_mapping = {
+                'layer': 'layer',
+                'olinetype': 'olinetype',
+                'color': 'color',
+                'width': 'width',
+                'thickness': 'thickness',
+                'geom': 'LINESTRING25D',
+            }
+
+            shp_path = Path(settings.MEDIA_ROOT / shapes / random_shp )
+            shp_str = str(shp_path)
+
+            lm = LayerMapping(DxfImport, shp_str, poly_mapping, transform=True)
+            lm.save(strict=True, )
         self.refresh = False
         super(Plan, self).save(*args, **kwargs)
 
