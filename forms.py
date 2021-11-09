@@ -35,10 +35,13 @@ class BuildingDeleteForm(forms.Form):
 class PlanCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),
         queryset=Building.objects.all(), disabled = True )
+    #shape_files = forms.FileField( label=_('Shape files'), required = False,
+        #widget = forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = Plan
         fields = ('__all__')
+        #exclude = ('cpg_file', 'dbf_file', 'prj_file', 'shp_file', 'shx_file', )
 
 class PhotoStationCreateForm(ModelForm):
     build = forms.ModelChoiceField( label=_('Building'),

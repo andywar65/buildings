@@ -1,3 +1,4 @@
+from pathlib import Path
 from datetime import datetime
 from math import radians, sin, cos
 #radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
@@ -7,6 +8,7 @@ from django.conf import settings
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import get_random_string
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
@@ -234,7 +236,7 @@ class Plan(models.Model):
         upload_to="uploads/buildings/plans/shapes/",
         validators=[FileExtensionValidator(allowed_extensions=['prj', ])],
         null=True, blank=True )
-    shp_file = models.FileField(_("Shape files"), max_length=200,
+    shp_file = models.FileField(_("SHP file"), max_length=200,
         upload_to="uploads/buildings/plans/shapes/",
         validators=[FileExtensionValidator(allowed_extensions=['shp', ])],
         null=True, blank=True )
@@ -270,7 +272,7 @@ class Plan(models.Model):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
                 self.title + ' ' + str(self.elev))
-        #upload file
+        #upload files
         super(Plan, self).save(*args, **kwargs)
         if self.refresh and self.file:
             #clear plan geometries
@@ -316,6 +318,37 @@ class Plan(models.Model):
                 if created:
                     elm.sheet = element['sheet']
                     elm.save()
+        if self.refresh and self.shp_file:
+            random = get_random_string(7)
+            shapes = "uploads/buildings/plans/shapes/"
+            cpg = Path(settings.MEDIA_ROOT / str(self.cpg_file) )
+            if cpg.is_file():
+                random_cpg = random + '.cpg'
+                cpg.replace(settings.MEDIA_ROOT / shapes / random_cpg )
+                self.cpg_file = shapes + random_cpg
+            dbf = Path(settings.MEDIA_ROOT / str(self.dbf_file) )
+            if dbf.is_file():
+                random_dbf = random + '.dbf'
+                dbf.replace(settings.MEDIA_ROOT / shapes / random_dbf )
+                self.dbf_file = shapes + random_dbf
+            prj = Path(settings.MEDIA_ROOT / str(self.prj_file) )
+            if prj.is_file():
+                random_prj = random + '.prj'
+                prj.replace(settings.MEDIA_ROOT / shapes / random_prj )
+                self.prj_file = shapes + random_prj
+            shp = Path(settings.MEDIA_ROOT / str(self.shp_file) )
+            if shp.is_file():
+                random_shp = random + '.shp'
+                shp.replace(settings.MEDIA_ROOT / shapes / random_shp )
+                self.shp_file = shapes + random_shp
+            shx = Path(settings.MEDIA_ROOT / str(self.shx_file) )
+            if shx.is_file():
+                random_shx = random + '.shx'
+                shx.replace(settings.MEDIA_ROOT / shapes / random_shx )
+                self.shx_file = shapes + random_shx
+        self.refresh = False
+        super(Plan, self).save(*args, **kwargs)
+
 
     class Meta:
         verbose_name = _('Building plan')

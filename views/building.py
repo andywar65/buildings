@@ -312,10 +312,6 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         context = self.add_alerts_to_context(context)
         return context
 
-    def form_valid(self, form):
-        return super(PlanCreateView, self).form_valid(form)
-        object = self.object
-
     def get_success_url(self):
         if 'add_another' in self.request.POST:
             return (reverse('buildings:plan_create',
