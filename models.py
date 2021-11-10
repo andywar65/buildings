@@ -270,13 +270,39 @@ class Plan(models.Model):
             'title': self.title, }
 
     @transaction.atomic
+    def save_dxf_imports(self, shp_str):
+        poly_mapping = {
+            #'plan': { 'id': 'plan' },
+            'layer': 'layer',
+            'olinetype': 'olinetype',
+            'color': 'color',
+            'width': 'width',
+            'thickness': 'thickness',
+            'geom': 'LINESTRING25D',
+        }
+        last = DxfImport.objects.last()
+        lm = LayerMapping(DxfImport, shp_str, poly_mapping, transform=True)
+        lm.save(strict=True, )
+        if last:
+            imports = DxfImport.objects.filter(id__gt=last.id)
+        else:
+            imports = DxfImport.objects.all()
+        for imp in imports:
+            rgb = imp.color.split(',')
+            imp.color = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
+                int(rgb[1]), int(rgb[2]) )
+            imp.plan = self
+            imp.save()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
                 self.title + ' ' + str(self.elev))
+        refresh = True if self.refresh else False
+        self.refresh = False
         #upload files
         super(Plan, self).save(*args, **kwargs)
-        if self.refresh and self.file:
+        if refresh and self.file:
             #clear plan geometries
             self.plan_geometry.all().delete()
             geometry, elements = workflow(self.file,
@@ -295,9 +321,6 @@ class Plan(models.Model):
                         popup=gm['popup'],
                         geometry=LineString(gm['coords']),
                         geomjson=gm['coordz'],)
-            #this is a sloppy workaround to make working test
-            #geometry refreshed
-            #Plan.objects.filter(id=self.id).update(refresh=False)
             base_family = Family.objects.get(slug=self.build.get_base_slug())
             for element in elements:
                 try:
@@ -320,7 +343,7 @@ class Plan(models.Model):
                 if created:
                     elm.sheet = element['sheet']
                     elm.save()
-        if self.refresh and self.shp_file:
+        if refresh and self.shp_file:
             #change all shape filenames to same random name
             random = get_random_string(7)
             shapes = "uploads/buildings/plans/shapes/"
@@ -349,35 +372,12 @@ class Plan(models.Model):
                 random_shx = random + '.shx'
                 shx.replace(settings.MEDIA_ROOT / shapes / random_shx )
                 self.shx_file = shapes + random_shx
-
-            poly_mapping = {
-                #'plan': { 'id': self.id },
-                'layer': 'layer',
-                'olinetype': 'olinetype',
-                'color': 'color',
-                'width': 'width',
-                'thickness': 'thickness',
-                'geom': 'LINESTRING25D',
-            }
-
+            #update file names
+            super(Plan, self).save(*args, **kwargs)
+            #prepare data for layer mapping
             shp_path = Path(settings.MEDIA_ROOT / shapes / random_shp )
             shp_str = str(shp_path)
-            last = DxfImport.objects.last()
-            lm = LayerMapping(DxfImport, shp_str, poly_mapping, transform=True)
-            lm.save(strict=True, )
-            if last:
-                imports = DxfImport.objects.filter(id__gt=last.id)
-            else:
-                imports = DxfImport.objects.all()
-            for imp in imports:
-                rgb = imp.color.split(',')
-                imp.color = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
-                    int(rgb[1]), int(rgb[2]) )
-                imp.plan = self
-                imp.save()
-        self.refresh = False
-        super(Plan, self).save(*args, **kwargs)
-
+            self.save_dxf_imports(shp_str)
 
     class Meta:
         verbose_name = _('Building plan')
