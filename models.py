@@ -289,7 +289,7 @@ class Plan(models.Model):
             imports = DxfImport.objects.all()
         for imp in imports:
             rgb = imp.color.split(',')
-            imp.color = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
+            imp.color_field = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
                 int(rgb[1]), int(rgb[2]) )
             imp.plan = self
             imp.save()
@@ -794,6 +794,7 @@ class DxfImport(models.Model):
     layer = models.CharField(max_length=254)
     olinetype = models.CharField(max_length=254)
     color = models.CharField(max_length=254)
+    color_field = ColorField(default='#FF0000')
     width = models.FloatField()
     thickness = models.FloatField()
     geom = models.LineStringField(srid=4326)
