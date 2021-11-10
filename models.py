@@ -3,7 +3,7 @@ from datetime import datetime
 from math import radians, sin, cos
 #radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.utils.timezone import now
 from django.utils.text import slugify
@@ -269,6 +269,7 @@ class Plan(models.Model):
         return {'id': self.id, 'geometry': geometry,
             'title': self.title, }
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
@@ -296,7 +297,7 @@ class Plan(models.Model):
                         geomjson=gm['coordz'],)
             #this is a sloppy workaround to make working test
             #geometry refreshed
-            Plan.objects.filter(id=self.id).update(refresh=False)
+            #Plan.objects.filter(id=self.id).update(refresh=False)
             base_family = Family.objects.get(slug=self.build.get_base_slug())
             for element in elements:
                 try:
@@ -350,6 +351,7 @@ class Plan(models.Model):
                 self.shx_file = shapes + random_shx
 
             poly_mapping = {
+                #'plan': { 'id': self.id },
                 'layer': 'layer',
                 'olinetype': 'olinetype',
                 'color': 'color',
@@ -360,9 +362,13 @@ class Plan(models.Model):
 
             shp_path = Path(settings.MEDIA_ROOT / shapes / random_shp )
             shp_str = str(shp_path)
-
+            last = DxfImport.objects.last()
             lm = LayerMapping(DxfImport, shp_str, poly_mapping, transform=True)
             lm.save(strict=True, )
+            if last:
+                imports = DxfImport.objects.filter(id__gt=last.id).update(plan_id=self.id)
+            else:
+                imports = DxfImport.objects.all().update(plan_id=self.id)
         self.refresh = False
         super(Plan, self).save(*args, **kwargs)
 
@@ -777,6 +783,8 @@ class Journal(models.Model):
         ordering = ('-date', )
 
 class DxfImport(models.Model):
+    plan = models.ForeignKey(Plan, on_delete = models.CASCADE, null=True,
+        related_name='plan_dxfimport', verbose_name = _('Plan DXF import'),)
     layer = models.CharField(max_length=254)
     olinetype = models.CharField(max_length=254)
     color = models.CharField(max_length=254)
