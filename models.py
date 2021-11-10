@@ -366,9 +366,15 @@ class Plan(models.Model):
             lm = LayerMapping(DxfImport, shp_str, poly_mapping, transform=True)
             lm.save(strict=True, )
             if last:
-                imports = DxfImport.objects.filter(id__gt=last.id).update(plan_id=self.id)
+                imports = DxfImport.objects.filter(id__gt=last.id)
             else:
-                imports = DxfImport.objects.all().update(plan_id=self.id)
+                imports = DxfImport.objects.all()
+            for imp in imports:
+                rgb = imp.color.split(',')
+                imp.color = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
+                    int(rgb[1]), int(rgb[2]) )
+                imp.plan = self
+                imp.save()
         self.refresh = False
         super(Plan, self).save(*args, **kwargs)
 
