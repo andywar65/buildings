@@ -43,10 +43,17 @@ class PlanGeometryInline(admin.TabularInline):
         models.GeometryField: {"widget": OSMWidget},
     }
 
+class DxfImportInline(admin.TabularInline):
+    model = DxfImport
+    fields = ( 'geom', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
+    formfield_overrides = {
+        models.LineStringField: {"widget": OSMWidget},
+    }
+
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('title', 'build', 'elev', 'file')
-    inlines = [ PlanGeometryInline,  ]
+    inlines = [ PlanGeometryInline, DxfImportInline, ]
 
     fieldsets = (
         (None, {
@@ -170,10 +177,3 @@ class JournalAdmin(admin.ModelAdmin):
             'fields': ('tags', 'author' ),
         }),
         )
-
-@admin.register(DxfImport)
-class DxfImportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'layer', )
-    formfield_overrides = {
-        models.LineStringField: {"widget": OSMWidget},
-    }
