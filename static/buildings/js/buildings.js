@@ -27,6 +27,20 @@ const elemMarker = L.divIcon({
   className: 'elem-marker'
 });
 
+async function load_dxf(plan_id) {
+  let dxf_url = ``
+  dxf_url = `/build-api/dxf/by-plan/` + plan_id;
+  let response = await fetch(dxf_url);
+  let geojson = await response.json();
+  return geojson;
+}
+
+async function render_dxf(plan_id, layergroup) {
+  let dxfgeo = await load_dxf(plan_id);
+  L.geoJSON(dxfgeo).bindPopup(layer => layer.feature.properties.layer).addTo(layergroup)
+  return;
+}
+
 if (map_data.hasOwnProperty('plans')){
   for (plan of map_data.plans){
     window['plan_' + plan.id ] = L.layerGroup();
@@ -50,9 +64,9 @@ if (map_data.hasOwnProperty('plans')){
         } else {
           object.bindPopup(obj.popup).addTo(window['plan_' + plan.id ]);
         }
-
       }
     }
+    render_dxf(plan.id, window['plan_' + plan.id ]);
   }
 }
 
