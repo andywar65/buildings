@@ -7,5 +7,5 @@ class DxfImportSerializer(serializers.GeoFeatureModelSerializer):
 
     class Meta:
         fields = ("id", "layer", "color_field", )
-        geo_field = "geom"
+        geo_field = "geometry"
         model = DxfImport

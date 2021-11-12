@@ -87,7 +87,7 @@ class DxfImportAdmin(OSMGeoAdmin):
                 'width', 'thickness', ),
         }),
         (_('Geometry'), {
-            'fields': ('geom', ),
+            'fields': ('geometry', ),
         }),
         )
 

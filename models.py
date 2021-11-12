@@ -288,6 +288,10 @@ class Plan(models.Model):
         else:
             imports = DxfImport.objects.all()
         for imp in imports:
+            if imp.geom.closed:
+                imp.geometry = imp.geom.convex_hull
+            else:
+                imp.geometry = imp.geom
             rgb = imp.color.split(',')
             imp.color_field = '#{:02x}{:02x}{:02x}'.format( int(rgb[0]),
                 int(rgb[1]), int(rgb[2]) )
@@ -798,6 +802,8 @@ class DxfImport(models.Model):
     width = models.FloatField()
     thickness = models.FloatField()
     geom = models.LineStringField(srid=4326)
+    geometry = models.GeometryField( verbose_name = _('Geometry'),
+        help_text=_("can be LineString or Polygon"), null=True)
 
     class Meta:
         verbose_name = _('DXF Import')
