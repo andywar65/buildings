@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
-#from django.contrib.gis.admin import OSMGeoAdmin
+from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.gis.forms.widgets import OSMWidget
 from django.contrib.gis.db import models
 
@@ -37,7 +37,7 @@ class BuildingAdmin(admin.ModelAdmin):
 
 class PlanGeometryInline(admin.TabularInline):
     model = PlanGeometry
-    fields = ('geometry', 'color', 'popup', )
+    fields = ('id', 'color', 'popup', )
     extra = 0
     formfield_overrides = {
         models.GeometryField: {"widget": OSMWidget},
@@ -45,7 +45,8 @@ class PlanGeometryInline(admin.TabularInline):
 
 class DxfImportInline(admin.TabularInline):
     model = DxfImport
-    fields = ( 'geom', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
+    fields = ( 'id', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
+    extra = 0
     formfield_overrides = {
         models.LineStringField: {"widget": OSMWidget},
     }
@@ -60,21 +61,35 @@ class PlanAdmin(admin.ModelAdmin):
             'fields': ('title', 'build', 'elev', ),
         }),
         (_('File'), {
-            'fields': ('file', 'refresh', ),
+            'fields': ('file', 'cpg_file', 'dbf_file', 'prj_file', 'shp_file',
+                'shx_file', 'refresh', ),
         }),
         )
 
-#@admin.register(PlanGeometry)
-#class PlanGeometryAdmin(OSMGeoAdmin):
-    #list_display = ('id', 'plan', )
-    #fieldsets = (
-        #(None, {
-            #'fields': ('plan', 'color', 'popup', ),
-        #}),
-        #(_('Geometry'), {
-            #'fields': ('geometry', ),
-        #}),
-        #)
+@admin.register(PlanGeometry)
+class PlanGeometryAdmin(OSMGeoAdmin):
+    list_display = ('id', 'plan', )
+    fieldsets = (
+        (None, {
+            'fields': ('plan', 'color', 'popup', ),
+        }),
+        (_('Geometry'), {
+            'fields': ('geometry', ),
+        }),
+        )
+
+@admin.register(DxfImport)
+class DxfImportAdmin(OSMGeoAdmin):
+    list_display = ('id', 'plan', )
+    fieldsets = (
+        (None, {
+            'fields': ('plan', 'layer', 'color_field', 'olinetype',
+                'width', 'thickness', ),
+        }),
+        (_('Geometry'), {
+            'fields': ('geom', ),
+        }),
+        )
 
 class StationImageInline(admin.TabularInline):
     model = StationImage
