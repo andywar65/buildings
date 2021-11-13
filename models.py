@@ -288,8 +288,8 @@ class Plan(models.Model):
         else:
             imports = DxfImport.objects.all()
         for imp in imports:
-            if imp.geom.closed:
-                imp.geometry = imp.geom.convex_hull
+            if imp.geom.closed and imp.geom.simple:
+                imp.geometry = Polygon(imp.geom.coords)
             else:
                 imp.geometry = imp.geom
             rgb = imp.color.split(',')
