@@ -35,9 +35,18 @@ async function load_dxf(plan_id) {
   return geojson;
 }
 
+function setDxfStyle(feature) {
+  return {
+    fillColor: feature.properties.color_field,
+    color: feature.properties.color_field,
+    fillOpacity: 0.5,
+  };
+}
+
 async function render_dxf(plan_id, layergroup) {
   let dxfgeo = await load_dxf(plan_id);
-  L.geoJSON(dxfgeo).bindPopup(layer => layer.feature.properties.layer).addTo(layergroup)
+  L.geoJSON(dxfgeo, { style :setDxfStyle }
+    ).bindPopup(layer => layer.feature.properties.layer).addTo(layergroup)
   return;
 }
 
