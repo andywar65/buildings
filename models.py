@@ -100,6 +100,11 @@ class Building(models.Model):
             kwargs={'build_slug': self.slug,
             'set_slug': set_slug })
 
+    def image_medium_version_path(self):
+        self.fb_image.version_generate("medium")
+        return (settings.MEDIA_URL +
+            self.fb_image.version_path("medium"))
+
     def map_dictionary(self):
         self.fb_image.version_generate("medium")
         fb_path = (settings.MEDIA_URL +
