@@ -43,10 +43,14 @@ function setDxfStyle(feature) {
   };
 }
 
+function onEachDxfFeature(feature, layer) {
+  layer.bindPopup(feature.properties.layer);
+}
+
 async function render_dxf(plan_id, layergroup) {
   let dxfgeo = await load_dxf(plan_id);
-  L.geoJSON(dxfgeo, { style :setDxfStyle }
-    ).bindPopup(layer => layer.feature.properties.layer).addTo(layergroup)
+  L.geoJSON(dxfgeo, { style :setDxfStyle, onEachFeature: onEachDxfFeature }
+    ).addTo(layergroup)
   return;
 }
 
