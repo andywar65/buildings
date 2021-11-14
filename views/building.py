@@ -37,7 +37,7 @@ class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
 
 class BuildingListView( AlertMixin, ListView ):
     model = Building
-    template_name = 'buildings/building_list.html'
+    template_name = 'buildings/building_list_new.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingListView, self).setup(request, *args, **kwargs)
