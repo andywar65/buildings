@@ -28,19 +28,26 @@ const elemMarker = L.divIcon({
 });
 
 async function load_dxf(plan_id) {
-  let dxf_url = ``
-  dxf_url = `/build-api/dxf/by-plan/` + plan_id;
-  let response = await fetch(dxf_url);
+  let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
   let geojson = await response.json();
   return geojson;
 }
 
 function setDxfStyle(feature) {
-  return {
-    fillColor: feature.properties.color_field,
-    color: feature.properties.color_field,
-    fillOpacity: 0.5,
-  };
+  switch ( feature.geometry.type ){
+    case 'LineString':
+      return {
+        color: feature.properties.color_field,
+      };
+      break;
+    case 'Polygon':
+      return {
+        fillColor: feature.properties.color_field,
+        color: feature.properties.color_field,
+        fillOpacity: 0.5,
+      };
+      break;
+  }
 }
 
 function onEachDxfFeature(feature, layer) {
