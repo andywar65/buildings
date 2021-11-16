@@ -27,6 +27,10 @@ function buildingPointToLayer(feature, latlng) {
   return L.marker(latlng, {icon: buildMarker});
 }
 
+async function setCityView() {
+  return;
+}
+
 async function render_buildings() {
   let buildgeo = await load_buildings();
   markers = L.geoJSON(buildgeo,

@@ -28,6 +28,10 @@
         <a class="btn btn-secondary" href="{% url 'buildings:building_create'%}" title="{% translate "Add building" %}">
           + <i class="fa fa-building"></i></a>
       {% endif %}
+      {% if perms.buildings.add_city and user.is_staff %}
+        <a class="btn btn-warning" href="/admin/buildings/city/" title="{% translate "Manage cities (in admin)" %}">
+          <i class="fa fa-pencil"></i> <i class="fa fa-globe"></i></a>
+      {% endif %}
       </div>
     </div>
   </div>

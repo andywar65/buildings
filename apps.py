@@ -18,11 +18,14 @@ def create_buildings_group(sender, **kwargs):
             'view_journal', 'add_journal', 'change_journal', 'delete_journal',
             'view_dxfimport', 'add_dxfimport', 'change_dxfimport',
             'delete_dxfimport',
+            'view_city', 'add_city', 'change_city',
+            'delete_city'
             ))
         grp.permissions.set(permissions)
     grp, created = Group.objects.get_or_create(name=_('Building Guest'))
     if created:
         permissions = Permission.objects.filter(codename__in=(
+            'view_city',
             'view_building',
             'view_plan',
             'view_photostation',
@@ -34,24 +37,15 @@ def create_buildings_group(sender, **kwargs):
             ))
         grp.permissions.set(permissions)
 
-def create_plansets(sender, **kwargs):
-    from buildings.models import PlanSet
-    try:
-        PlanSet.objects.get(title=_('Architecture'))
-    except:
-        PlanSet.add_root(title=_('Architecture'))
-    try:
-        PlanSet.objects.get(title=_('MEP'))
-    except:
-        PlanSet.add_root(title=_('MEP'))
-    try:
-        PlanSet.objects.get(title=_('Structure'))
-    except:
-        PlanSet.add_root(title=_('Structure'))
+def create_city(sender, **kwargs):
+    from django.contrib.gis.geos import Point
+    from buildings.models import City
+    city, created = City.objects.get_or_create(name=_('Rome'),
+        location=Point( 12.5451, 41.8988 ), zoom=10)
 
 class BuildingsConfig(AppConfig):
     name = 'buildings'
 
     def ready(self):
         post_migrate.connect(create_buildings_group, sender=self)
-        #post_migrate.connect(create_plansets, sender=self)
+        post_migrate.connect(create_city, sender=self)
