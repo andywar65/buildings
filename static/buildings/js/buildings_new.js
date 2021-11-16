@@ -30,9 +30,15 @@ function buildingPointToLayer(feature, latlng) {
 async function render_buildings() {
   let buildgeo = await load_buildings();
   markers = L.geoJSON(buildgeo,
-    { pointToLayer: buildingPointToLayer, onEachFeature: onEachBuildingFeature, icon: buildMarker })
-  markers.addTo(map)
-  map.fitBounds(markers.getBounds());
+    { pointToLayer: buildingPointToLayer, onEachFeature: onEachBuildingFeature });
+  if (markers) {
+    markers.addTo(map);
+    map.fitBounds(markers.getBounds());
+  } else {
+    map.locate()
+      .on('locationfound', e => map.setView(e.latlng, 9))
+      .on('locationerror', () => map.setView([41.8988, 12.5451], 9));
+  }
   return;
 }
 

@@ -7,18 +7,18 @@
 {% block title %}{{ website.acro }} | {% translate "Buildings" %}{% endblock title %}
 
 {% block extra-head %}
+  {% include 'buildings/includes/leaflet_extra_head.html' %}
   <link rel="stylesheet/less" type="text/css" href="{% static 'buildings/less/leaflet-marker-icon.less'%}" />
   <script src="{% static 'buildings/js/less.min.js'%}" type="text/javascript"></script>
-  {% include 'buildings/includes/leaflet_extra_head.html' %}
   <style media="screen">
     .container { max-width: none; }
   </style>
 {% endblock extra-head %}
 
 {% block content %}
-{% include "buildings/includes/building_alerts.html" %}
 <div class="row" id="main-container">
   <div class="col">
+    {% include "buildings/includes/building_alerts.html" %}
     <div class="card" style="margin-bottom: 15px">
       <div class="card-header">
         <h4 class="card-title"><strong>{% translate "Map of all buildings" %}</strong></h4>
