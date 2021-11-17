@@ -733,6 +733,7 @@ class City(models.Model):
     class Meta:
         verbose_name = _('City')
         verbose_name_plural = _('Cities')
+        ordering = ("-id", )
 
 def default_intro():
     return (_('Another building log entry by %(name)s!') %

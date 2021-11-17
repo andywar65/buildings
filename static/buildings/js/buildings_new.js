@@ -28,6 +28,15 @@ function buildingPointToLayer(feature, latlng) {
 }
 
 async function setCityView() {
+  let response = await fetch(`/build-api/city/`);
+  let cityjson = await response.json();
+  city = cityjson.features[0]
+  if (city) {
+    map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
+      city.properties.zoom);
+  } else {
+    map.setView([41.8988, 12.5451], 10);
+  }
   return;
 }
 
@@ -35,13 +44,16 @@ async function render_buildings() {
   let buildgeo = await load_buildings();
   markers = L.geoJSON(buildgeo,
     { pointToLayer: buildingPointToLayer, onEachFeature: onEachBuildingFeature });
-  if (markers) {
-    markers.addTo(map);
+  markers.addTo(map);
+  try {
     map.fitBounds(markers.getBounds());
-  } else {
+  }
+  catch (err) {
+  }
+  finally {
     map.locate()
-      .on('locationfound', e => map.setView(e.latlng, 9))
-      .on('locationerror', () => map.setView([41.8988, 12.5451], 9));
+      .on('locationfound', e => map.setView(e.latlng, 10))
+      .on('locationerror', () => setCityView());
   }
   return;
 }

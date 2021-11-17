@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 from rest_framework import generics
 from rest_framework_gis import filters
 
-from .models import Building, Plan, DxfImport
+from .models import Building, Plan, DxfImport, City
 from .serializers import *
 
 class BuildingsListApiView(generics.ListAPIView):
@@ -15,6 +15,11 @@ class BuildingsListApiView(generics.ListAPIView):
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
     #bbox_filter_include_overlapping = True
+
+class CityListApiView(generics.ListAPIView):
+
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
 
 class DxfImportsApiView(generics.ListAPIView):
 
