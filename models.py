@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.conf import settings
 from django.utils.timezone import now
 from django.utils.text import slugify
+from django.utils.translation import gettext as _g
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 from django.urls import reverse
@@ -211,7 +212,7 @@ class Building(models.Model):
         except:
             Family.add_root(title=self.title, slug=self.get_base_slug(),
                 intro = _("Base element family"), build=self,
-                sheet = {_('Building'): self.title})
+                sheet = {_g('Building'): self.title})
 
     class Meta:
         verbose_name = _('Building')
