@@ -3,11 +3,6 @@ const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const osm = L.tileLayer(url, { attribution: copy })
 const map = L.map('mapid', { layers: [osm] })
 
-//const buildMarker = L.divIcon({
-  //html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
-  //iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-  //className: 'build-marker'
-//});
 const buildMarker = L.AwesomeMarkers.icon({
     icon: 'fa-building',
     prefix: 'fa',
