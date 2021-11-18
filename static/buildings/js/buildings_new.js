@@ -35,10 +35,8 @@ async function setCityView() {
     map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
       city.properties.zoom);
   } catch {
-  } finally {
     map.setView([41.8988, 12.5451], 10);
   }
-  return;
 }
 
 async function render_buildings() {
@@ -49,14 +47,11 @@ async function render_buildings() {
   try {
     map.fitBounds(markers.getBounds());
   }
-  catch (err) {
-  }
-  finally {
+  catch {
     map.locate()
       .on('locationfound', e => map.setView(e.latlng, 10))
       .on('locationerror', () => setCityView());
   }
-  return;
 }
 
 render_buildings();
