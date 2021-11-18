@@ -30,11 +30,12 @@ function buildingPointToLayer(feature, latlng) {
 async function setCityView() {
   let response = await fetch(`/build-api/city/`);
   let cityjson = await response.json();
-  city = cityjson.features[0]
-  if (city) {
+  try {
+    city = cityjson.features[0];
     map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
       city.properties.zoom);
-  } else {
+  } catch {
+  } finally {
     map.setView([41.8988, 12.5451], 10);
   }
   return;
