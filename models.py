@@ -357,30 +357,30 @@ class Plan(models.Model):
             #change all shape filenames to same random name
             random = get_random_string(7)
             shapes = "uploads/buildings/plans/shapes/"
-            cpg = Path(settings.MEDIA_ROOT).joinpath( str(self.cpg_file) )
+            cpg = Path(settings.MEDIA_ROOT).joinpath(str(self.cpg_file) )
             if cpg.is_file():
                 random_cpg = random + '.cpg'
-                cpg.replace(settings.MEDIA_ROOT / shapes / random_cpg )
+                cpg.replace(settings.MEDIA_ROOT).joinpath(shapes).joinpath(random_cpg )
                 self.cpg_file = shapes + random_cpg
-            dbf = Path(settings.MEDIA_ROOT / str(self.dbf_file) )
+            dbf = Path(settings.MEDIA_ROOT).joinpath(str(self.dbf_file) )
             if dbf.is_file():
                 random_dbf = random + '.dbf'
-                dbf.replace(settings.MEDIA_ROOT / shapes / random_dbf )
+                dbf.replace(settings.MEDIA_ROOT).joinpath(shapes).joinpath(random_dbf )
                 self.dbf_file = shapes + random_dbf
-            prj = Path(settings.MEDIA_ROOT / str(self.prj_file) )
+            prj = Path(settings.MEDIA_ROOT).joinpath(str(self.prj_file) )
             if prj.is_file():
                 random_prj = random + '.prj'
-                prj.replace(settings.MEDIA_ROOT / shapes / random_prj )
+                prj.replace(settings.MEDIA_ROOT).joinpath(shapes).joinpath(random_prj )
                 self.prj_file = shapes + random_prj
-            shp = Path(settings.MEDIA_ROOT / str(self.shp_file) )
+            shp = Path(settings.MEDIA_ROOT).joinpath(str(self.shp_file) )
             if shp.is_file():
                 random_shp = random + '.shp'
-                shp.replace(settings.MEDIA_ROOT / shapes / random_shp )
+                shp.replace(settings.MEDIA_ROOT).joinpath(shapes).joinpath(random_shp )
                 self.shp_file = shapes + random_shp
-            shx = Path(settings.MEDIA_ROOT / str(self.shx_file) )
+            shx = Path(settings.MEDIA_ROOT).joinpath(str(self.shx_file) )
             if shx.is_file():
                 random_shx = random + '.shx'
-                shx.replace(settings.MEDIA_ROOT / shapes / random_shx )
+                shx.replace(settings.MEDIA_ROOT).joinpath(shapes).joinpath(random_shx )
                 self.shx_file = shapes + random_shx
             #update file names
             super(Plan, self).save(*args, **kwargs)
