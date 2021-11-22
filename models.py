@@ -386,7 +386,7 @@ class Plan(models.Model):
             #update file names
             super(Plan, self).save(*args, **kwargs)
             #prepare data for layer mapping
-            shp_path = Path(settings.MEDIA_ROOT / shapes / random_shp )
+            shp_path = shapes_path.joinpath(random_shp)
             shp_str = str(shp_path)
             self.save_dxf_imports(shp_str)
 
