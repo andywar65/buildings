@@ -9,23 +9,26 @@ var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   accessToken: map_data.mapbox_token
 });
 
-const buildMarker = L.divIcon({
-  html: '<i class="fa fa-building fa-2x" style="color: blue;"></i>',
-  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-  className: 'build-marker'
-});
+const buildMarker = L.AwesomeMarkers.icon({
+    icon: 'fa-building',
+    prefix: 'fa',
+    markerColor: 'blue',
+    iconColor: 'white',
+  });
 
-const statMarker = L.divIcon({
-  html: '<i class="fa fa-camera fa-2x" style="color: red;"></i>',
-  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-  className: 'stat-marker'
-});
+const statMarker = L.AwesomeMarkers.icon({
+    icon: 'fa-camera',
+    prefix: 'fa',
+    markerColor: 'red',
+    iconColor: 'white',
+  });
 
-const elemMarker = L.divIcon({
-  html: '<i class="fa fa-thumb-tack fa-2x" style="color: green;"></i>',
-  iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -18],
-  className: 'elem-marker'
-});
+const elemMarker = L.AwesomeMarkers.icon({
+    icon: 'fa-thumb-tack',
+    prefix: 'fa',
+    markerColor: 'green',
+    iconColor: 'white',
+  });
 
 async function load_dxf(plan_id) {
   let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
