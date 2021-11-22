@@ -357,7 +357,7 @@ class Plan(models.Model):
             #change all shape filenames to same random name
             random = get_random_string(7)
             shapes = "uploads/buildings/plans/shapes/"
-            cpg = Path(settings.MEDIA_ROOT / str(self.cpg_file) )
+            cpg = Path(settings.MEDIA_ROOT).joinpath( str(self.cpg_file) )
             if cpg.is_file():
                 random_cpg = random + '.cpg'
                 cpg.replace(settings.MEDIA_ROOT / shapes / random_cpg )
