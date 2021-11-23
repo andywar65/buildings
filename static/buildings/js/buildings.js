@@ -158,7 +158,7 @@ if (map_data.hasOwnProperty('elements')){
   }
 }
 
-var layers = [ base_map, sat_map, ];
+var layers = [ base_map, ];
 
 if (map_data.hasOwnProperty('plans')){
   for ( plan of map_data.plans ){
