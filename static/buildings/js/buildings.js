@@ -1,11 +1,21 @@
 const map_data = JSON.parse(document.getElementById("map_data").textContent);
 
-var base_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+const copy = '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+var base_map = L.tileLayer(url, {
+  attribution: copy,
+  maxZoom: 23,
+  tileSize: 512,
+  zoomOffset: -1
+});
+
+var sat_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
   maxZoom: 23,
   tileSize: 512,
   zoomOffset: -1,
-  id: 'mapbox/streets-v11',
+  id: 'mapbox/satellite-v9',
   accessToken: map_data.mapbox_token
 });
 
@@ -148,7 +158,8 @@ if (map_data.hasOwnProperty('elements')){
   }
 }
 
-var layers = [ base_map, ];
+var layers = [ base_map, sat_map, ];
+
 if (map_data.hasOwnProperty('plans')){
   for ( plan of map_data.plans ){
     if ( plan.visible ){
@@ -220,7 +231,8 @@ if (map_data.hasOwnProperty('elem')){
 }
 
 var baseMaps = {
-  "Base": base_map
+  "Base": base_map,
+  "Satellite": sat_map
 };
 
 var overlayMaps = {};
