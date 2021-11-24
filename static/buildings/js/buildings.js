@@ -6,8 +6,6 @@ const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 var base_map = L.tileLayer(url, {
   attribution: copy,
   maxZoom: 23,
-  tileSize: 512,
-  zoomOffset: -1
 });
 
 var sat_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
