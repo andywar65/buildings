@@ -27,8 +27,7 @@ class AlertMixin:
                 context[ param ] = self.request.GET[ param ]
         return context
 
-class BuildingRedirectView( PermissionRequiredMixin, RedirectView):
-    permission_required = 'buildings.view_building'
+class BuildingRedirectView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         build = get_object_or_404( Building,
