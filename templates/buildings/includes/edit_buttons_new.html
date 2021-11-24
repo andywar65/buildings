@@ -1,0 +1,30 @@
+{% load i18n %}
+
+{% if perms.buildings.change_building %}
+<a class="btn btn-primary" style="margin-bottom: 10px;" href="{% url 'buildings:building_change' slug=build.slug %}" title="{% translate "Modify building" %}">
+  <i class="fa fa-pencil"></i> <i class="fa fa-building"></i></a>
+{% endif %}
+<a class="btn btn-secondary" style="margin-bottom: 10px;" href="{% url 'buildings:building_list' %}" title="{% translate "Back to all buildings" %}">
+  <i class="fa fa-angle-double-left"></i> <i class="fa fa-globe"></i></a>
+{% if perms.buildings.add_planset %}
+<a class="btn btn-info" style="margin-bottom: 10px;" href="{% url 'buildings:planset_create' slug=build.slug %}" title="{% translate "Add Plan set" %}">
+  + <i class="fa fa-sitemap"></i></a>
+{% endif %}
+{% if perms.buildings.add_plan %}
+<a class="btn btn-info" style="margin-bottom: 10px;" href="{% url 'buildings:plan_create' slug=build.slug %}" title="{% translate "Add building plan" %}">
+  + <i class="fa fa-map-o"></i></a>
+{% endif %}
+{% if perms.buildings.add_photostation %}
+<a class="btn btn-danger" style="margin-bottom: 10px;" href="{% url 'buildings:station_create' slug=build.slug %}" title="{% translate "Add photo station" %}">
+  + <i class="fa fa-camera"></i></a>
+{% endif %}
+{% if perms.buildings.add_family %}
+<a class="btn btn-success" style="margin-bottom: 10px;" href="{% url 'buildings:family_list_create' slug=build.slug %}" title="{% translate "Add element family" %}">
+  + <i class="fa fa-folder-open"></i></a>
+{% endif %}
+{% if perms.buildings.add_element %}
+<a class="btn btn-success" style="margin-bottom: 10px;" href="{% url 'buildings:element_create' slug=build.slug %}" title="{% translate "Add element" %}">
+  + <i class="fa fa-thumb-tack"></i></a>
+{% endif %}
+<a class="btn btn-success" style="margin-bottom: 10px;" href="{% url 'buildings:element_download' slug=build.slug %}" title="{% translate "Download elements" %}">
+  <i class="fa fa-thumb-tack"></i><i class="fa fa-download"></i></a>
