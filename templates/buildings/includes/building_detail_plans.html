@@ -6,13 +6,13 @@
       <tr>
         <th scope="col">{% translate 'Modify' %}</th>
         <th scope="col">{% translate 'Elevation (mt)' %}</th>
-        {% if plan_visibility %}
+        {% if plan_visibility and perms.buildings.change_plan %}
           <th scope="col">{% translate 'Visibility' %}</th>
         {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% if plan_visibility %}
+      {% if plan_visibility and perms.buildings.change_plan %}
         {% for plan, visibility in plan_visibility.items %}
         <tr>
           <td><a href="{% url 'buildings:plan_change' build_slug=build.slug plan_slug=plan.slug %}">

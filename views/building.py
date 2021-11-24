@@ -150,7 +150,7 @@ class BuildingDetailView(AlertMixin, DetailView):
             raise Http404(_("Plan set does not belong to Building"))
 
     def get(self, request, *args, **kwargs):
-        if 'visibility' in request.GET:
+        if 'visibility' in request.GET and request.user.has_perm('buildings.change_plan'):
             pv = get_object_or_404( PlanVisibility,
                 id=request.GET['visibility'])
             if pv.visibility:
