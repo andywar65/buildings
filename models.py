@@ -84,6 +84,8 @@ class Building(models.Model):
         default=building_default_location, geography=True)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
+    visitor = models.ForeignKey(User, on_delete=models.CASCADE,
+        blank= True, null=True, verbose_name = _('Guest'))
 
     def __str__(self):
         return self.title
