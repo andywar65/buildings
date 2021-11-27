@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 
 def create_buildings_group(sender, **kwargs):
     from django.contrib.auth.models import Permission, Group
-    grp, created = Group.objects.get_or_create(name=_('Building Manager'))
+    grp, created = Group.objects.get_or_create(name='Building Manager')
     if created:
         permissions = Permission.objects.filter(codename__in=(
             'view_building','add_building','change_building','delete_building',
@@ -22,7 +22,7 @@ def create_buildings_group(sender, **kwargs):
             'delete_city'
             ))
         grp.permissions.set(permissions)
-    grp, created = Group.objects.get_or_create(name=_('Building Guest'))
+    grp, created = Group.objects.get_or_create(name='Building Guest')
     if created:
         permissions = Permission.objects.filter(codename__in=(
             'view_city',
