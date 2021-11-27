@@ -13,7 +13,7 @@ class DxfImportSerializer(gis_serializers.GeoFeatureModelSerializer):
 
 class BuildingSerializer(gis_serializers.GeoFeatureModelSerializer):
     """Building GeoJSON serializer."""
-    path = serializers.ReadOnlyField(source='get_full_path')
+    path = serializers.ReadOnlyField(source='get_normal_path')
     image_path = serializers.ReadOnlyField(source='image_medium_version_path')
 
     class Meta:

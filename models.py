@@ -96,6 +96,10 @@ class Building(models.Model):
     def get_base_slug(self):
         return 'base_'+str(self.id)
 
+    def get_normal_path(self):
+        return reverse('buildings:building_slug',
+            kwargs={'slug': self.slug})
+
     def get_full_path(self):
         active = self.building_planset.filter(active=True)
         if active:
