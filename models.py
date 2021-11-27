@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import make_password
+from django.core.mail import EmailMessage
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
@@ -86,8 +87,8 @@ class Building(models.Model):
         default=building_default_location, geography=True)
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
-    visitor = models.ForeignKey(User, on_delete=models.CASCADE,
-        blank= True, null=True, verbose_name = _('Guest'))
+    visitor = models.ForeignKey(User, on_delete=models.SET_NULL,
+        blank= True, null=True, verbose_name = _('visitor'))
 
     def __str__(self):
         return self.title
@@ -211,6 +212,13 @@ class Building(models.Model):
                 email=settings.DEFAULT_RECIPIENT)
             group = Group.objects.get(name='Building Guest')
             self.visitor.groups.add(group)
+            #send message
+            subject = _('Building visitor credentials: ') + self.title
+            body = _('Password: ') + password
+            mailto = [ self.visitor.email, ]
+            email = EmailMessage(subject, body, settings.SERVER_EMAIL, mailto)
+            email.send()
+            #modify profile
             profile = self.visitor.profile
             profile.immutable = True
             profile.save()
