@@ -10,6 +10,8 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _g
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
+from django.contrib.auth.models import Group
+from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from django.contrib.gis.db import models
@@ -198,6 +200,20 @@ class Building(models.Model):
             self.location = Point( self.long, self.lat )
             self.long = None
             self.lat = None
+        if not self.visitor:
+            visitor_name = get_random_string(7)
+            password = User.objects.make_random_password()
+            self.visitor = User.objects.create_user(
+                username=visitor_name,
+                first_name=_('Visitor'),
+                last_name=self.title,
+                password=make_password(password),
+                email=settings.DEFAULT_RECIPIENT)
+            group = Group.objects.get(name='Building Guest')
+            self.visitor.groups.add(group)
+            profile = self.visitor.profile
+            profile.immutable = True
+            profile.save()
         super(Building, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test
