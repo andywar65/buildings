@@ -52,6 +52,11 @@ class BuildingRedirectView(LoginView):
         initial['username'] = self.build.visitor.username
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['build'] = self.build
+        return context
+
     def get_redirect_url(self, *args, **kwargs):
         return self.build.get_full_path()
 
