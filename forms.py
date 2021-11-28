@@ -1,9 +1,19 @@
 from django import forms
 from django.forms import ModelForm, ModelChoiceField, ModelMultipleChoiceField
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.utils.translation import gettext_lazy as _
 
 from .models import (Building, Plan, PhotoStation, StationImage,
     PlanSet, Family, Element)
+
+class BuildingAuthenticationForm(AuthenticationForm):
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True,
+        }), disabled = True)
+    password = forms.CharField(
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password',
+            }),
+    )
 
 class NodeMultipleChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):

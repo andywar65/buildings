@@ -9,6 +9,7 @@ from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
 from django.views.generic.dates import YearArchiveView, DayArchiveView
 from django.utils.crypto import get_random_string
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -17,7 +18,7 @@ from buildings.models import (Building, Plan, PhotoStation, StationImage,
     PlanSet, City, PlanVisibility, Journal)
 from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
-    PlanSetCreateForm, PlanSetUpdateForm)
+    PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
@@ -27,12 +28,32 @@ class AlertMixin:
                 context[ param ] = self.request.GET[ param ]
         return context
 
-class BuildingRedirectView(RedirectView):
+class BuildingRedirectView(LoginView):
+    template_name = 'buildings/build_login.html'
+    form_class = BuildingAuthenticationForm
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingRedirectView, self).setup(request, *args, **kwargs)
+        #control if building exists
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+        if not self.build.private:
+            return HttpResponseRedirect(self.build.get_full_path())
+        if not self.build.visitor:
+            return HttpResponseRedirect(self.build.get_full_path())
+        if request.user.is_authenticated:
+            if (request.user.profile.immutable and
+                request.user != self.build.visitor):
+                raise Http404(_("User is not building visitor"))
+            return HttpResponseRedirect(self.build.get_full_path())
+
+    def get_initial(self):
+        initial = super( BuildingRedirectView, self ).get_initial()
+        initial['username'] = self.build.visitor.username
+        return initial
 
     def get_redirect_url(self, *args, **kwargs):
-        build = get_object_or_404( Building,
-            slug = self.kwargs['slug'] )
-        return build.get_full_path()
+        return self.build.get_full_path()
 
 class BuildingListView( AlertMixin, TemplateView ):
     #model = Building
