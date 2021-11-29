@@ -12,16 +12,15 @@
 
     {% if user.is_authenticated %}
       <p class="alert alert-warning" role="alert">
-      Guarda che sei già autenticato come {{ user.member.first_name }}.
-      Se vuoi fare il login con un account diverso devi prima
-      <a href="{% url 'front_logout' %}">uscire dall'account</a>.
+      {% trans 'You are logged in as:' %} <strong>{{ user.get_full_name }}</strong>.
+      <a href="{% url 'front_logout' %}">{% trans 'You must logout to watch this building!' %}</a>
       </p>
       <hr class="mb-4">
     {% else %}
       {% if form.errors and not form.non_field_errors %}
         <p class="alert alert-danger" role="alert">
-        {% if form.errors.items|length == 1 %}Correggi l'errore qui sotto
-        {% else %}Correggi gli errori qui sotto{% endif %}
+        {% if form.errors.items|length == 1 %}{% trans 'Fix the error below' %}
+        {% else %}{% trans 'Fix the errors below' %}{% endif %}
         </p>
       {% endif %}
 
@@ -42,8 +41,8 @@
                     </div>
                   </div>
                   <hr class="mb-4">
-                  <button class="btn btn-success btn-lg btn-block" type="submit">Invia</button>
-                  <small>I campi con l'asterisco (*) sono obbligatori</small><br>
+                  <button class="btn btn-success btn-lg btn-block" type="submit">{% trans 'Submit' %}</button>
+                  <small>{% trans 'Fields with asterisk (*) are required' %}</small><br>
                   <hr class="mb-4">
           {% csrf_token %}
         </form>
