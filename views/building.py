@@ -19,6 +19,16 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
+class BuildingAuthMixin:
+    def building_view_permission(self, build, user):
+        if build.private:
+            if not user.is_authenticated:
+                raise Http404(_("Building is private"))
+            if not user.has_perm('buildings.view_building'):
+                raise Http404(_("User has no permission to view buildings"))
+            if user.profile.immutable and user != build.visitor:
+                raise Http404(_("User has no permission to view this building"))
+
 class AlertMixin:
     def add_alerts_to_context(self, context):
         params = [ 'model', 'created', 'modified', 'deleted', ]
@@ -50,7 +60,7 @@ class BuildingLoginView(LoginView):
     def get_redirect_url(self, *args, **kwargs):
         return self.build.get_full_path()
 
-class BuildingRedirectView(RedirectView):
+class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
     template_name = 'buildings/build_login.html'
     form_class = BuildingAuthenticationForm
 
@@ -66,18 +76,21 @@ class BuildingRedirectView(RedirectView):
         return context
 
     def get_redirect_url(self, *args, **kwargs):
-        if not self.build.private:
+        enter = True
+        if self.build.private:
+            if not self.request.user.is_authenticated:
+                enter = False
+            else:
+                if not self.request.user.has_perm('buildings.view_building'):
+                    enter = False
+                elif (self.request.user.profile.immutable and
+                    self.request.user != self.build.visitor):
+                    enter = False
+        if enter:
             return self.build.get_full_path()
-        if not self.build.visitor:
-            return self.build.get_full_path()
-        if self.request.user.is_authenticated:
-            if (self.request.user.profile.immutable and
-                self.request.user != self.build.visitor):
-                return reverse('buildings:building_login',
-                    kwargs={'slug': self.build.slug })
-            return self.build.get_full_path()
-        return reverse('buildings:building_login',
-            kwargs={'slug': self.build.slug })
+        else:
+            return reverse('buildings:building_login',
+                kwargs={'slug': self.build.slug })
 
 class BuildingListView( AlertMixin, TemplateView ):
     #model = Building
@@ -178,11 +191,15 @@ class BuildingDetailView(AlertMixin, DetailView):
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
-        if self.get_object().private:
+        build = self.get_object()
+        if build.private:
             if not request.user.is_authenticated:
                 raise Http404(_("Building is private"))
             if not request.user.has_perm('buildings.view_building'):
                 raise Http404(_("User has no permission to view building"))
+            if (request.user.profile.immutable and
+                request.user != build.visitor):
+                raise Http404(_("User has no permission to view this building"))
         self.set = get_object_or_404( PlanSet,
             slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
