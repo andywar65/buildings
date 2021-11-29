@@ -205,7 +205,7 @@ class Building(models.Model):
             self.location = Point( self.long, self.lat )
             self.long = None
             self.lat = None
-        if not self.visitor:
+        if not self.visitor and self.private:
             visitor_name = 'visitor-' + get_random_string(7)
             password = User.objects.make_random_password()
             self.visitor = User.objects.create_user(

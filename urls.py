@@ -8,6 +8,8 @@ urlpatterns = [
     path('', BuildingListView.as_view(), name = 'building_list'),
     path(_('add/'), BuildingCreateView.as_view(), name = 'building_create'),
     path(_('<slug>/'), BuildingRedirectView.as_view(), name = 'building_slug'),
+    path(_('<slug>/login/'), BuildingLoginView.as_view(),
+        name = 'building_login'),
     path(_('<slug>/change/'), BuildingUpdateView.as_view(),
         name = 'building_change'),
     path(_('<slug>/delete/'), BuildingDeleteView.as_view(),
