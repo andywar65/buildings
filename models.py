@@ -206,7 +206,7 @@ class Building(models.Model):
             self.long = None
             self.lat = None
         if not self.visitor:
-            visitor_name = get_random_string(7)
+            visitor_name = 'visitor-' + get_random_string(7)
             password = User.objects.make_random_password()
             self.visitor = User.objects.create_user(
                 username=visitor_name,
