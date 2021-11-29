@@ -6,14 +6,14 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.views.generic import ( CreateView, UpdateView, FormView, ListView )
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.decorators import permission_required
+#from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from buildings.models import (Building, Family, Element)
 from buildings.forms import ( FamilyCreateForm, FamilyUpdateForm,
     BuildingDeleteForm, ElementCreateForm)
-from buildings.views.building import AlertMixin
+from buildings.views.building import AlertMixin, BuildingAuthMixin
 
 class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Family
@@ -288,7 +288,7 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.title}&model={_("Element")}')
 
-class ElementByFamilyListView( ListView ):
+class ElementByFamilyListView( BuildingAuthMixin, ListView ):
     model = Element
     template_name = 'buildings/elements_by_family_list.html'
 
@@ -297,13 +297,12 @@ class ElementByFamilyListView( ListView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
+        enter = self.check_building_permissions(self.build, request.user,
+            'buildings.view_element')
+        if not enter:
+            raise Http404(_("User has no permission to view this building"))
         self.family = get_object_or_404( Family,
             slug = self.kwargs['fam_slug'] )
-        if self.build.private:
-            if not request.user.is_authenticated:
-                raise Http404(_("Building is private"))
-            if not request.user.has_perm('buildings.view_element'):
-                raise Http404(_("User has no permission to view Elements"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -360,7 +359,7 @@ def csv_writer(writer, qs):
         writer.writerow(row)
     return writer
 
-@permission_required('buildings.view_building')
+#@permission_required('buildings.view_building')
 def building_element_download(request, slug):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -369,6 +368,10 @@ def building_element_download(request, slug):
         { 'building': _('Buildings') }
         )
     build = get_object_or_404( Building, slug = slug )
+    enter = BuildingAuthMixin.check_building_permissions(build, request.user,
+        'buildings.view_building')
+    if not enter:
+        raise Http404(_("User has no permission to view this building"))
     qs = Element.objects.filter(build_id=build.id)
 
     writer = csv.writer(response)

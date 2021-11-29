@@ -382,9 +382,9 @@ class PlanUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 'plan_slug': self.object.slug}) +
                 f'?modified={self.object.title}&model={_("Plan")}')
 
-class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
+class PlanDetailView(AlertMixin, BuildingAuthMixin, DetailView):
     model = Plan
-    permission_required = 'buildings.view_plan'
+    #permission_required = 'buildings.view_plan'
     context_object_name = 'plan'
     slug_url_kwarg = 'plan_slug'
 
@@ -393,6 +393,10 @@ class PlanDetailView(PermissionRequiredMixin, AlertMixin, DetailView):
         plan = super(PlanDetailView, self).get_object(queryset=None)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
+        enter = self.check_building_permissions(self.build, self.request.user,
+            'buildings.view_plan')
+        if not enter:
+            raise Http404(_("User has no permission to view this building"))
         if not self.build == plan.build:
             raise Http404(_("Plan does not belong to Building"))
         return plan
@@ -600,7 +604,7 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.set.title}&model={_("Plan set")}')
 
-class JournalDetailView( DetailView ):
+class JournalDetailView( BuildingAuthMixin, DetailView ):
     model = Journal
     context_object_name = 'jour'
     slug_url_kwarg = 'jour_slug'
@@ -610,11 +614,10 @@ class JournalDetailView( DetailView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        if self.build.private:
-            if not request.user.is_authenticated:
-                raise Http404(_("Building is private"))
-            if not request.user.has_perm('buildings.view_journal'):
-                raise Http404(_("User has no permission to view the journal"))
+        enter = self.check_building_permissions(self.build, request.user,
+            'buildings.view_journal')
+        if not enter:
+            raise Http404(_("User has no permission to view this building"))
         self.jour = get_object_or_404( Journal,
             slug = self.kwargs['jour_slug'] )
         if not self.jour.build == self.build:
@@ -639,7 +642,7 @@ class JournalDetailView( DetailView ):
             return ['buildings/journal_pdf.html', ]
         return ['buildings/journal_detail.html', ]
 
-class JournalListView( ListView ):
+class JournalListView( BuildingAuthMixin, ListView ):
     model = Journal
     template_name = 'buildings/journal_list.html'
 
@@ -648,11 +651,10 @@ class JournalListView( ListView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
-        if self.build.private:
-            if not request.user.is_authenticated:
-                raise Http404(_("Building is private"))
-            if not request.user.has_perm('buildings.view_journal'):
-                raise Http404(_("User has no permission to view journals"))
+        enter = self.check_building_permissions(self.build, request.user,
+            'buildings.view_journal')
+        if not enter:
+            raise Http404(_("User has no permission to view this building"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
