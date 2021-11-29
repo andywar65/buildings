@@ -20,13 +20,13 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
 class BuildingAuthMixin:
-    def building_view_permission(self, build, user):
+    def check_building_permissions(self, build, user, perm):
         enter = True
         if build.private:
             if not user.is_authenticated:
                 enter = False
             else:
-                if not user.has_perm('buildings.view_building'):
+                if not user.has_perm(perm):
                     enter = False
                 elif user.profile.immutable and user != build.visitor:
                     enter = False
@@ -64,8 +64,6 @@ class BuildingLoginView(LoginView):
         return self.build.get_full_path()
 
 class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
-    template_name = 'buildings/build_login.html'
-    form_class = BuildingAuthenticationForm
 
     def setup(self, request, *args, **kwargs):
         super(BuildingRedirectView, self).setup(request, *args, **kwargs)
@@ -79,7 +77,8 @@ class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
         return context
 
     def get_redirect_url(self, *args, **kwargs):
-        enter = self.building_view_permission(self.build, self.request.user)
+        enter = self.check_building_permissions(self.build, self.request.user,
+            'buildings.view_building')
         if enter:
             return self.build.get_full_path()
         else:
@@ -157,7 +156,8 @@ class BuildingDetailView(AlertMixin, BuildingAuthMixin, DetailView):
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
         build = self.get_object()
-        enter = self.building_view_permission(build, request.user)
+        enter = self.check_building_permissions(build, request.user,
+            'buildings.view_building')
         if not enter:
             raise Http404(_("User has no permission to view this building"))
         self.set = get_object_or_404( PlanSet,
