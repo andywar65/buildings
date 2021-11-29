@@ -21,13 +21,16 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
 
 class BuildingAuthMixin:
     def building_view_permission(self, build, user):
+        enter = True
         if build.private:
             if not user.is_authenticated:
-                raise Http404(_("Building is private"))
-            if not user.has_perm('buildings.view_building'):
-                raise Http404(_("User has no permission to view buildings"))
-            if user.profile.immutable and user != build.visitor:
-                raise Http404(_("User has no permission to view this building"))
+                enter = False
+            else:
+                if not user.has_perm('buildings.view_building'):
+                    enter = False
+                elif user.profile.immutable and user != build.visitor:
+                    enter = False
+        return enter
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
@@ -76,16 +79,7 @@ class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
         return context
 
     def get_redirect_url(self, *args, **kwargs):
-        enter = True
-        if self.build.private:
-            if not self.request.user.is_authenticated:
-                enter = False
-            else:
-                if not self.request.user.has_perm('buildings.view_building'):
-                    enter = False
-                elif (self.request.user.profile.immutable and
-                    self.request.user != self.build.visitor):
-                    enter = False
+        enter = self.building_view_permission(self.build, self.request.user)
         if enter:
             return self.build.get_full_path()
         else:
@@ -93,39 +87,11 @@ class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
                 kwargs={'slug': self.build.slug })
 
 class BuildingListView( AlertMixin, TemplateView ):
-    #model = Building
     template_name = 'buildings/building_list_new.html'
-
-    #def setup(self, request, *args, **kwargs):
-        #super(BuildingListView, self).setup(request, *args, **kwargs)
-        #self.city = City.objects.first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #list all buildings
-        #context['builds'] = Building.objects.all()
-        #building alerts
         context = self.add_alerts_to_context(context)
-        #we add the following to feed the map
-        #not using values() because we have to manipulate entries
-        #builds = []
-        #for build in context['builds']:
-            #builds.append( build.map_dictionary() )
-        #if self.city:
-            #city_long = self.city.location.coords[0]
-            #city_lat = self.city.location.coords[1]
-            #city_zoom = self.city.zoom
-        #else:
-            #city_long = settings.CITY_LONG
-            #city_lat = settings.CITY_LAT
-            #city_zoom = settings.CITY_ZOOM
-        #context['map_data'] = {
-            #'builds': builds,
-            #'city_lat': city_lat,
-            #'city_long': city_long,
-            #'city_zoom': city_zoom,
-            #'mapbox_token': settings.MAPBOX_TOKEN
-            #}
         return context
 
 class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
@@ -183,23 +149,17 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return ( self.object.get_full_path() +
                 f'?created={self.object.title}&model={_("Building")}' )
 
-class BuildingDetailView(AlertMixin, DetailView):
+class BuildingDetailView(AlertMixin, BuildingAuthMixin, DetailView):
     model = Building
-    #permission_required = 'buildings.view_building'
     context_object_name = 'build'
     slug_url_kwarg = 'build_slug'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
         build = self.get_object()
-        if build.private:
-            if not request.user.is_authenticated:
-                raise Http404(_("Building is private"))
-            if not request.user.has_perm('buildings.view_building'):
-                raise Http404(_("User has no permission to view building"))
-            if (request.user.profile.immutable and
-                request.user != build.visitor):
-                raise Http404(_("User has no permission to view this building"))
+        enter = self.building_view_permission(build, request.user)
+        if not enter:
+            raise Http404(_("User has no permission to view this building"))
         self.set = get_object_or_404( PlanSet,
             slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
