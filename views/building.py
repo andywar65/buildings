@@ -21,7 +21,7 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
 class BuildingAuthMixin:
-    #TODO leave only last conditional
+    #TODO get rid of this class!
     def check_building_permissions(self, build, user, perm):
         enter = True
         if not user.is_authenticated:
@@ -41,28 +41,13 @@ class AlertMixin:
                 context[ param ] = self.request.GET[ param ]
         return context
 
-class BuildingLoginView(LoginView):
-    template_name = 'buildings/build_login.html'
-    form_class = BuildingAuthenticationForm
-
-    def setup(self, request, *args, **kwargs):
-        super(BuildingLoginView, self).setup(request, *args, **kwargs)
-        #control if building exists
-        self.build = get_object_or_404( Building,
-            slug = self.kwargs['slug'] )
-
-    def get_initial(self):
-        initial = super( BuildingLoginView, self ).get_initial()
-        initial['username'] = self.build.visitor.username
-        return initial
+class BuildingListView( AlertMixin, TemplateView ):
+    template_name = 'buildings/building_list_new.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['build'] = self.build
+        context = self.add_alerts_to_context(context)
         return context
-
-    def get_redirect_url(self, *args, **kwargs):
-        return self.build.get_full_path()
 
 class BuildingRedirectView( PermissionRequiredMixin, RedirectView ):
     permission_required = 'buildings.view_building'
@@ -90,13 +75,28 @@ class BuildingRedirectView( PermissionRequiredMixin, RedirectView ):
         else:
             return self.build.get_full_path()
 
-class BuildingListView( AlertMixin, TemplateView ):
-    template_name = 'buildings/building_list_new.html'
+class BuildingLoginView(LoginView):
+    template_name = 'buildings/build_login.html'
+    form_class = BuildingAuthenticationForm
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingLoginView, self).setup(request, *args, **kwargs)
+        #control if building exists
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+
+    def get_initial(self):
+        initial = super( BuildingLoginView, self ).get_initial()
+        initial['username'] = self.build.visitor.username
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = self.add_alerts_to_context(context)
+        context['build'] = self.build
         return context
+
+    def get_redirect_url(self, *args, **kwargs):
+        return self.build.get_full_path()
 
 class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
