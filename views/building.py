@@ -8,7 +8,8 @@ from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
     FormView, RedirectView, TemplateView)
 from django.views.generic.dates import YearArchiveView, DayArchiveView
 from django.utils.crypto import get_random_string
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import (PermissionRequiredMixin,
+    UserPassesTestMixin)
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -148,22 +149,31 @@ class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return ( self.object.get_full_path() +
                 f'?created={self.object.title}&model={_("Building")}' )
 
-class BuildingDetailView(AlertMixin, BuildingAuthMixin, DetailView):
+class BuildingDetailView(PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, DetailView):
     model = Building
+    permission_required = 'buildings.view_building'
     context_object_name = 'build'
     slug_url_kwarg = 'build_slug'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
         build = self.get_object()
-        enter = self.check_building_permissions(build, request.user,
-            'buildings.view_building')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         self.set = get_object_or_404( PlanSet,
             slug = self.kwargs['set_slug'] )
         if not self.set.build.slug == self.kwargs['build_slug']:
             raise Http404(_("Plan set does not belong to Building"))
+
+    def test_func(self):
+        build = self.get_object()
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.get_object().slug })
 
     def get(self, request, *args, **kwargs):
         if 'visibility' in request.GET and request.user.has_perm('buildings.change_plan'):
@@ -247,6 +257,10 @@ class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
     permission_required = 'buildings.change_building'
     form_class = BuildingUpdateForm
     template_name = 'buildings/building_form_update.html'
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.get_object().slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
