@@ -64,7 +64,8 @@ class BuildingLoginView(LoginView):
     def get_redirect_url(self, *args, **kwargs):
         return self.build.get_full_path()
 
-class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
+class BuildingRedirectView( PermissionRequiredMixin, RedirectView ):
+    permission_required = 'buildings.view_building'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingRedirectView, self).setup(request, *args, **kwargs)
@@ -72,19 +73,22 @@ class BuildingRedirectView( BuildingAuthMixin, RedirectView ):
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
 
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['build'] = self.build
         return context
 
     def get_redirect_url(self, *args, **kwargs):
-        enter = self.check_building_permissions(self.build, self.request.user,
-            'buildings.view_building')
-        if enter:
-            return self.build.get_full_path()
-        else:
+        if (self.request.user.profile.immutable and
+            self.request.user != self.build.visitor):
             return reverse('buildings:building_login',
                 kwargs={'slug': self.build.slug })
+        else:
+            return self.build.get_full_path()
 
 class BuildingListView( AlertMixin, TemplateView ):
     template_name = 'buildings/building_list_new.html'
