@@ -40,9 +40,8 @@ class DxfImportsByPlanApiView(generics.ListAPIView):
     def setup(self, request, *args, **kwargs):
         super(DxfImportsByPlanApiView, self).setup(request, *args, **kwargs)
         self.plan = get_object_or_404( Plan, id = self.kwargs['pk'] )
-        if self.plan.build.private:
-            if not self.request.user.has_perm('buildings.view_dxfimport'):
-                raise Http404(_("User can't view DxfImports"))
+        if not self.request.user.has_perm('buildings.view_dxfimport'):
+            raise Http404(_("User can't view DxfImports"))
 
     def get_queryset(self):
         queryset = DxfImport.objects.filter(plan_id=self.plan.id)

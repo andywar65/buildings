@@ -77,8 +77,6 @@ class Building(models.Model):
     address = models.CharField(_('Address'), null=True, blank=True,
         help_text = _('Something like "Rome - Monteverde" is ok'),
         max_length = 100)
-    private = models.BooleanField(_("Private"), default=True,
-        help_text=_("""Can be viewed only by authenticated users"""))
     lat = models.FloatField(_("Latitude"), null=True)
     long = models.FloatField(_("Longitude"), null=True,
         help_text=_("""Coordinates from Google Maps
@@ -205,7 +203,7 @@ class Building(models.Model):
             self.location = Point( self.long, self.lat )
             self.long = None
             self.lat = None
-        if not self.visitor and self.private:
+        if not self.visitor:
             visitor_name = 'visitor-' + get_random_string(7)
             password = User.objects.make_random_password()
             self.visitor = User.objects.create_user(

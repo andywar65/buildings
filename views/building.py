@@ -20,16 +20,16 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
 class BuildingAuthMixin:
+    #TODO leave only last conditional
     def check_building_permissions(self, build, user, perm):
         enter = True
-        if build.private:
-            if not user.is_authenticated:
+        if not user.is_authenticated:
+            enter = False
+        else:
+            if not user.has_perm(perm):
                 enter = False
-            else:
-                if not user.has_perm(perm):
-                    enter = False
-                elif user.profile.immutable and user != build.visitor:
-                    enter = False
+            elif user.profile.immutable and user != build.visitor:
+                enter = False
         return enter
 
 class AlertMixin:

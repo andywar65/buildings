@@ -29,7 +29,7 @@ class BuildingAdmin(admin.ModelAdmin):
         }),
         (None, {
             'fields':
-                ('title', 'date', 'intro', 'address', 'private', 'visitor', ),
+                ('title', 'date', 'intro', 'address', 'visitor', ),
         }),
         (_('Map'), {
             'fields': ('location', 'zoom', ),
