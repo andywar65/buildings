@@ -86,7 +86,7 @@ class Building(models.Model):
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
     visitor = models.ForeignKey(User, on_delete=models.SET_NULL,
-        blank= True, null=True, verbose_name = _('visitor'))
+        null=True, verbose_name = _('Building visitor'))
 
     def __str__(self):
         return self.title
