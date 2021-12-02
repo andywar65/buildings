@@ -21,7 +21,7 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
 class BuildingAuthMixin:
-    #TODO get rid of this class!
+    #TODO get rid of this class (already did in this file)!
     def check_building_permissions(self, build, user, perm):
         enter = True
         if not user.is_authenticated:
@@ -550,7 +550,8 @@ class PlanDeleteView(PermissionRequiredMixin, UserPassesTestMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.plan.title}&model={_("Plan")}')
 
-class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class PlanSetCreateView( PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, CreateView ):
     model = PlanSet
     permission_required = 'buildings.add_planset'
     form_class = PlanSetCreateForm
@@ -560,6 +561,17 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
         super(PlanSetCreateView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_initial(self):
         initial = super( PlanSetCreateView, self ).get_initial()
@@ -597,21 +609,32 @@ class PlanSetCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'set_slug': self.object.slug}) +
                 f'?created={self.object.title}&model={_("Plan set")}')
 
-class PlanSetUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class PlanSetUpdateView( PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, UpdateView ):
     model = PlanSet
     permission_required = 'buildings.change_planset'
     form_class = PlanSetUpdateForm
     template_name = 'buildings/planset_form_update.html'
     slug_url_kwarg = 'set_slug'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        set = super(PlanSetUpdateView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(PlanSetUpdateView, self).setup(request, *args, **kwargs)
+        set = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
         if not self.build == set.build:
             raise Http404(_("Plan set does not belong to Building"))
-        return set
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_initial(self):
         initial = super( PlanSetUpdateView, self ).get_initial()
@@ -641,7 +664,7 @@ class PlanSetUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 'set_slug': self.object.slug}) +
                 f'?modified={self.object.title}&model={_("Plan set")}')
 
-class PlanSetDeleteView(PermissionRequiredMixin, FormView):
+class PlanSetDeleteView(PermissionRequiredMixin, UserPassesTestMixin, FormView):
     permission_required = 'buildings.delete_planset'
     form_class = BuildingDeleteForm
     template_name = 'buildings/planset_form_delete.html'
@@ -654,6 +677,17 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
             slug = self.kwargs['set_slug'] )
         if not self.build == self.set.build:
             raise Http404(_("Plan set does not belong to Building"))
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -674,8 +708,10 @@ class PlanSetDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.set.title}&model={_("Plan set")}')
 
-class JournalDetailView( BuildingAuthMixin, DetailView ):
+class JournalDetailView( PermissionRequiredMixin, UserPassesTestMixin,
+    DetailView ):
     model = Journal
+    permission_required = 'buildings.view_journal'
     context_object_name = 'jour'
     slug_url_kwarg = 'jour_slug'
 
@@ -684,14 +720,21 @@ class JournalDetailView( BuildingAuthMixin, DetailView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_journal')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         self.jour = get_object_or_404( Journal,
             slug = self.kwargs['jour_slug'] )
         if not self.jour.build == self.build:
             raise Http404(_("Journal does not belong to Building"))
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -712,8 +755,9 @@ class JournalDetailView( BuildingAuthMixin, DetailView ):
             return ['buildings/journal_pdf.html', ]
         return ['buildings/journal_detail.html', ]
 
-class JournalListView( BuildingAuthMixin, ListView ):
+class JournalListView( PermissionRequiredMixin, UserPassesTestMixin, ListView ):
     model = Journal
+    permission_required = 'buildings.view_journal'
     template_name = 'buildings/journal_list.html'
 
     def setup(self, request, *args, **kwargs):
@@ -721,10 +765,17 @@ class JournalListView( BuildingAuthMixin, ListView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_journal')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
