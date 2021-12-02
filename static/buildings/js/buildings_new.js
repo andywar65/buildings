@@ -1,7 +1,30 @@
+const map_data = JSON.parse(document.getElementById("map_data").textContent);
+
 const copy = '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-const osm = L.tileLayer(url, { attribution: copy })
-const map = L.map('mapid', { layers: [osm] })
+
+var base_map = L.tileLayer(url, {
+  attribution: copy,
+  maxZoom: 23,
+});
+
+var sat_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+  maxZoom: 23,
+  tileSize: 512,
+  zoomOffset: -1,
+  id: 'mapbox/satellite-v9',
+  accessToken: map_data.mapbox_token
+});
+
+const map = L.map('mapid', { layers: [base_map] })
+
+var baseMaps = {
+  "Base": base_map,
+  "Satellite": sat_map
+};
+
+L.control.layers(baseMaps, ).addTo(map);
 
 const buildMarker = L.AwesomeMarkers.icon({
     icon: 'fa-building',

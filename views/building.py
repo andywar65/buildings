@@ -47,6 +47,9 @@ class BuildingListView( AlertMixin, TemplateView ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context = self.add_alerts_to_context(context)
+        context['map_data'] = {
+            'mapbox_token': settings.MAPBOX_TOKEN
+            }
         return context
 
 class BuildingRedirectView( PermissionRequiredMixin, RedirectView ):
