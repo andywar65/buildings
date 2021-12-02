@@ -20,19 +20,6 @@ from buildings.forms import ( BuildingCreateForm, BuildingUpdateForm,
     BuildingDeleteForm, PlanCreateForm,
     PlanSetCreateForm, PlanSetUpdateForm, BuildingAuthenticationForm)
 
-class BuildingAuthMixin:
-    #TODO get rid of this class (already did in this file)!
-    def check_building_permissions(self, build, user, perm):
-        enter = True
-        if not user.is_authenticated:
-            enter = False
-        else:
-            if not user.has_perm(perm):
-                enter = False
-            elif user.profile.immutable and user != build.visitor:
-                enter = False
-        return enter
-
 class VisitorPermReqMix(PermissionRequiredMixin):
     """Overrides login url. Don't use in Building Create or Delete Views
     (visitor should never be allowed to do that), not used in Building Update
