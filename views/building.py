@@ -259,11 +259,19 @@ class BuildingDetailView(PermissionRequiredMixin, UserPassesTestMixin,
             }
         return context
 
-class BuildingUpdateView(PermissionRequiredMixin, AlertMixin, UpdateView):
+class BuildingUpdateView(PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, UpdateView):
     model = Building
     permission_required = 'buildings.change_building'
     form_class = BuildingUpdateForm
     template_name = 'buildings/building_form_update.html'
+
+    def test_func(self):
+        build = self.get_object()
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
 
     def get_login_url(self):
         return reverse('buildings:building_login',
@@ -329,7 +337,8 @@ class BuildingDeleteView(PermissionRequiredMixin, FormView):
         return (reverse('buildings:building_list') +
             f'?deleted={self.build.title}&model={_("Building")}')
 
-class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class PlanCreateView( PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, CreateView ):
     model = Plan
     permission_required = 'buildings.add_plan'
     form_class = PlanCreateForm
@@ -337,6 +346,17 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     def setup(self, request, *args, **kwargs):
         super(PlanCreateView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_initial(self):
         initial = super( PlanCreateView, self ).get_initial()
@@ -364,7 +384,8 @@ class PlanCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'plan_slug': self.object.slug}) +
                 f'?created={self.object.title}&model={_("Plan")}')
 
-class PlanUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class PlanUpdateView( PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, UpdateView ):
     model = Plan
     permission_required = 'buildings.change_plan'
     form_class = PlanCreateForm
@@ -372,14 +393,24 @@ class PlanUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
     #we have two slugs, so we need to override next attribute
     slug_url_kwarg = 'plan_slug'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        plan = super(PlanUpdateView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(PlanUpdateView, self).setup(request, *args, **kwargs)
+        plan = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
         if not self.build == plan.build:
             raise Http404(_("Plan does not belong to Building"))
-        return plan
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -403,24 +434,31 @@ class PlanUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 'plan_slug': self.object.slug}) +
                 f'?modified={self.object.title}&model={_("Plan")}')
 
-class PlanDetailView(AlertMixin, BuildingAuthMixin, DetailView):
+class PlanDetailView(PermissionRequiredMixin, UserPassesTestMixin,
+    AlertMixin, DetailView):
     model = Plan
-    #permission_required = 'buildings.view_plan'
+    permission_required = 'buildings.view_plan'
     context_object_name = 'plan'
     slug_url_kwarg = 'plan_slug'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        plan = super(PlanDetailView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(PlanDetailView, self).setup(request, *args, **kwargs)
+        plan = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        enter = self.check_building_permissions(self.build, self.request.user,
-            'buildings.view_plan')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         if not self.build == plan.build:
             raise Http404(_("Plan does not belong to Building"))
-        return plan
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -470,7 +508,7 @@ class PlanDetailView(AlertMixin, BuildingAuthMixin, DetailView):
             }
         return context
 
-class PlanDeleteView(PermissionRequiredMixin, FormView):
+class PlanDeleteView(PermissionRequiredMixin, UserPassesTestMixin, FormView):
     #model = Plan
     permission_required = 'buildings.delete_plan'
     form_class = BuildingDeleteForm
@@ -484,6 +522,17 @@ class PlanDeleteView(PermissionRequiredMixin, FormView):
             slug = self.kwargs['plan_slug'] )
         if not self.build == self.plan.build:
             raise Http404(_("Plan does not belong to Building"))
+
+    def test_func(self):
+        build = self.build
+        user = self.request.user
+        if user.profile.immutable and user != build.visitor:
+            return False
+        return True
+
+    def get_login_url(self):
+        return reverse('buildings:building_login',
+            kwargs={'slug': self.build.slug })
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
