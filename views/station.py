@@ -4,7 +4,6 @@ from django.views.generic import (ListView, DetailView, CreateView, UpdateView,
     FormView, TemplateView)
 from django.views.generic.dates import YearArchiveView, DayArchiveView
 from django.utils.crypto import get_random_string
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -12,9 +11,11 @@ from django.utils.translation import gettext as _
 from buildings.models import Building, Plan, PhotoStation, StationImage
 from buildings.forms import ( PhotoStationCreateForm,
     BuildingDeleteForm, StationImageCreateForm, StationImageUpdateForm, )
-from buildings.views.building import AlertMixin, BuildingAuthMixin
+from buildings.views.building import (VisitorPermReqMix, VisitorPassTestMix,
+    AlertMixin)
 
-class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class PhotoStationCreateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    CreateView ):
     model = PhotoStation
     permission_required = 'buildings.add_photostation'
     form_class = PhotoStationCreateForm
@@ -70,7 +71,8 @@ class PhotoStationCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
                 'stat_slug': self.object.slug }) +
                 f'?created={self.object.title}&model={_("Photo station")}')
 
-class PhotoStationUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class PhotoStationUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    UpdateView ):
     model = PhotoStation
     permission_required = 'buildings.change_photostation'
     form_class = PhotoStationCreateForm
@@ -136,7 +138,7 @@ class PhotoStationUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
                 'stat_slug': self.object.slug}) +
                 f'?modified={self.object.title}&model={_("Photo station")}')
 
-class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
+class PhotoStationDeleteView(VisitorPermReqMix, VisitorPassTestMix, FormView):
     #model = PhotoStation
     permission_required = 'buildings.delete_photostation'
     form_class = BuildingDeleteForm
@@ -169,18 +171,14 @@ class PhotoStationDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.stat.title}&model={_("Photo station")}')
 
-class PhotoStation3dView( BuildingAuthMixin, TemplateView ):
-    #permission_required = 'buildings.view_photostation'
+class PhotoStation3dView( VisitorPermReqMix, VisitorPassTestMix, TemplateView ):
+    permission_required = 'buildings.view_photostation'
     template_name = 'buildings/photostation_3d.html'
 
     def setup(self, request, *args, **kwargs):
         super(PhotoStation3dView, self).setup(request, *args, **kwargs)
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_photostation')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         self.stat = get_object_or_404( PhotoStation,
             slug = self.kwargs['stat_slug'] )
         if not self.build == self.stat.build:
@@ -195,10 +193,11 @@ class PhotoStation3dView( BuildingAuthMixin, TemplateView ):
         context['map_data']['floor'] = self.build.get_floor_elevation()
         return context
 
-class StationImageListCreateView( AlertMixin, BuildingAuthMixin,
-    CreateView ):
+class StationImageListCreateView( VisitorPermReqMix, VisitorPassTestMix,
+    AlertMixin, CreateView ):
     model = StationImage
-    #permission_required = 'buildings.view_photostation'
+    permission_required = ('buildings.view_photostation',
+        'buildings.add_stationimage')
     form_class = StationImageCreateForm
     template_name = 'buildings/stationimage_list_create.html'
 
@@ -207,10 +206,6 @@ class StationImageListCreateView( AlertMixin, BuildingAuthMixin,
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_photostation')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         self.stat = get_object_or_404( PhotoStation,
             slug = self.kwargs['stat_slug'] )
         if not self.stat.build == self.build:
@@ -252,7 +247,8 @@ class StationImageListCreateView( AlertMixin, BuildingAuthMixin,
             'stat_slug': self.stat.slug}) +
             f'?created={self.object.id}&model={_("Image")}')
 
-class StationImageUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class StationImageUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    UpdateView ):
     model = StationImage
     permission_required = 'buildings.change_stationimage'
     form_class = StationImageUpdateForm
@@ -288,7 +284,7 @@ class StationImageUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
             'stat_slug': self.stat.slug}) +
             f'?modified={self.object.id}&model={_("Image")}')
 
-class StationImageDeleteView(PermissionRequiredMixin, FormView):
+class StationImageDeleteView(VisitorPermReqMix, VisitorPassTestMix, FormView):
     permission_required = 'buildings.delete_stationimage'
     form_class = BuildingDeleteForm
     template_name = 'buildings/stationimage_form_delete.html'
@@ -326,9 +322,10 @@ class StationImageDeleteView(PermissionRequiredMixin, FormView):
             'stat_slug': self.stat.slug}) +
             f'?deleted={self.title}&model={_("Image")}')
 
-class StationImageDayArchiveView( BuildingAuthMixin, DayArchiveView ):
+class StationImageDayArchiveView( VisitorPermReqMix, VisitorPassTestMix,
+    DayArchiveView ):
     model = StationImage
-    #permission_required = 'buildings.view_stationimage'
+    permission_required = 'buildings.view_stationimage'
     date_field = 'date'
     allow_future = True
     context_object_name = 'images'
@@ -341,10 +338,6 @@ class StationImageDayArchiveView( BuildingAuthMixin, DayArchiveView ):
         super(StationImageDayArchiveView, self).setup(request, *args, **kwargs)
         #here we get the project by the slug
         self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_stationimage')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
 
     def get_queryset(self):
         qs = super(StationImageDayArchiveView, self).get_queryset()
@@ -359,8 +352,10 @@ class StationImageDayArchiveView( BuildingAuthMixin, DayArchiveView ):
         context['build'] = self.build
         return context
 
-class StationImageDayArchiveListView( BuildingAuthMixin, ListView ):
+class StationImageDayArchiveListView( VisitorPermReqMix, VisitorPassTestMix,
+    ListView ):
     model = StationImage
+    permission_required = 'buildings.view_stationimage'
     template_name = 'buildings/stationimage_archive_day_list.html'
 
     def setup(self, request, *args, **kwargs):
@@ -368,10 +363,6 @@ class StationImageDayArchiveListView( BuildingAuthMixin, ListView ):
             **kwargs)
         #here we get the project by the slug
         self.build = get_object_or_404( Building, slug = self.kwargs['slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_stationimage')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

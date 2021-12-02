@@ -5,19 +5,20 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.views.generic import ( CreateView, UpdateView, FormView, ListView )
-from django.contrib.auth.mixins import PermissionRequiredMixin
-#from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from buildings.models import (Building, Family, Element)
 from buildings.forms import ( FamilyCreateForm, FamilyUpdateForm,
     BuildingDeleteForm, ElementCreateForm)
-from buildings.views.building import AlertMixin, BuildingAuthMixin
+from buildings.views.building import (VisitorPermReqMix, VisitorPassTestMix,
+    AlertMixin )
 
-class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class FamilyListCreateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    CreateView ):
     model = Family
-    permission_required = 'buildings.add_family'
+    permission_required = ('buildings.view_family', 'buildings.add_family')
     form_class = FamilyCreateForm
     template_name = 'buildings/family_list_create.html'
 
@@ -62,21 +63,21 @@ class FamilyListCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return ( self.build.get_full_path() +
                 f'?created={self.object.title}&model={_("Element family")}')
 
-class FamilyUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class FamilyUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    UpdateView ):
     model = Family
     permission_required = 'buildings.change_family'
     form_class = FamilyUpdateForm
     template_name = 'buildings/family_form_update.html'
     slug_url_kwarg = 'fam_slug'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        fam = super(FamilyUpdateView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(FamilyUpdateView, self).setup(request, *args, **kwargs)
+        fam = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
         if not self.build == fam.build:
             raise Http404(_("Element family does not belong to Building"))
-        return fam
 
     def get_initial(self):
         initial = super( FamilyUpdateView, self ).get_initial()
@@ -103,7 +104,7 @@ class FamilyUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
             return ( self.build.get_full_path() +
                 f'?modified={self.object.title}&model={_("Element family")}')
 
-class FamilyDeleteView(PermissionRequiredMixin, FormView):
+class FamilyDeleteView(VisitorPermReqMix, VisitorPassTestMix, FormView):
     permission_required = 'buildings.delete_family'
     form_class = BuildingDeleteForm
     template_name = 'buildings/family_form_delete.html'
@@ -136,7 +137,8 @@ class FamilyDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.fam.title}&model={_("Element family")}')
 
-class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
+class ElementCreateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    CreateView ):
     model = Element
     permission_required = 'buildings.add_element'
     form_class = ElementCreateForm
@@ -191,21 +193,21 @@ class ElementCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
             return (self.object.get_building_redirection() +
                 f'?created={self.object.__str__()}&model={_("Element")}')
 
-class ElementUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
+class ElementUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
+    UpdateView ):
     model = Element
     permission_required = 'buildings.change_element'
     form_class = ElementCreateForm
     template_name = 'buildings/element_form_update.html'
     pk_url_kwarg = 'pk'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        elem = super(ElementUpdateView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(ElementCreateView, self).setup(request, *args, **kwargs)
+        elem = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
         if not self.build == elem.build:
             raise Http404(_("Element does not belong to Building"))
-        return elem
 
     def get_initial(self):
         initial = super( ElementUpdateView, self ).get_initial()
@@ -255,7 +257,7 @@ class ElementUpdateView( PermissionRequiredMixin, AlertMixin, UpdateView ):
             return (self.object.get_building_redirection() +
                 f'?modified={self.object.__str__()}&model={_("Element")}')
 
-class ElementDeleteView(PermissionRequiredMixin, FormView):
+class ElementDeleteView(VisitorPermReqMix, VisitorPassTestMix, FormView):
     permission_required = 'buildings.delete_element'
     form_class = BuildingDeleteForm
     template_name = 'buildings/element_form_delete.html'
@@ -288,8 +290,10 @@ class ElementDeleteView(PermissionRequiredMixin, FormView):
         return ( self.build.get_full_path() +
             f'?deleted={self.title}&model={_("Element")}')
 
-class ElementByFamilyListView( BuildingAuthMixin, ListView ):
+class ElementByFamilyListView( VisitorPermReqMix, VisitorPassTestMix,
+    ListView ):
     model = Element
+    permission_required = 'buildings.view_element'
     template_name = 'buildings/elements_by_family_list.html'
 
     def setup(self, request, *args, **kwargs):
@@ -297,10 +301,6 @@ class ElementByFamilyListView( BuildingAuthMixin, ListView ):
         #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
-        enter = self.check_building_permissions(self.build, request.user,
-            'buildings.view_element')
-        if not enter:
-            raise Http404(_("User has no permission to view this building"))
         self.family = get_object_or_404( Family,
             slug = self.kwargs['fam_slug'] )
 
@@ -359,7 +359,7 @@ def csv_writer(writer, qs):
         writer.writerow(row)
     return writer
 
-#@permission_required('buildings.view_building')
+@permission_required('buildings.view_element')
 def building_element_download(request, slug):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -368,10 +368,9 @@ def building_element_download(request, slug):
         { 'building': _('Buildings') }
         )
     build = get_object_or_404( Building, slug = slug )
-    enter = BuildingAuthMixin.check_building_permissions(build, request.user,
-        'buildings.view_building')
-    if not enter:
-        raise Http404(_("User has no permission to view this building"))
+    if request.user.profile.immutable:
+        if request.user != build.visitor:
+            raise Http404(_("User cannot visit this Building"))
     qs = Element.objects.filter(build_id=build.id)
 
     writer = csv.writer(response)
