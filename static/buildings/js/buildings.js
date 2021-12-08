@@ -38,6 +38,13 @@ const elemMarker = L.AwesomeMarkers.icon({
     iconColor: 'white',
   });
 
+const locationMarker = L.AwesomeMarkers.icon({
+    icon: 'fa-street-view',
+    prefix: 'fa',
+    markerColor: 'orange',
+    iconColor: 'black',
+  });
+
 async function load_dxf(plan_id) {
   let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
   let geojson = await response.json();
@@ -185,9 +192,20 @@ if (map_data.hasOwnProperty('city_lat')){
   });
 }
 
+const locationGroup = L.layerGroup().addTo(mymap);
+let locateFlag = false;
+
+function onFirstLocationFound(e) {
+  locateFlag = true;
+  let content = "You are here!";
+  L.marker( e.latlng , {icon: locationMarker}).bindPopup(content).addTo(locationGroup);
+}
+
+mymap.locate().on('locationfound', onFirstLocationFound);
+
 if (map_data.hasOwnProperty('builds')){
   for (build of map_data.builds ){
-    var content = "<h5><a href=\"" + build.path + "\">" + build.title +
+    var content = "<h5><a href=\"" + build.path + "\">" + build.title
       "</a></h5><img src=\"" + build.fb_path + "\"><br><small>" +
         build.intro + "</small>"
     L.marker([ build.lat , build.long ], {icon: buildMarker}).addTo(mymap)
@@ -261,3 +279,17 @@ if (map_data.hasOwnProperty('on_map_click')){
 
   mymap.on('click', onMapClick);
 }
+
+function onLocationFound(e) {
+  locationGroup.clearLayers();
+  let content = "You are here!";
+  L.marker( e.latlng , {icon: locationMarker}).bindPopup(content).addTo(locationGroup);
+}
+
+function locate_user() {
+  if (locateFlag) {
+    mymap.locate().on('locationfound', onLocationFound);
+  }
+}
+
+mymap.on('moveend', locate_user);
