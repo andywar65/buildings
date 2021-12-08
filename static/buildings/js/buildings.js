@@ -193,15 +193,6 @@ if (map_data.hasOwnProperty('city_lat')){
 }
 
 const locationGroup = L.layerGroup().addTo(mymap);
-let locateFlag = false;
-
-function onFirstLocationFound(e) {
-  locateFlag = true;
-  let content = "You are here!";
-  L.marker( e.latlng , {icon: locationMarker}).bindPopup(content).addTo(locationGroup);
-}
-
-mymap.locate().on('locationfound', onFirstLocationFound);
 
 if (map_data.hasOwnProperty('builds')){
   for (build of map_data.builds ){
@@ -280,16 +271,19 @@ if (map_data.hasOwnProperty('on_map_click')){
   mymap.on('click', onMapClick);
 }
 
-function onLocationFound(e) {
-  locationGroup.clearLayers();
-  let content = "You are here!";
+function userFound(e) {
+  let content = "You are here (accuracy " + e.accuracy + " meters)!";
   L.marker( e.latlng , {icon: locationMarker}).bindPopup(content).addTo(locationGroup);
+  L.circle(e.latlng, e.accuracy).addTo(locationGroup);
+  mymap.fitBounds([e.latlng, [map_data.build.lat , map_data.build.long]],
+    {padding: [50,50]});
 }
 
-function locate_user() {
-  if (locateFlag) {
-    mymap.locate().on('locationfound', onLocationFound);
-  }
+function userNotFound(e) {
+    alert(e.message);
 }
 
-mymap.on('moveend', locate_user);
+function locateUser() {
+  locationGroup.clearLayers();
+  mymap.locate().on('locationfound', userFound).on('locationerror', userNotFound);
+}

@@ -69,7 +69,7 @@ async function render_buildings() {
     { pointToLayer: buildingPointToLayer, onEachFeature: onEachBuildingFeature });
   markers.addTo(map);
   try {
-    map.fitBounds(markers.getBounds());
+    map.fitBounds(markers.getBounds(), {padding: [50,50]});
   }
   catch {
     map.locate()
