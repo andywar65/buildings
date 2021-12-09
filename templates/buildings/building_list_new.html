@@ -8,13 +8,14 @@
 
 {% block extra-head %}
   {% include 'buildings/includes/leaflet_extra_head.html' %}
+  {% include 'buildings/includes/vue_extra_head.html' %}
   <style media="screen">
     .container { max-width: none; }
   </style>
 {% endblock extra-head %}
 
 {% block content %}
-<div class="row" id="main-container">
+<div class="row" id="vue-app">
   <div class="col">
     <div class="card" style="margin-bottom: 15px">
       <div class="card-header">
