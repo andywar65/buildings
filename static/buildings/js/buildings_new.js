@@ -1,12 +1,22 @@
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+
 let app = new Vue({
   delimiters: ["[[", "]]"],
   el: '#vue-app',
-  data: {
-    map_data : JSON.parse(document.getElementById("map_data").textContent),
-    copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
-    url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    isBuildList : true
-  },
+  data() {
+        return {
+          map_data : JSON.parse(document.getElementById("map_data").textContent),
+          copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+          url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          isBuildList : true,
+          isCityChange : false,
+          city_name : "",
+          city_lat : null,
+          city_long : null,
+          city_zoom : 10
+        };
+    },
   methods: {
     setupLeafletMap: function () {
 
@@ -86,6 +96,25 @@ let app = new Vue({
       }
 
       render_buildings()
+
+      map.on('click', this.onMapClick);
+    },
+    onCityChange : function () {
+      this.isBuildList = false
+      this.isCityChange = true
+    },
+    onCityDismiss : function () {
+      this.isBuildList = true
+      this.isCityChange = false
+    },
+    onMapClick : function (e) {
+      this.city_lat = e.latlng.lat
+      this.city_long = e.latlng.lng
+      //this.city_zoom = zoom
+    },
+    onCityAdd : function () {
+      this.isBuildList = true
+      this.isCityChange = false
     },
   },
   mounted() {

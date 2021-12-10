@@ -27,10 +27,39 @@
         <a class="btn btn-secondary" href="{% url 'buildings:building_create'%}" title="{% translate "Add building" %}">
           + <i class="fa fa-building"></i></a>
       {% endif %}
-      {% if perms.buildings.add_city and user.is_staff %}
-        <a class="btn btn-warning" href="/admin/buildings/city/" title="{% translate "Manage cities (in admin)" %}">
+      {% if perms.buildings.add_city %}
+        <a class="btn btn-warning" href="#" @click="onCityChange" title="{% translate "Manage cities" %}">
           <i class="fa fa-pencil"></i> <i class="fa fa-globe"></i></a>
       {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col" v-show="isCityChange">
+    <div class="card" style="margin-bottom: 15px">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Change city" %}</strong></h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+            <label>{% translate "City name" %}</label>
+            <input type="text" class=" textinput textInput form-control" v-model="city_name" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "City latitude" %}</label>
+            <input type="number" class="numberinput form-control" v-model="city_lat" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "City longitude" %}</label>
+            <input type="number" class="numberinput form-control" v-model="city_long" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Zoom factor" %}</label>
+            <input type="number" class="numberinput form-control" v-model="city_zoom" required>
+        </div>
+      <a class="btn btn-success" href="#" @click="onCityAdd" title="{% translate "Submit" %}">
+        <i class="fa fa-check"></i></a>
+      <a class="btn btn-secondary" href="#" @click="onCityDismiss" title="{% translate "Cancel" %}">
+        <i class="fa fa-times"></i></a>
       </div>
     </div>
   </div>
