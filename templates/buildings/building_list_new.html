@@ -16,7 +16,7 @@
 
 {% block content %}
 <div class="row" id="vue-app">
-  <div class="col">
+  <div class="col" v-show="isBuildList">
     <div class="card" style="margin-bottom: 15px">
       <div class="card-header">
         <h4 class="card-title"><strong>{% translate "Map of all buildings" %}</strong></h4>

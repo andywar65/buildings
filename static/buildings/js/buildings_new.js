@@ -4,7 +4,8 @@ let app = new Vue({
   data: {
     map_data : JSON.parse(document.getElementById("map_data").textContent),
     copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
-    url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    isBuildList : true
   },
   methods: {
     setupLeafletMap: function () {
