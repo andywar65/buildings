@@ -28,3 +28,8 @@ class CitySerializer(gis_serializers.GeoFeatureModelSerializer):
         fields = ("id", "zoom", )
         geo_field = "location"
         model = City
+
+class CityLatLongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ("name", "lat", "long", "zoom")

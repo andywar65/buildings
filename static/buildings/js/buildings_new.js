@@ -1,5 +1,5 @@
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
 let app = new Vue({
   delimiters: ["[[", "]]"],
@@ -15,7 +15,7 @@ let app = new Vue({
           city_lat : null,
           city_long : null,
           city_zoom : 10
-        };
+        }
     },
   methods: {
     setupLeafletMap: function () {
@@ -72,7 +72,7 @@ let app = new Vue({
         let response = await fetch(`/build-api/city/`)
         let cityjson = await response.json()
         try {
-          city = cityjson.features[0];
+          city = cityjson.features[0]
           map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
             city.properties.zoom)
         } catch {
@@ -97,7 +97,7 @@ let app = new Vue({
 
       render_buildings()
 
-      map.on('click', this.onMapClick);
+      map.on('click', this.onMapClick)
     },
     onCityChange : function () {
       this.isBuildList = false
@@ -113,11 +113,26 @@ let app = new Vue({
       //this.city_zoom = zoom
     },
     onCityAdd : function () {
-      this.isBuildList = true
-      this.isCityChange = false
+      let url = '/build-api/city/add/'
+      let data = {
+          "name": this.city_name,
+          "lat": this.city_lat,
+          "long": this.city_long,
+          "zoom": this.city_zoom
+      }
+      axios
+          .post(url, data)
+          .then(response => {
+            this.isBuildList = true
+            this.isCityChange = false
+            this.setupLeafletMap()
+          })
+          .catch(error => {
+              console.log(error)
+          })
     },
   },
   mounted() {
-    this.setupLeafletMap();
+    this.setupLeafletMap()
   }
-});
+})

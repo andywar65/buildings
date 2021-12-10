@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.utils.translation import gettext as _
 
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework_gis import filters
 
 from .models import Building, Plan, DxfImport, City
@@ -20,6 +20,11 @@ class CityListApiView(generics.ListAPIView):
 
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
+class CityCreateApiView(generics.CreateAPIView):
+    queryset = City.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
+    serializer_class = CityLatLongSerializer
 
 class DxfImportsApiView(generics.ListAPIView):
 
