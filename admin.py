@@ -166,6 +166,7 @@ class ElementAdmin(admin.ModelAdmin):
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'location')
+    exclude = ('lat', 'long')
     formfield_overrides = {
         models.PointField: {"widget": OSMWidget},
     }
