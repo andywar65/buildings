@@ -752,12 +752,23 @@ class Element(models.Model):
 
 class City(models.Model):
     name = models.CharField(max_length=100)
+    lat = models.FloatField(_("Latitude"), null=True)
+    long = models.FloatField(_("Longitude"), null=True,
+        help_text=_("""Coordinates from Google Maps
+            or https://openstreetmap.org"""))
     location = models.PointField()
     zoom = models.FloatField(_("Zoom factor"), default = settings.CITY_ZOOM,
         help_text=_("Maximum should be 23"))
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.long and self.lat:
+            self.location = Point( self.long, self.lat )
+            self.long = None
+            self.lat = None
+        super(City, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('City')
