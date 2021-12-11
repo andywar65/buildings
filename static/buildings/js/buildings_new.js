@@ -4,25 +4,26 @@ axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 let app = new Vue({
   delimiters: ["[[", "]]"],
   el: '#vue-app',
-  data() {
-        return {
-          map_data : JSON.parse(document.getElementById("map_data").textContent),
-          copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
-          url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          isBuildList : true,
-          isCityChange : false,
-          isBuildAdd : false,
-          city_name : "",
-          city_lat : null,
-          city_long : null,
-          city_zoom : 10,
-          build_image : "",
-          build_title : "",
-          build_intro : "",
-          build_lat : null,
-          build_long : null,
-          build_zoom : 15
-        }
+  data : {
+      map_data : JSON.parse(document.getElementById("map_data").textContent),
+      copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+      url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+      mb_id : 'mapbox/satellite-v9',
+      isBuildList : true,
+      isCityChange : false,
+      isBuildAdd : false,
+      city_name : "",
+      city_lat : null,
+      city_long : null,
+      city_zoom : 10,
+      build_image : "",
+      build_title : "",
+      build_intro : "",
+      build_lat : null,
+      build_long : null,
+      build_zoom : 15
     },
   methods: {
     setupLeafletMap: function () {
@@ -32,12 +33,12 @@ let app = new Vue({
         maxZoom: 23,
       })
 
-      const sat_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      const sat_map = L.tileLayer(this.mb_url, {
+        attribution: this.mb_copy,
         maxZoom: 23,
         tileSize: 512,
         zoomOffset: -1,
-        id: 'mapbox/satellite-v9',
+        id: this.mb_id,
         accessToken: this.map_data.mapbox_token
       })
 
@@ -106,11 +107,11 @@ let app = new Vue({
 
       map.on('click', this.onMapClick)
     },
-    onCityChange : function () {
+    onCityPanel : function () {
       this.isBuildList = false
       this.isCityChange = true
     },
-    onBuildChange : function () {
+    onBuildPanel : function () {
       this.isBuildList = false
       this.isBuildAdd = true
     },
