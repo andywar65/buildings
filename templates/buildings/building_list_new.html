@@ -24,7 +24,7 @@
       <div class="card-body">
       {% include "buildings/includes/building_alerts.html" %}
       {% if perms.buildings.add_building %}
-        <a class="btn btn-secondary" href="{% url 'buildings:building_create'%}" title="{% translate "Add building" %}">
+        <a class="btn btn-secondary" href="#" @click="onBuildChange" title="{% translate "Add building" %}">
           + <i class="fa fa-building"></i></a>
       {% endif %}
       {% if perms.buildings.add_city %}
@@ -34,6 +34,7 @@
       </div>
     </div>
   </div>
+  {% if perms.buildings.add_city %}
   <div class="col" v-show="isCityChange">
     <div class="card" style="margin-bottom: 15px">
       <div class="card-header">
@@ -42,7 +43,7 @@
       <div class="card-body">
         <div class="form-group">
             <label>{% translate "City name" %}</label>
-            <input type="text" class=" textinput textInput form-control" v-model="city_name" required>
+            <input type="text" class="textinput textInput form-control" v-model="city_name" required>
         </div>
         <div class="form-group">
             <label>{% translate "City latitude" %}</label>
@@ -63,6 +64,46 @@
       </div>
     </div>
   </div>
+  {% endif %}
+  {% if perms.buildings.add_building %}
+  <div class="col" v-show="isBuildAdd">
+    <div class="card" style="margin-bottom: 15px">
+      <div class="card-header">
+        <h4 class="card-title"><strong>{% translate "Add building" %}</strong></h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+            <label>{% translate "Image" %}</label>
+            <input type="file" accept="image/*" class="clearablefileinput form-control-file" v-model="build_image" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Building title" %}</label>
+            <input type="text" class="textinput textInput form-control" v-model="build_title" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Description" %}</label>
+            <input type="text" class="textinput textInput form-control" v-model="build_intro" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Building latitude" %}</label>
+            <input type="number" class="numberinput form-control" v-model="build_lat" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Building longitude" %}</label>
+            <input type="number" class="numberinput form-control" v-model="build_long" required>
+        </div>
+        <div class="form-group">
+            <label>{% translate "Zoom factor" %}</label>
+            <input type="number" class="numberinput form-control" v-model="build_zoom" required>
+        </div>
+      <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
+        <i class="fa fa-check"></i></a>
+      <a class="btn btn-secondary" href="#" @click="onBuildDismiss" title="{% translate "Cancel" %}">
+        <i class="fa fa-times"></i></a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <div class="col col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
       <div id="mapid" style="min-height: 600px; margin-bottom: 15px"></div>
   </div>

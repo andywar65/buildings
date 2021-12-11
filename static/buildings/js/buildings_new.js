@@ -11,10 +11,17 @@ let app = new Vue({
           url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           isBuildList : true,
           isCityChange : false,
+          isBuildAdd : false,
           city_name : "",
           city_lat : null,
           city_long : null,
-          city_zoom : 10
+          city_zoom : 10,
+          build_image : "",
+          build_title : "",
+          build_intro : "",
+          build_lat : null,
+          build_long : null,
+          build_zoom : 15
         }
     },
   methods: {
@@ -103,13 +110,32 @@ let app = new Vue({
       this.isBuildList = false
       this.isCityChange = true
     },
+    onBuildChange : function () {
+      this.isBuildList = false
+      this.isBuildAdd = true
+    },
     onCityDismiss : function () {
       this.isBuildList = true
       this.isCityChange = false
+      //this.city_name = ""
+      //this.city_lat = null
+      //this.city_long = null
+      //this.city_zoom = 10
+    },
+    onBuildDismiss : function () {
+      this.isBuildList = true
+      this.isBuildAdd = false
+      //this.build_title = ""
+      //this.build_intro = ""
+      //this.build_lat = null
+      //this.build_long = null
+      //this.build_zoom = 10
     },
     onMapClick : function (e) {
       this.city_lat = e.latlng.lat
       this.city_long = e.latlng.lng
+      this.build_lat = e.latlng.lat
+      this.build_long = e.latlng.lng
       //this.city_zoom = zoom
     },
     onCityAdd : function () {
@@ -125,6 +151,27 @@ let app = new Vue({
           .then(response => {
             this.isBuildList = true
             this.isCityChange = false
+            this.setupLeafletMap()
+          })
+          .catch(error => {
+              console.log(error)
+          })
+    },
+    onBuildAdd : function () {
+      let url = '/build-api/add/'
+      let data = {
+          "image": this.build_image,
+          "title": this.build_title,
+          "intro": this.build_intro,
+          "lat": this.build_lat,
+          "long": this.build_long,
+          "zoom": this.build_zoom
+      }
+      axios
+          .post(url, data)
+          .then(response => {
+            this.isBuildList = true
+            this.isBuildAdd = false
             this.setupLeafletMap()
           })
           .catch(error => {

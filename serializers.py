@@ -21,6 +21,11 @@ class BuildingSerializer(gis_serializers.GeoFeatureModelSerializer):
         geo_field = "location"
         model = Building
 
+class BuildingLatLongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Building
+        fields = ("image", "title", "intro", "lat", "long", "zoom")
+
 class CitySerializer(gis_serializers.GeoFeatureModelSerializer):
     """City GeoJSON serializer."""
 

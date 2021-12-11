@@ -16,6 +16,11 @@ class BuildingsListApiView(generics.ListAPIView):
     serializer_class = BuildingSerializer
     #bbox_filter_include_overlapping = True
 
+class BuildingCreateApiView(generics.CreateAPIView):
+    queryset = Building.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
+    serializer_class = BuildingLatLongSerializer
+
 class CityListApiView(generics.ListAPIView):
 
     queryset = City.objects.all()
