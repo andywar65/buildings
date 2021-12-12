@@ -57,6 +57,7 @@
             <label>{% translate "Zoom factor" %}</label>
             <input type="number" class="numberinput form-control" v-model="zoom" required>
         </div>
+        <p><small>{% translate "Actual zoom is:" %} <span id="actual-zoom"></span></small></p>
       <a class="btn btn-success" href="#" @click="onCityAdd" title="{% translate "Submit" %}">
         <i class="fa fa-check"></i></a>
       <a class="btn btn-secondary" href="#" @click="onCityDismiss" title="{% translate "Cancel" %}">
@@ -93,6 +94,7 @@
               <label>{% translate "Zoom factor" %}</label>
               <input type="number" class="numberinput form-control" v-model="zoom" required>
           </div>
+          <p><small>{% translate "Actual zoom is:" %} <span id="actual-zoom-2"></span></small></p>
         </form>
       <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
         <i class="fa fa-check"></i></a>

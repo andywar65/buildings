@@ -105,7 +105,8 @@ let app = new Vue({
 
       map.on('zoomend', function(e){
         let zoom = map.getZoom()
-        console.log(zoom)
+        document.getElementById("actual-zoom").innerHTML = zoom
+        document.getElementById("actual-zoom-2").innerHTML = zoom
       })
 
     },
