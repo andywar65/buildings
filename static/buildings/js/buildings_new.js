@@ -14,16 +14,12 @@ let app = new Vue({
       isBuildList : true,
       isCityChange : false,
       isBuildAdd : false,
-      city_name : "",
-      city_lat : null,
-      city_long : null,
-      city_zoom : 10,
-      build_image : "",
-      build_title : "",
-      build_intro : "",
-      build_lat : null,
-      build_long : null,
-      build_zoom : 15
+      title : "",
+      lat : null,
+      long : null,
+      zoom : 10,
+      image : "",
+      intro : ""
     },
   methods: {
     setupLeafletMap: function () {
@@ -106,6 +102,12 @@ let app = new Vue({
       render_buildings()
 
       map.on('click', this.onMapClick)
+
+      map.on('zoomend', function(e){
+        let zoom = map.getZoom()
+        console.log(zoom)
+      })
+
     },
     onCityPanel : function () {
       this.isBuildList = false
@@ -118,34 +120,22 @@ let app = new Vue({
     onCityDismiss : function () {
       this.isBuildList = true
       this.isCityChange = false
-      //this.city_name = ""
-      //this.city_lat = null
-      //this.city_long = null
-      //this.city_zoom = 10
     },
     onBuildDismiss : function () {
       this.isBuildList = true
       this.isBuildAdd = false
-      //this.build_title = ""
-      //this.build_intro = ""
-      //this.build_lat = null
-      //this.build_long = null
-      //this.build_zoom = 10
     },
     onMapClick : function (e) {
-      this.city_lat = e.latlng.lat
-      this.city_long = e.latlng.lng
-      this.build_lat = e.latlng.lat
-      this.build_long = e.latlng.lng
-      //this.city_zoom = zoom
+      this.lat = e.latlng.lat
+      this.long = e.latlng.lng
     },
     onCityAdd : function () {
       let url = '/build-api/city/add/'
       let data = {
-          "name": this.city_name,
-          "lat": this.city_lat,
-          "long": this.city_long,
-          "zoom": this.city_zoom
+          "name": this.title,
+          "lat": this.lat,
+          "long": this.long,
+          "zoom": this.zoom
       }
       axios
           .post(url, data)
@@ -161,12 +151,11 @@ let app = new Vue({
     onBuildAdd : function () {
       let url = '/build-api/add/'
       let data = {
-          "image": this.build_image,
-          "title": this.build_title,
-          "intro": this.build_intro,
-          "lat": this.build_lat,
-          "long": this.build_long,
-          "zoom": this.build_zoom
+          "title": this.title,
+          "intro": this.intro,
+          "lat": this.lat,
+          "long": this.long,
+          "zoom": this.zoom
       }
       axios
           .post(url, data)

@@ -43,19 +43,19 @@
       <div class="card-body">
         <div class="form-group">
             <label>{% translate "City name" %}</label>
-            <input type="text" class="textinput textInput form-control" v-model="city_name" required>
+            <input type="text" class="textinput textInput form-control" v-model="title" required>
         </div>
         <div class="form-group">
             <label>{% translate "City latitude" %}</label>
-            <input type="number" class="numberinput form-control" v-model="city_lat" required>
+            <input type="number" class="numberinput form-control" v-model="lat" required>
         </div>
         <div class="form-group">
             <label>{% translate "City longitude" %}</label>
-            <input type="number" class="numberinput form-control" v-model="city_long" required>
+            <input type="number" class="numberinput form-control" v-model="long" required>
         </div>
         <div class="form-group">
             <label>{% translate "Zoom factor" %}</label>
-            <input type="number" class="numberinput form-control" v-model="city_zoom" required>
+            <input type="number" class="numberinput form-control" v-model="zoom" required>
         </div>
       <a class="btn btn-success" href="#" @click="onCityAdd" title="{% translate "Submit" %}">
         <i class="fa fa-check"></i></a>
@@ -74,28 +74,24 @@
       <div class="card-body">
         <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
           <div class="form-group">
-              <label>{% translate "Image" %}</label>
-              <input type="file" accept="image/*" class="clearablefileinput form-control-file" v-model="build_image" required>
-          </div>
-          <div class="form-group">
               <label>{% translate "Building title" %}</label>
-              <input type="text" class="textinput textInput form-control" v-model="build_title" required>
+              <input type="text" class="textinput textInput form-control" v-model="title" required>
           </div>
           <div class="form-group">
               <label>{% translate "Description" %}</label>
-              <input type="text" class="textinput textInput form-control" v-model="build_intro" required>
+              <input type="text" class="textinput textInput form-control" v-model="intro" required>
           </div>
           <div class="form-group">
               <label>{% translate "Building latitude" %}</label>
-              <input type="number" class="numberinput form-control" v-model="build_lat" required>
+              <input type="number" class="numberinput form-control" v-model="lat" required>
           </div>
           <div class="form-group">
               <label>{% translate "Building longitude" %}</label>
-              <input type="number" class="numberinput form-control" v-model="build_long" required>
+              <input type="number" class="numberinput form-control" v-model="long" required>
           </div>
           <div class="form-group">
               <label>{% translate "Zoom factor" %}</label>
-              <input type="number" class="numberinput form-control" v-model="build_zoom" required>
+              <input type="number" class="numberinput form-control" v-model="zoom" required>
           </div>
         </form>
       <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
