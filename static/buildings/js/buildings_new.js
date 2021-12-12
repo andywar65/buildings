@@ -17,7 +17,7 @@ let app = new Vue({
       title : "",
       lat : null,
       long : null,
-      zoom : 10,
+      zoom : null,
       image : "",
       intro : ""
     },
@@ -130,6 +130,14 @@ let app = new Vue({
       this.lat = e.latlng.lat
       this.long = e.latlng.lng
     },
+    clearData : function () {
+      this.title = ""
+      this.lat = null
+      this.long = null
+      this.zoom = null
+      this.image = ""
+      this.intro = ""
+    },
     onCityAdd : function () {
       let url = '/build-api/city/add/'
       let data = {
@@ -143,7 +151,7 @@ let app = new Vue({
           .then(response => {
             this.isBuildList = true
             this.isCityChange = false
-            this.setupLeafletMap()
+            this.clearData()
           })
           .catch(error => {
               console.log(error)
@@ -163,6 +171,7 @@ let app = new Vue({
           .then(response => {
             this.isBuildList = true
             this.isBuildAdd = false
+            this.clearData()
             this.setupLeafletMap()
           })
           .catch(error => {
