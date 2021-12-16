@@ -77,8 +77,8 @@ let app = new Vue({
         this.map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
           city.properties.zoom)
       } catch {
-        this.map.setView([map_data.city_lat, map_data.city_long],
-          map_data.city_zoom)
+        this.map.setView([this.map_data.city_lat, this.map_data.city_long],
+          this.map_data.city_zoom)
       }
     },
     render_buildings : async function () {
