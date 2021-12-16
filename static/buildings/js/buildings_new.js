@@ -70,14 +70,15 @@ let app = new Vue({
       layer.bindPopup(content, {minWidth: 300})
     },
     setCityView : async function () {
-      let response = await fetch(`/build-api/city/`)
+      let response = await fetch(`/build-api/city/all/`)
       let cityjson = await response.json()
       try {
         city = cityjson.features[0]
         this.map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
           city.properties.zoom)
       } catch {
-        this.map.setView([41.8988, 12.5451], 10)
+        this.map.setView([map_data.city_lat, map_data.city_long],
+          map_data.city_zoom)
       }
     },
     render_buildings : async function () {

@@ -55,7 +55,10 @@ class BuildingListView( AlertMixin, TemplateView ):
         context = super().get_context_data(**kwargs)
         context = self.add_alerts_to_context(context)
         context['map_data'] = {
-            'mapbox_token': settings.MAPBOX_TOKEN
+            'mapbox_token': settings.MAPBOX_TOKEN,
+            'city_lat': settings.CITY_LAT,
+            'city_long': settings.CITY_LONG,
+            'city_zoom': settings.CITY_ZOOM,
             }
         return context
 
