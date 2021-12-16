@@ -74,6 +74,10 @@
       <div class="card-body">
         <form action="" method="post" class="needs-validation"  enctype="multipart/form-data" novalidate>
           <div class="form-group">
+              <label>{% translate "Image" %}</label>
+              <input type="file" ref="image" accept="image/*" class="clearablefileinput form-control-file" required @change="handleImageUpload()">
+          </div>
+          <div class="form-group">
               <label>{% translate "Building title" %}</label>
               <input type="text" class="textinput textInput form-control" v-model="title" required>
           </div>

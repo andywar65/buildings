@@ -16,6 +16,7 @@ let app = new Vue({
       isBuildList : true,
       isCityChange : false,
       isBuildAdd : false,
+      image : null,
       title : "",
       lat : null,
       long : null,
@@ -95,6 +96,9 @@ let app = new Vue({
           .on('locationerror', () => this.setCityView())
       }
     },
+    handleImageUpload : function () {
+      this.image = this.$refs.image.files[0]
+    },
     onCityPanel : function () {
       this.isBuildList = false
       this.isCityChange = true
@@ -121,6 +125,7 @@ let app = new Vue({
       this.zoom = this.map.getZoom()
     },
     clearData : function () {
+      this.file = null
       this.title = ""
       this.lat = null
       this.long = null
@@ -149,20 +154,20 @@ let app = new Vue({
     },
     onBuildAdd : function () {
       let url = '/build-api/add/'
-      let data = {
-          "title": this.title,
-          "intro": this.intro,
-          "lat": this.lat,
-          "long": this.long,
-          "zoom": this.zoom
-      }
+      let data = new FormData()
+      data.append("image", this.image)
+      data.append("title", this.title)
+      data.append("intro", this.intro)
+      data.append("lat", this.lat)
+      data.append("long", this.long)
+      data.append("zoom", this.zoom)
       axios
           .post(url, data)
           .then(response => {
             this.isBuildList = true
             this.isBuildAdd = false
             this.clearData()
-            this.setupLeafletMap()
+            this.render_buildings()
           })
           .catch(error => {
               console.log(error)
