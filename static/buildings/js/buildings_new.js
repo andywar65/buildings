@@ -106,10 +106,12 @@ let app = new Vue({
     onCityDismiss : function () {
       this.isBuildList = true
       this.isCityChange = false
+      this.clearData()
     },
     onBuildDismiss : function () {
       this.isBuildList = true
       this.isBuildAdd = false
+      this.clearData()
     },
     onMapClick : function (e) {
       this.lat = e.latlng.lat
