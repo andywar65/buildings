@@ -13,6 +13,8 @@ let app = new Vue({
       mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       mb_id : 'mapbox/satellite-v9',
+      alert : "",
+      isAlertPanel : false,
       isBuildList : true,
       isCityChange : false,
       isBuildAdd : false,
@@ -41,8 +43,6 @@ let app = new Vue({
         id: this.mb_id,
         accessToken: this.map_data.mapbox_token
       })
-
-      //const map = L.map('mapid', { layers: [base_map] })
 
       const baseMaps = {
         "Base": base_map,
@@ -101,10 +101,14 @@ let app = new Vue({
       this.image = this.$refs.image.files[0]
     },
     onCityPanel : function () {
+      this.isAlertPanel = false
+      this.alert = ""
       this.isBuildList = false
       this.isCityChange = true
     },
     onBuildPanel : function () {
+      this.isAlertPanel = false
+      this.alert = ""
       this.isBuildList = false
       this.isBuildAdd = true
     },
@@ -168,6 +172,8 @@ let app = new Vue({
       axios
           .post(url, data)
           .then(response => {
+            this.isAlertPanel = true
+            this.alert = this.title
             this.isBuildList = true
             this.isCityChange = false
             this.clearData()
@@ -197,6 +203,12 @@ let app = new Vue({
       axios
           .post(url, data)
           .then(response => {
+            this.isAlertPanel = true
+            if (this.title) {
+              this.alert = this.title
+            } else {
+              this.alert = "New building"
+            }
             this.isBuildList = true
             this.isBuildAdd = false
             this.clearData()
