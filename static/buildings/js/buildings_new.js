@@ -16,6 +16,7 @@ let app = new Vue({
       isBuildList : true,
       isCityChange : false,
       isBuildAdd : false,
+      formErrors : false,
       image : null,
       title : "",
       lat : null,
@@ -133,7 +134,17 @@ let app = new Vue({
       this.image = ""
       this.intro = ""
     },
+    formValidation : function (value, id) {
+      let field = document.getElementById(id)
+      if (! value) {
+        field.setAttribute('class', "form-control is-invalid")
+        this.formErrors = true
+      } else {
+        field.setAttribute('class', "form-control is-valid")
+      }
+    },
     onCityAdd : function () {
+      this.formErrors = false
       let url = '/build-api/city/add/'
       let data = {
           "name": this.title,
@@ -141,26 +152,40 @@ let app = new Vue({
           "long": this.long,
           "zoom": this.zoom
       }
+      this.formValidation(this.title, "id_c_name")
+      this.formValidation(this.lat, "id_c_lat")
+      this.formValidation(this.long, "id_c_long")
+      this.formValidation(this.zoom, "id_c_zoom")
+      if (this.formErrors) { return }//prevent from sending form
       axios
           .post(url, data)
           .then(response => {
             this.isBuildList = true
             this.isCityChange = false
             this.clearData()
+            this.render_buildings()
           })
           .catch(error => {
               console.log(error)
           })
     },
     onBuildAdd : function () {
+      this.formErrors = false
       let url = '/build-api/add/'
       let data = new FormData()
       data.append("image", this.image)
+      if (! this.image.name ) {
+        this.formErrors = true
+      }
       data.append("title", this.title)
       data.append("intro", this.intro)
       data.append("lat", this.lat)
+      this.formValidation(this.lat, "id_b_lat")
       data.append("long", this.long)
+      this.formValidation(this.long, "id_b_long")
       data.append("zoom", this.zoom)
+      this.formValidation(this.zoom, "id_b_zoom")
+      if (this.formErrors) { return }//prevent from sending form
       axios
           .post(url, data)
           .then(response => {
