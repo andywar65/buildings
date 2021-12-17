@@ -111,11 +111,13 @@ let app = new Vue({
     onCityDismiss : function () {
       this.isBuildList = true
       this.isCityChange = false
+      this.formErrors = false
       this.clearData()
     },
     onBuildDismiss : function () {
       this.isBuildList = true
       this.isBuildAdd = false
+      this.formErrors = false
       this.clearData()
     },
     onMapClick : function (e) {
@@ -133,6 +135,12 @@ let app = new Vue({
       this.zoom = null
       this.image = ""
       this.intro = ""
+      let ids = ["id_c_name", "id_c_lat", "id_c_long", "id_c_zoom", "id_b_lat",
+        "id_b_long", "id_b_zoom"]
+      for (id in ids) {
+        let field = document.getElementById(id)
+        field.setAttribute('class', "form-control")
+      }
     },
     formValidation : function (value, id) {
       let field = document.getElementById(id)

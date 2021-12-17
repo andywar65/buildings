@@ -47,19 +47,19 @@
         <form action="" method="post" class="needs-validation" novalidate>
           <div class="form-group">
               <label for="id_c_name">{% translate "City name" %}*</label>
-              <input id="id_c_name" type="text" class="textinput textInput form-control" v-model="title" required>
+              <input id="id_c_name" type="text" class="form-control" v-model="title" required>
           </div>
           <div class="form-group">
               <label for="id_c_lat">{% translate "City latitude" %}*</label>
-              <input id="id_c_lat" type="number" class="numberinput form-control" v-model="lat" required>
+              <input id="id_c_lat" type="number" class="form-control" v-model="lat" required>
           </div>
           <div class="form-group">
               <label for="id_c_long">{% translate "City longitude" %}*</label>
-              <input id="id_c_long" type="number" class="numberinput form-control" v-model="long" required>
+              <input id="id_c_long" type="number" class="form-control" v-model="long" required>
           </div>
           <div class="form-group">
               <label for="id_c_zoom">{% translate "Zoom factor" %}*</label>
-              <input id="id_c_zoom" type="number" class="numberinput form-control" v-model="zoom" required>
+              <input id="id_c_zoom" type="number" class="form-control" v-model="zoom" required>
           </div>
           <a class="btn btn-success" href="#" @click="onCityAdd" title="{% translate "Submit" %}">
             <i class="fa fa-check"></i></a>
@@ -87,29 +87,29 @@
           </div>
           <div class="form-group">
               <label>{% translate "Building title" %}</label>
-              <input type="text" class="textinput textInput form-control" v-model="title">
+              <input type="text" class="form-control" v-model="title">
           </div>
           <div class="form-group">
               <label>{% translate "Description" %}</label>
-              <input type="text" class="textinput textInput form-control" v-model="intro">
+              <input type="text" class="form-control" v-model="intro">
           </div>
           <div class="form-group">
               <label>{% translate "Building latitude" %}*</label>
-              <input id="id_b_lat" type="number" class="numberinput form-control" v-model="lat" required>
+              <input id="id_b_lat" type="number" class="form-control" v-model="lat" required>
           </div>
           <div class="form-group">
               <label>{% translate "Building longitude" %}*</label>
-              <input id="id_b_long" type="number" class="numberinput form-control" v-model="long" required>
+              <input id="id_b_long" type="number" class="form-control" v-model="long" required>
           </div>
           <div class="form-group">
               <label>{% translate "Zoom factor" %}*</label>
-              <input id="id_b_zoom" type="number" class="numberinput form-control" v-model="zoom" required>
+              <input id="id_b_zoom" type="number" class="form-control" v-model="zoom" required>
           </div>
+          <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
+            <i class="fa fa-check"></i></a>
+          <a class="btn btn-secondary" href="#" @click="onBuildDismiss" title="{% translate "Cancel" %}">
+            <i class="fa fa-times"></i></a>
         </form>
-      <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
-        <i class="fa fa-check"></i></a>
-      <a class="btn btn-secondary" href="#" @click="onBuildDismiss" title="{% translate "Cancel" %}">
-        <i class="fa fa-times"></i></a>
       </div>
     </div>
   </div>
