@@ -7,6 +7,7 @@ let app = new Vue({
   data : {
       map_data : JSON.parse(document.getElementById("map_data").textContent),
       map : Object,
+      buildLayerGroup : Object,
       buildMarker : Object,
       copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
       url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -85,10 +86,11 @@ let app = new Vue({
       }
     },
     render_buildings : async function () {
+      this.buildLayerGroup.clearLayers()
       let buildgeo = await this.load_buildings()
       markers = L.geoJSON(buildgeo,
         { pointToLayer: this.buildingPointToLayer, onEachFeature: this.onEachBuildingFeature })
-      markers.addTo(this.map)
+      markers.addTo(this.buildLayerGroup)
       try {
         this.map.fitBounds(markers.getBounds(), {padding: [50,50]})
       }
@@ -214,6 +216,7 @@ let app = new Vue({
   },
   mounted() {
     this.map = L.map('mapid')
+    this.buildLayerGroup = L.layerGroup().addTo(this.map)
     this.buildMarker = L.AwesomeMarkers.icon({
         icon: 'fa-building',
         prefix: 'fa',
