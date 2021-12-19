@@ -7,7 +7,7 @@
     </div>
     <div class="card-body">
       <p v-if="isAlertPanel" class="alert alert-success" role="alert">
-        <strong>[[ alert ]]</strong> {% translate 'created successfully!' %}
+        <strong><i :class="alertType"></i> [[ alert ]]</strong> {% translate 'created successfully!' %}
       </p>
     {% if perms.buildings.add_building %}
       <a class="btn btn-secondary" href="#" @click="onBuildPanel" title="{% translate "Add building" %}">

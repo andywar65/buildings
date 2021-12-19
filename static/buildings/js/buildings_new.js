@@ -14,6 +14,7 @@ let app = new Vue({
       mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       mb_id : 'mapbox/satellite-v9',
       alert : "",
+      alertType : "",
       isAlertPanel : false,
       isBuildList : true,
       isCityChange : false,
@@ -139,24 +140,22 @@ let app = new Vue({
       this.zoom = null
       this.image = ""
       this.intro = ""
-      let ids = ["id_c_name", "id_c_lat", "id_c_long", "id_c_zoom", "id_b_lat",
-        "id_b_long", "id_b_zoom"]
-      for (id in ids) {
-        let field = document.getElementById(id)
-        field.setAttribute('class', "form-control")
-      }
     },
-    formValidation : function (value, id) {
-      let field = document.getElementById(id)
-      if (! value) {
-        field.setAttribute('class', "form-control is-invalid")
-        this.formErrors = true
-      } else {
-        field.setAttribute('class', "form-control is-valid")
-      }
+    formValidation : function (id) {
+      let form = document.getElementById(id)
+      if (form.checkValidity() === false) {
+          this.formErrors = true
+        }
+      form.classList.add('was-validated')
+    },
+    formValidated : function (id) {
+      let form = document.getElementById(id)
+      form.classList.remove('was-validated')
     },
     onCityAdd : function () {
       this.formErrors = false
+      this.formValidation("add_c_form")
+      if (this.formErrors) { return }//prevent from sending form
       let url = '/build-api/city/add/'
       let data = {
           "name": this.title,
@@ -164,18 +163,15 @@ let app = new Vue({
           "long": this.long,
           "zoom": this.zoom
       }
-      this.formValidation(this.title, "id_c_name")
-      this.formValidation(this.lat, "id_c_lat")
-      this.formValidation(this.long, "id_c_long")
-      this.formValidation(this.zoom, "id_c_zoom")
-      if (this.formErrors) { return }//prevent from sending form
       axios
           .post(url, data)
           .then(response => {
             this.isAlertPanel = true
             this.alert = this.title
+            this.alertType = "fa fa-globe"
             this.isBuildList = true
             this.isCityChange = false
+            this.formValidated("add_c_form")
             this.clearData()
             this.render_buildings()
           })
@@ -185,21 +181,16 @@ let app = new Vue({
     },
     onBuildAdd : function () {
       this.formErrors = false
+      this.formValidation("add_b_form")
+      if (this.formErrors) { return }//prevent from sending form
       let url = '/build-api/add/'
       let data = new FormData()
       data.append("image", this.image)
-      if (! this.image.name ) {
-        this.formErrors = true
-      }
       data.append("title", this.title)
       data.append("intro", this.intro)
       data.append("lat", this.lat)
-      this.formValidation(this.lat, "id_b_lat")
       data.append("long", this.long)
-      this.formValidation(this.long, "id_b_long")
       data.append("zoom", this.zoom)
-      this.formValidation(this.zoom, "id_b_zoom")
-      if (this.formErrors) { return }//prevent from sending form
       axios
           .post(url, data)
           .then(response => {
@@ -209,8 +200,10 @@ let app = new Vue({
             } else {
               this.alert = "New building"
             }
+            this.alertType = "fa fa-building"
             this.isBuildList = true
             this.isBuildAdd = false
+            this.formValidated("add_b_form")
             this.clearData()
             this.render_buildings()
           })
