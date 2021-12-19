@@ -9,6 +9,7 @@
   <div class="col-md-8">
     <h4><strong>{% translate 'Delete building:' %} {{ title }}</strong></h4>
     {% if perms.buildings.delete_building %}
+    <p>{% translate "Building visitors will not be deleted. You must do that manually" %}.</p>
     {% include 'buildings/includes/delete_buttons.html' %}
     {% else %}
     <p>{% translate "You don't have permissions to delete buildings" %}.</p>
