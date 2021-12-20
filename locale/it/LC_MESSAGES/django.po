@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 14:53+0100\n"
+"POT-Creation-Date: 2021-12-20 19:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,9 +20,11 @@ msgstr ""
 
 #: .\buildings\admin.py:27 .\buildings\admin.py:155 .\buildings\forms.py:26
 #: .\buildings\forms.py:72 .\buildings\models.py:63 .\buildings\models.py:65
-#: .\buildings\models.py:605 .\buildings\models.py:607
-#: .\buildings\models.py:623 .\buildings\models.py:682
-#: .\buildings\models.py:684 .\buildings\views\element.py:343
+#: .\buildings\models.py:603 .\buildings\models.py:605
+#: .\buildings\models.py:621 .\buildings\models.py:680
+#: .\buildings\models.py:682
+#: .\buildings\templates\buildings\vue\add_building.html:15
+#: .\buildings\views\element.py:343
 msgid "Image"
 msgstr "Immagine"
 
@@ -34,17 +36,17 @@ msgstr "Mappa"
 msgid "File"
 msgstr "File"
 
-#: .\buildings\admin.py:77 .\buildings\admin.py:90 .\buildings\models.py:434
-#: .\buildings\models.py:843
+#: .\buildings\admin.py:77 .\buildings\admin.py:90 .\buildings\models.py:432
+#: .\buildings\models.py:852
 msgid "Geometry"
 msgstr "Geometria"
 
 #: .\buildings\admin.py:108 .\buildings\forms.py:46 .\buildings\forms.py:57
 #: .\buildings\forms.py:87 .\buildings\forms.py:101 .\buildings\forms.py:117
-#: .\buildings\forms.py:130 .\buildings\forms.py:141 .\buildings\models.py:248
-#: .\buildings\models.py:255 .\buildings\models.py:454
-#: .\buildings\models.py:532 .\buildings\models.py:629
-#: .\buildings\models.py:676 .\buildings\models.py:775
+#: .\buildings\forms.py:130 .\buildings\forms.py:141 .\buildings\models.py:246
+#: .\buildings\models.py:253 .\buildings\models.py:452
+#: .\buildings\models.py:530 .\buildings\models.py:627
+#: .\buildings\models.py:674 .\buildings\models.py:784
 #: .\buildings\templates\buildings\building_detail.html:20
 #: .\buildings\templates\buildings\elements_by_family_list.html:17
 #: .\buildings\templates\buildings\journal_pdf.html:47
@@ -53,7 +55,7 @@ msgstr "Geometria"
 msgid "Building"
 msgstr "Edificio"
 
-#: .\buildings\api_views.py:45
+#: .\buildings\api_views.py:54
 msgid "User can't view DxfImports"
 msgstr "L'utente non può vedere DxfImports"
 
@@ -69,12 +71,12 @@ msgstr "Elimina l'edificio"
 msgid "Caution, can't undo this."
 msgstr "Attenzione, non si può tornare indietro."
 
-#: .\buildings\forms.py:70 .\buildings\forms.py:79 .\buildings\models.py:596
+#: .\buildings\forms.py:70 .\buildings\forms.py:79 .\buildings\models.py:594
 #: .\buildings\templates\buildings\stationimage_list_create.html:13
 msgid "Photo station"
 msgstr "Stazione fotografica"
 
-#: .\buildings\forms.py:103 .\buildings\models.py:455
+#: .\buildings\forms.py:103 .\buildings\models.py:453
 msgid "Parent set"
 msgstr "Set genitore"
 
@@ -82,7 +84,7 @@ msgstr "Set genitore"
 msgid "Can be changed only by staff in admin"
 msgstr "Può essere cambiato solo dallo staff in amministrazione"
 
-#: .\buildings\forms.py:132 .\buildings\models.py:630
+#: .\buildings\forms.py:132 .\buildings\models.py:628
 msgid "Parent family"
 msgstr "Famiglia genitore"
 
@@ -91,8 +93,8 @@ msgstr "Famiglia genitore"
 msgid "Another Building by %(website)s!"
 msgstr "Un altro edificio di %(website)s!"
 
-#: .\buildings\models.py:68 .\buildings\models.py:460 .\buildings\models.py:536
-#: .\buildings\models.py:635 .\buildings\models.py:777
+#: .\buildings\models.py:68 .\buildings\models.py:458 .\buildings\models.py:534
+#: .\buildings\models.py:633 .\buildings\models.py:786
 msgid "Title"
 msgstr "Titolo"
 
@@ -100,7 +102,7 @@ msgstr "Titolo"
 msgid "Building name"
 msgstr "Nome dell'edificio"
 
-#: .\buildings\models.py:71 .\buildings\models.py:780
+#: .\buildings\models.py:71 .\buildings\models.py:789
 msgid "Introduction"
 msgstr "Introduzione"
 
@@ -108,7 +110,7 @@ msgstr "Introduzione"
 msgid "Few words to describe this building"
 msgstr "Qualche parola per descrivere questo edificio"
 
-#: .\buildings\models.py:75 .\buildings\models.py:784
+#: .\buildings\models.py:75 .\buildings\models.py:793
 msgid "Date"
 msgstr "Data"
 
@@ -120,25 +122,17 @@ msgstr "Indirizzo"
 msgid "Something like \"Rome - Monteverde\" is ok"
 msgstr "Qualcosa tipo \"Rome - Monteverde\" va bene"
 
-#: .\buildings\models.py:80
-msgid "Private"
-msgstr "Privato"
-
-#: .\buildings\models.py:81
-msgid "Can be viewed only by authenticated users"
-msgstr "Può essere visto solo da utenti autenticati"
-
-#: .\buildings\models.py:82 .\buildings\models.py:542 .\buildings\models.py:689
-#: .\buildings\views\element.py:344
+#: .\buildings\models.py:80 .\buildings\models.py:540 .\buildings\models.py:687
+#: .\buildings\models.py:755 .\buildings\views\element.py:344
 msgid "Latitude"
 msgstr "Latitudine"
 
-#: .\buildings\models.py:83 .\buildings\models.py:543 .\buildings\models.py:690
-#: .\buildings\views\element.py:344
+#: .\buildings\models.py:81 .\buildings\models.py:541 .\buildings\models.py:688
+#: .\buildings\models.py:756 .\buildings\views\element.py:344
 msgid "Longitude"
 msgstr "Longitudine"
 
-#: .\buildings\models.py:84
+#: .\buildings\models.py:82 .\buildings\models.py:757
 msgid ""
 "Coordinates from Google Maps\n"
 "            or https://openstreetmap.org"
@@ -146,44 +140,46 @@ msgstr ""
 "Coordinate da Google Maps\n"
 "            oppure https://openstreetmap.org"
 
-#: .\buildings\models.py:88 .\buildings\models.py:758
+#: .\buildings\models.py:86 .\buildings\models.py:760
+#: .\buildings\templates\buildings\vue\add_building.html:35
+#: .\buildings\templates\buildings\vue\add_city.html:28
 msgid "Zoom factor"
 msgstr "Fattore di zoom"
 
-#: .\buildings\models.py:89 .\buildings\models.py:759
+#: .\buildings\models.py:87 .\buildings\models.py:761
 msgid "Maximum should be 23"
 msgstr "Al massimo 23"
 
-#: .\buildings\models.py:91
-msgid "visitor"
-msgstr "visitatore"
+#: .\buildings\models.py:89
+msgid "Building visitor"
+msgstr "Visitatore"
 
-#: .\buildings\models.py:199
+#: .\buildings\models.py:197
 #, python-format
 msgid "Building-%(date)s"
 msgstr "Edificio-%(date)s"
 
-#: .\buildings\models.py:213
+#: .\buildings\models.py:211
 msgid "Visitor"
 msgstr "Visitatore"
 
-#: .\buildings\models.py:220
+#: .\buildings\models.py:218
 msgid "Building visitor credentials: "
 msgstr "Credenziali del visitatore: "
 
-#: .\buildings\models.py:221
+#: .\buildings\models.py:219
 msgid "Password: "
 msgstr "Password: "
 
-#: .\buildings\models.py:239
+#: .\buildings\models.py:237
 msgid "Base plan set"
 msgstr "Set di planimetrie di base"
 
-#: .\buildings\models.py:244
+#: .\buildings\models.py:242
 msgid "Base element family"
 msgstr "Famiglie di elementi di base"
 
-#: .\buildings\models.py:249
+#: .\buildings\models.py:247
 #: .\buildings\templates\buildings\building_list.html:7
 #: .\buildings\templates\buildings\building_list_create.html:7
 #: .\buildings\templates\buildings\building_list_new.html:7
@@ -191,84 +187,84 @@ msgstr "Famiglie di elementi di base"
 msgid "Buildings"
 msgstr "Edifici"
 
-#: .\buildings\models.py:256
+#: .\buildings\models.py:254
 msgid "Name"
 msgstr "Nome"
 
-#: .\buildings\models.py:257
+#: .\buildings\models.py:255
 msgid "Name of the building plan"
 msgstr "Nome della planimetria"
 
-#: .\buildings\models.py:259
+#: .\buildings\models.py:257
 msgid "Elevation in meters"
 msgstr "Livello in metri"
 
-#: .\buildings\models.py:260
+#: .\buildings\models.py:258
 msgid "DXF file"
 msgstr "File DXF"
 
-#: .\buildings\models.py:264
+#: .\buildings\models.py:262
 msgid "CPG file"
 msgstr "File CPG"
 
-#: .\buildings\models.py:268
+#: .\buildings\models.py:266
 msgid "DBF file"
 msgstr "File DBF"
 
-#: .\buildings\models.py:272
+#: .\buildings\models.py:270
 msgid "PRJ file"
 msgstr "File PRJ"
 
-#: .\buildings\models.py:276
+#: .\buildings\models.py:274
 msgid "SHP file"
 msgstr "File SHP"
 
-#: .\buildings\models.py:280
+#: .\buildings\models.py:278
 msgid "SHX file"
 msgstr "File SHX"
 
-#: .\buildings\models.py:284
+#: .\buildings\models.py:282
 msgid "Refresh geometry"
 msgstr "Ripristina la geometria"
 
-#: .\buildings\models.py:424 .\buildings\models.py:516
-#: .\buildings\models.py:534 .\buildings\models.py:678
+#: .\buildings\models.py:422 .\buildings\models.py:514
+#: .\buildings\models.py:532 .\buildings\models.py:676
 msgid "Building plan"
 msgstr "Planimetria"
 
-#: .\buildings\models.py:425
+#: .\buildings\models.py:423
 msgid "Building plans"
 msgstr "Planimetrie"
 
-#: .\buildings\models.py:430 .\buildings\models.py:449
+#: .\buildings\models.py:428 .\buildings\models.py:447
 msgid "Plan geometry"
 msgstr "Geometria della planimetria"
 
-#: .\buildings\models.py:432
+#: .\buildings\models.py:430
 msgid "Popup"
 msgstr "Popup"
 
-#: .\buildings\models.py:433
+#: .\buildings\models.py:431
 msgid "Geometry description in popup"
 msgstr "Descrizione della geometria nel popup"
 
-#: .\buildings\models.py:435 .\buildings\models.py:844
+#: .\buildings\models.py:433 .\buildings\models.py:853
 msgid "can be LineString or Polygon"
 msgstr "può essere LineString o Polygon"
 
-#: .\buildings\models.py:437
+#: .\buildings\models.py:435
 msgid "Is 3D"
 msgstr "E' 3D"
 
-#: .\buildings\models.py:438
+#: .\buildings\models.py:436
 msgid "Use third dimension in camera view"
 msgstr "Usa la terza dimensione nella vista in soggettiva"
 
-#: .\buildings\models.py:450
+#: .\buildings\models.py:448
 msgid "Plan geometries"
 msgstr "Geometrie della planimetria"
 
-#: .\buildings\models.py:457 .\buildings\models.py:632
+#: .\buildings\models.py:455 .\buildings\models.py:630
 msgid ""
 "Choose carefully,\n"
 "            can be changed only by staff in admin"
@@ -276,174 +272,175 @@ msgstr ""
 "Scegli con attenzione,\n"
 "            può essere modificato solo dallo staff in amministrazione"
 
-#: .\buildings\models.py:461
+#: .\buildings\models.py:459
 msgid "Set name"
 msgstr "Nome del set"
 
-#: .\buildings\models.py:463 .\buildings\models.py:539
-#: .\buildings\models.py:638 .\buildings\models.py:687
+#: .\buildings\models.py:461 .\buildings\models.py:537
+#: .\buildings\models.py:636 .\buildings\models.py:685
+#: .\buildings\templates\buildings\vue\add_building.html:23
 #: .\buildings\views\element.py:344
 msgid "Description"
 msgstr "Descrizione"
 
-#: .\buildings\models.py:465
+#: .\buildings\models.py:463
 msgid "Few words to describe the set"
 msgstr "Poche parole per descrivere il set"
 
-#: .\buildings\models.py:469
+#: .\buildings\models.py:467
 #: .\buildings\templates\buildings\building_detail.html:44
 #: .\buildings\templates\buildings\plan_detail.html:54
 msgid "Plans"
 msgstr "Planimetrie"
 
-#: .\buildings\models.py:471
+#: .\buildings\models.py:469
 msgid "Choose plans to show in this set"
 msgstr "Scegli le planimetrie da mostrare nel set"
 
-#: .\buildings\models.py:510 .\buildings\models.py:518
+#: .\buildings\models.py:508 .\buildings\models.py:516
 msgid "Plan set"
 msgstr "Set di planimetrie"
 
-#: .\buildings\models.py:511
+#: .\buildings\models.py:509
 #: .\buildings\templates\buildings\plan_detail.html:46
 msgid "Plan sets"
 msgstr "Set di planimetrie"
 
-#: .\buildings\models.py:519
+#: .\buildings\models.py:517
 msgid "Visible"
 msgstr "Visibile"
 
-#: .\buildings\models.py:520
+#: .\buildings\models.py:518
 msgid "Check if plan is visible in this plan set"
 msgstr "Spunta se la planimetria è visibile in questo set"
 
-#: .\buildings\models.py:523
+#: .\buildings\models.py:521
 msgid "Plan visibility"
 msgstr "Visibilità della planimetria"
 
-#: .\buildings\models.py:526
+#: .\buildings\models.py:524
 #, python-format
 msgid "Another photo station by %(sitename)s!"
 msgstr "Un'altra stazione fotografica di %(sitename)s!"
 
-#: .\buildings\models.py:537
+#: .\buildings\models.py:535
 msgid "Title of the photo station"
 msgstr "Titolo della stazione fotografica"
 
-#: .\buildings\models.py:597
+#: .\buildings\models.py:595
 msgid "Photo stations"
 msgstr "Stazioni fotografiche"
 
-#: .\buildings\models.py:603
+#: .\buildings\models.py:601
 msgid "Station"
 msgstr "Stazione"
 
-#: .\buildings\models.py:604
+#: .\buildings\models.py:602
 msgid "Date:"
 msgstr "Data:"
 
-#: .\buildings\models.py:610
+#: .\buildings\models.py:608
 msgid "Caption"
 msgstr "Didascalia"
 
-#: .\buildings\models.py:624
+#: .\buildings\models.py:622
 msgid "Images"
 msgstr "Immagini"
 
-#: .\buildings\models.py:636
+#: .\buildings\models.py:634
 msgid "Family name"
 msgstr "Nome della famiglia"
 
-#: .\buildings\models.py:640
+#: .\buildings\models.py:638
 msgid "Few words to describe the family"
 msgstr "Poche parole per descrivere la famiglia"
 
-#: .\buildings\models.py:643 .\buildings\models.py:692
+#: .\buildings\models.py:641 .\buildings\models.py:690
 #: .\buildings\views\element.py:345
 msgid "Data sheet"
 msgstr "Foglio dati"
 
-#: .\buildings\models.py:644 .\buildings\models.py:693
+#: .\buildings\models.py:642 .\buildings\models.py:691
 msgid "A dictionary of element features"
 msgstr "Un dizionario di caratteristiche dell'elemento"
 
-#: .\buildings\models.py:670
+#: .\buildings\models.py:668
 msgid "Element Family"
 msgstr "Famiglia di elementi"
 
-#: .\buildings\models.py:671
+#: .\buildings\models.py:669
 msgid "Element Families"
 msgstr "Famiglie di elementi"
 
-#: .\buildings\models.py:681 .\buildings\views\element.py:342
+#: .\buildings\models.py:679 .\buildings\views\element.py:342
 msgid "Family"
 msgstr "Famiglia"
 
-#: .\buildings\models.py:730
+#: .\buildings\models.py:728
 #: .\buildings\templates\buildings\includes\station_gallery.html:35
 #: .\buildings\templates\buildings\journal_pdf.html:55
 #: .\buildings\views\element.py:348
 msgid "No description"
 msgstr "Nessuna descrizione"
 
-#: .\buildings\models.py:751
+#: .\buildings\models.py:749
 msgid "Element"
 msgstr "Elemento"
 
-#: .\buildings\models.py:752
+#: .\buildings\models.py:750
 msgid "Elements"
 msgstr "Elementi"
 
-#: .\buildings\models.py:765
+#: .\buildings\models.py:774
 msgid "City"
 msgstr "Città"
 
-#: .\buildings\models.py:766
+#: .\buildings\models.py:775
 msgid "Cities"
 msgstr "Città"
 
-#: .\buildings\models.py:770
+#: .\buildings\models.py:779
 #, python-format
 msgid "Another building log entry by %(name)s!"
 msgstr "Un altro giornale di cantiere di %(name)s!"
 
-#: .\buildings\models.py:778
+#: .\buildings\models.py:787
 msgid "The title of the building log entry"
 msgstr "Titolo del giornale di cantiere"
 
-#: .\buildings\models.py:783
+#: .\buildings\models.py:792
 msgid "Text"
 msgstr "Testo"
 
-#: .\buildings\models.py:786
+#: .\buildings\models.py:795
 msgid "Categories"
 msgstr "Categorie"
 
-#: .\buildings\models.py:787
+#: .\buildings\models.py:796
 msgid "Comma separated list of categories"
 msgstr "Lista di categorie separate da virgole"
 
-#: .\buildings\models.py:790
+#: .\buildings\models.py:799
 msgid "Author"
 msgstr "Autore"
 
-#: .\buildings\models.py:829
+#: .\buildings\models.py:838
 msgid "Building log entry"
 msgstr "Giornale di cantiere"
 
-#: .\buildings\models.py:830
+#: .\buildings\models.py:839
 msgid "Building log entries"
 msgstr "Giornali di cantiere"
 
-#: .\buildings\models.py:835
+#: .\buildings\models.py:844
 msgid "Plan DXF import"
 msgstr "DXF importato nella planimetria"
 
-#: .\buildings\models.py:847
+#: .\buildings\models.py:856
 msgid "DXF Import"
 msgstr "DXF importato"
 
-#: .\buildings\models.py:848
+#: .\buildings\models.py:857
 msgid "DXF Imports"
 msgstr "DXF importati"
 
@@ -471,11 +468,13 @@ msgstr "Correggi l'errore qui sotto"
 msgid "Fix the errors below"
 msgstr "Correggi gli errori qui sotto"
 
-#: .\buildings\templates\buildings\build_login.html:44
+#: .\buildings\templates\buildings\build_login.html:41
+#: .\buildings\templates\buildings\vue\add_building.html:38
+#: .\buildings\templates\buildings\vue\add_city.html:31
 msgid "Submit"
 msgstr "Invia"
 
-#: .\buildings\templates\buildings\build_login.html:45
+#: .\buildings\templates\buildings\build_login.html:42
 #: .\buildings\templates\buildings\includes\add_buttons.html:15
 msgid "Fields with asterisk (*) are required"
 msgstr "I campi con l'asterisco (*) sono richiesti"
@@ -528,7 +527,8 @@ msgstr "Nessun giornale di cantiere disponibile"
 #: .\buildings\templates\buildings\building_list.html:30
 #: .\buildings\templates\buildings\building_list_create.html:30
 #: .\buildings\templates\buildings\building_list_create.html:50
-#: .\buildings\templates\buildings\building_list_new.html:26
+#: .\buildings\templates\buildings\vue\add_building.html:6
+#: .\buildings\templates\buildings\vue\list_buildings.html:15
 msgid "Add building"
 msgstr "Aggiungi edificio"
 
@@ -563,7 +563,11 @@ msgstr "Cancella l'edificio"
 msgid "Delete building:"
 msgstr "Cancella l'edificio:"
 
-#: .\buildings\templates\buildings\building_form_delete.html:14
+#: .\buildings\templates\buildings\building_form_delete.html:12
+msgid "Building visitors will not be deleted. You must do that manually"
+msgstr ""
+
+#: .\buildings\templates\buildings\building_form_delete.html:15
 msgid "You don't have permissions to delete buildings"
 msgstr "Non hai le credenziali per cancellare edifici"
 
@@ -609,13 +613,12 @@ msgstr "Non hai le credenziali per modificare edifici"
 
 #: .\buildings\templates\buildings\building_list.html:19
 #: .\buildings\templates\buildings\building_list_create.html:19
-#: .\buildings\templates\buildings\building_list_new.html:21
+#: .\buildings\templates\buildings\vue\list_buildings.html:6
 msgid "Map of all buildings"
 msgstr "Mappa di tutti gli edifici"
 
 #: .\buildings\templates\buildings\building_list.html:36
 #: .\buildings\templates\buildings\building_list_create.html:36
-#: .\buildings\templates\buildings\building_list_new.html:30
 msgid "Manage cities (in admin)"
 msgstr "Gestisci città (in amministrazione)"
 
@@ -821,6 +824,10 @@ msgstr "Aggiungi planimetria"
 msgid "Add photo station"
 msgstr "Aggiungi stazione fotografica"
 
+#: .\buildings\templates\buildings\includes\edit_buttons_new.html:31
+msgid "Locate user"
+msgstr "Localizza l'utente"
+
 #: .\buildings\templates\buildings\includes\element_detail.html:6
 msgid "Building: "
 msgstr "Edificio: "
@@ -855,6 +862,8 @@ msgid "Modify directory (in admin)"
 msgstr "Modifica la directory (in amministrazione)"
 
 #: .\buildings\templates\buildings\includes\form_errors.html:5
+#: .\buildings\templates\buildings\vue\add_building.html:11
+#: .\buildings\templates\buildings\vue\add_city.html:12
 msgid "Fix the errors below, please"
 msgstr "Correggi gli errori qui sotto, per favore"
 
@@ -1115,6 +1124,69 @@ msgstr "Aggiungi un'immagine"
 msgid "You don't have permissions to add images"
 msgstr "Non hai le credenziali per aggiungere immagini"
 
+#: .\buildings\templates\buildings\vue\add_building.html:9
+msgid "Zoom and click on the map to automatically set building location"
+msgstr "Fai zoom e click sulla mappa per definire la posizione dell'edificio"
+
+#: .\buildings\templates\buildings\vue\add_building.html:19
+msgid "Building title"
+msgstr "Nome dell'edificio"
+
+#: .\buildings\templates\buildings\vue\add_building.html:27
+msgid "Building latitude"
+msgstr "Latitudine dell'edificio"
+
+#: .\buildings\templates\buildings\vue\add_building.html:31
+msgid "Building longitude"
+msgstr "Longitudine dell'edificio"
+
+#: .\buildings\templates\buildings\vue\add_building.html:40
+#: .\buildings\templates\buildings\vue\add_city.html:33
+msgid "Cancel"
+msgstr "Annulla"
+
+#: .\buildings\templates\buildings\vue\add_city.html:6
+msgid "Change city"
+msgstr "Modifica la città"
+
+#: .\buildings\templates\buildings\vue\add_city.html:9
+msgid "City is map starting point when there are no buildings"
+msgstr "La città è il punto di partenza quando non sono definiti edifici"
+
+#: .\buildings\templates\buildings\vue\add_city.html:10
+msgid "Zoom and click on the map to automatically set starting point"
+msgstr "Fai zoom e click sulla mappa per definire il punto di partenza"
+
+#: .\buildings\templates\buildings\vue\add_city.html:16
+msgid "City name"
+msgstr "Nome della città"
+
+#: .\buildings\templates\buildings\vue\add_city.html:20
+msgid "City latitude"
+msgstr "Latitudine della città"
+
+#: .\buildings\templates\buildings\vue\add_city.html:24
+msgid "City longitude"
+msgstr "Longitudine della città"
+
+#: .\buildings\templates\buildings\vue\list_buildings.html:9
+msgid "Click on buildings to visit them"
+msgstr "Fai click sugli edifici per visitarli"
+
+#: .\buildings\templates\buildings\vue\list_buildings.html:10
+msgid ""
+"Create buildings or set starting view point (only if you have permissions)"
+msgstr ""
+"Crea edifici o definisci il punto di partenza (servono permessi)"
+
+#: .\buildings\templates\buildings\vue\list_buildings.html:12
+msgid "created successfully!"
+msgstr "creato/a con successo!"
+
+#: .\buildings\templates\buildings\vue\list_buildings.html:19
+msgid "Manage cities"
+msgstr "Gestisci città"
+
 #: .\buildings\urls.py:9
 msgid "add/"
 msgstr "aggiungi/"
@@ -1240,38 +1312,30 @@ msgstr ""
 msgid "<slug:slug>/journal/all/"
 msgstr "<slug:slug>/giornale/tutti/"
 
-#: .\buildings\views\building.py:162 .\buildings\views\building.py:399
-#: .\buildings\views\building.py:620 .\buildings\views\building.py:657
-#: .\buildings\views\element.py:303 .\buildings\views\element.py:374
-#: .\buildings\views\station.py:183 .\buildings\views\station.py:213
-#: .\buildings\views\station.py:347 .\buildings\views\station.py:374
-msgid "User has no permission to view this building"
-msgstr "L'utente non ha le credenziali per vedere questo edificio"
-
-#: .\buildings\views\building.py:166 .\buildings\views\building.py:543
-#: .\buildings\views\building.py:586
+#: .\buildings\views\building.py:178 .\buildings\views\building.py:577
+#: .\buildings\views\building.py:619
 msgid "Plan set does not belong to Building"
 msgstr "Il set di planimetrie non appartiene all'edificio"
 
-#: .\buildings\views\building.py:240 .\buildings\views\building.py:447
+#: .\buildings\views\building.py:263 .\buildings\views\building.py:479
 #: .\buildings\views\element.py:336
 msgid "No plan"
 msgstr "Nessuna planimetria"
 
-#: .\buildings\views\building.py:360 .\buildings\views\building.py:401
-#: .\buildings\views\building.py:465
+#: .\buildings\views\building.py:397 .\buildings\views\building.py:434
+#: .\buildings\views\building.py:497
 msgid "Plan does not belong to Building"
 msgstr "La planimetria non appartiene all'edificio"
 
-#: .\buildings\views\building.py:624
+#: .\buildings\views\building.py:655
 msgid "Journal does not belong to Building"
 msgstr "Il giornale non appartiene all'edificio"
 
-#: .\buildings\views\element.py:78 .\buildings\views\element.py:118
+#: .\buildings\views\element.py:80 .\buildings\views\element.py:119
 msgid "Element family does not belong to Building"
 msgstr "La famiglia di elementi non appartiene all'edificio"
 
-#: .\buildings\views\element.py:207 .\buildings\views\element.py:271
+#: .\buildings\views\element.py:210 .\buildings\views\element.py:273
 msgid "Element does not belong to Building"
 msgstr "L'elemento' non appartiene all'edificio"
 
@@ -1295,16 +1359,20 @@ msgstr "Y"
 msgid "No image"
 msgstr "Nessuna immagine"
 
-#: .\buildings\views\station.py:87 .\buildings\views\station.py:152
-#: .\buildings\views\station.py:187 .\buildings\views\station.py:217
-#: .\buildings\views\station.py:269 .\buildings\views\station.py:304
+#: .\buildings\views\element.py:373
+msgid "User cannot visit this Building"
+msgstr "L'utente non può visitare questo edificio"
+
+#: .\buildings\views\station.py:89 .\buildings\views\station.py:154
+#: .\buildings\views\station.py:185 .\buildings\views\station.py:212
+#: .\buildings\views\station.py:265 .\buildings\views\station.py:300
 msgid "Station does not belong to Building"
 msgstr "La stazione non appartiene all'edificio"
 
-#: .\buildings\views\station.py:240
+#: .\buildings\views\station.py:235
 msgid "User has no permission to add images"
 msgstr "L'utente non ha le credenziali per aggiungere immagini"
 
-#: .\buildings\views\station.py:271 .\buildings\views\station.py:306
+#: .\buildings\views\station.py:267 .\buildings\views\station.py:302
 msgid "Image does not belong to Photo Station"
-msgstr "L'immagine' non appartiene alla stazione fotografica"
+msgstr "L'immagine non appartiene alla stazione fotografica"
