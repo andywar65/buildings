@@ -6,6 +6,7 @@
       <h4 class="card-title"><strong>{% translate "Add building" %}</strong></h4>
     </div>
     <div class="card-body">
+      <p><small>{% translate 'Zoom and click on the map to automatically set building location' %}.</small></p>
       <p v-if="formErrors" class="alert alert-danger" role="alert">
         {% translate 'Fix the errors below, please' %}.
       </p>
@@ -24,15 +25,15 @@
         </div>
         <div class="form-group">
             <label>{% translate "Building latitude" %}*</label>
-            <input id="id_b_lat" type="number" step="0.000000000000001" class="form-control" v-model="lat" required>
+            <input id="id_b_lat" type="number" step="0.000000000000001" min="-90" max="90" class="form-control" v-model="lat" required>
         </div>
         <div class="form-group">
             <label>{% translate "Building longitude" %}*</label>
-            <input id="id_b_long" type="number" step="0.000000000000001" class="form-control" v-model="long" required>
+            <input id="id_b_long" type="number" step="0.000000000000001" min="-180" max="180" class="form-control" v-model="long" required>
         </div>
         <div class="form-group">
             <label>{% translate "Zoom factor" %}*</label>
-            <input id="id_b_zoom" type="number" class="form-control" v-model="zoom" required>
+            <input id="id_b_zoom" type="number" min="0" max="23" class="form-control" v-model="zoom" required>
         </div>
         <a class="btn btn-success" href="#" @click="onBuildAdd" title="{% translate "Submit" %}">
           <i class="fa fa-check"></i></a>

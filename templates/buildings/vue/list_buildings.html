@@ -6,6 +6,8 @@
       <h4 class="card-title"><strong>{% translate "Map of all buildings" %}</strong></h4>
     </div>
     <div class="card-body">
+      <p><small>{% translate 'Click on buildings to visit them' %}.</small></p>
+      <p><small>{% translate 'Create buildings or set starting view point (only if you have permissions)' %}.</small></p>
       <p v-if="isAlertPanel" class="alert alert-success" role="alert">
         <strong><i :class="alertType"></i> [[ alert ]]</strong> {% translate 'created successfully!' %}
       </p>
