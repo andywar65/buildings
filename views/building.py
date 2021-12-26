@@ -48,12 +48,12 @@ class AlertMixin:
                 context[ param ] = self.request.GET[ param ]
         return context
 
-class BuildingListView( AlertMixin, TemplateView ):
+class BuildingListView( TemplateView ):#AlertMixin, 
     template_name = 'buildings/building_list_new.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = self.add_alerts_to_context(context)
+        #context = self.add_alerts_to_context(context)
         context['map_data'] = {
             'mapbox_token': settings.MAPBOX_TOKEN,
             'city_lat': settings.CITY_LAT,

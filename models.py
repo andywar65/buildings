@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _g
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import make_password
 from django.core.mail import EmailMessage
@@ -26,7 +27,9 @@ from colorfield.fields import ColorField
 from taggit.managers import TaggableManager
 
 from .map_utils import workflow
-from users.models import User
+#from users.models import User
+
+User = get_user_model()
 
 def generate_unique_slug(klass, field):
     """
