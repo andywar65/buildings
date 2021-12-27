@@ -16,8 +16,8 @@
             <input type="file" id="id_image" ref="image" accept="image/*" class="form-control-file" @change="handleImageUpload()" required>
         </div>
         <div class="form-group">
-            <label>{% translate "Building title" %}</label>
-            <input type="text" class="form-control" v-model="title">
+            <label>{% translate "Building title" %}*</label>
+            <input type="text" class="form-control" v-model="title" required>
         </div>
         <div class="form-group">
             <label>{% translate "Description" %}</label>

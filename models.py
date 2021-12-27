@@ -197,8 +197,8 @@ class Building(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.title:
-            self.title = _('Building-%(date)s') % {
-                'date': self.date.strftime("%d-%m-%y")}
+            self.title = _('Building-%(random)s') % {
+                'random': get_random_string(7)}
         if not self.slug:
             self.slug = generate_unique_slug(Building, self.title)
         self.last_updated = now()
