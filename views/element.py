@@ -368,9 +368,10 @@ def building_element_download(request, slug):
         { 'building': _('Buildings') }
         )
     build = get_object_or_404( Building, slug = slug )
-    if request.user.profile.immutable:
-        if request.user != build.visitor:
-            raise Http404(_("User cannot visit this Building"))
+    user = self.request.user
+    is_guest = user.groups.filter(name='Building Guest').exists()
+    if is_guest and user != build.visitor:
+        raise Http404(_("User cannot visit this Building"))
     qs = Element.objects.filter(build_id=build.id)
 
     writer = csv.writer(response)

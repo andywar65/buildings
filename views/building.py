@@ -36,7 +36,8 @@ class VisitorPassTestMix(UserPassesTestMixin):
     def test_func(self):
         build = self.build
         user = self.request.user
-        if user.profile.immutable and user != build.visitor:
+        is_guest = user.groups.filter(name='Building Guest').exists()
+        if is_guest and user != build.visitor:
             return False
         return True
 
@@ -48,7 +49,7 @@ class AlertMixin:
                 context[ param ] = self.request.GET[ param ]
         return context
 
-class BuildingListView( TemplateView ):#AlertMixin, 
+class BuildingListView( TemplateView ):#AlertMixin,
     template_name = 'buildings/building_list_new.html'
 
     def get_context_data(self, **kwargs):
@@ -77,12 +78,14 @@ class BuildingRedirectView( VisitorPermReqMix, RedirectView ):
         return context
 
     def get_redirect_url(self, *args, **kwargs):
-        if (self.request.user.profile.immutable and
-            self.request.user != self.build.visitor):
+        build = self.build
+        user = self.request.user
+        is_guest = user.groups.filter(name='Building Guest').exists()
+        if is_guest and user != build.visitor:
             return reverse('buildings:building_login',
-                kwargs={'slug': self.build.slug })
+                kwargs={'slug': build.slug })
         else:
-            return self.build.get_full_path()
+            return build.get_full_path()
 
 class BuildingLoginView(LoginView):
     template_name = 'buildings/build_login.html'
@@ -180,7 +183,8 @@ class BuildingDetailView(PermissionRequiredMixin, UserPassesTestMixin,
     def test_func(self):
         build = self.get_object()
         user = self.request.user
-        if user.profile.immutable and user != build.visitor:
+        is_guest = user.groups.filter(name='Building Guest').exists()
+        if is_guest and user != build.visitor:
             return False
         return True
 
@@ -275,7 +279,8 @@ class BuildingUpdateView(PermissionRequiredMixin, UserPassesTestMixin,
     def test_func(self):
         build = self.get_object()
         user = self.request.user
-        if user.profile.immutable and user != build.visitor:
+        is_guest = user.groups.filter(name='Building Guest').exists()
+        if is_guest and user != build.visitor:
             return False
         return True
 
