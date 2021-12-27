@@ -223,10 +223,6 @@ class Building(models.Model):
             mailto = [ self.visitor.email, ]
             email = EmailMessage(subject, body, settings.SERVER_EMAIL, mailto)
             email.send()
-            #modify profile
-            profile = self.visitor.profile
-            profile.immutable = True
-            profile.save()
         super(Building, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test
