@@ -1,3 +1,5 @@
+import copy
+
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.utils.translation import gettext as _
@@ -7,6 +9,27 @@ from rest_framework_gis import filters
 
 from .models import Building, Plan, DxfImport, City
 from .serializers import *
+
+class ViewDjangoModelPermissions(permissions.DjangoModelPermissions):
+    """
+    Extend DjangoModelPermissions to GET requests.
+    """
+    def __init__(self):
+        # you need deepcopy when you inherit a dictionary type
+        self.perms_map = copy.deepcopy(self.perms_map)
+        self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+
+class IsBuildingVisitor(permissions.BasePermission):
+    """
+    Allows access to users that are not in Building Guest group. If they are,
+    they must be Building visitor.
+    """
+    def has_permission(self, request, view):
+        is_guest = request.user.groups.filter(name='Building Guest').exists()
+        if is_guest:
+            return request.user == view.plan.build.visitor
+        else:
+            return True
 
 class BuildingsListApiView(generics.ListAPIView):
     queryset = Building.objects.all()
@@ -35,17 +58,11 @@ class DxfImportsApiView(generics.ListAPIView):
 
 class DxfImportsByPlanApiView(generics.ListAPIView):
     serializer_class = DxfImportSerializer
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
 
     def setup(self, request, *args, **kwargs):
         super(DxfImportsByPlanApiView, self).setup(request, *args, **kwargs)
         self.plan = get_object_or_404( Plan, id = self.kwargs['pk'] )
-        build = self.plan.build
-        user = self.request.user
-        if not user.has_perm('buildings.view_dxfimport'):
-            raise Http404(_("User can't view DxfImports"))
-        is_guest = user.groups.filter(name='Building Guest').exists()
-        if is_guest and user != build.visitor:
-            raise Http404(_("User can't view DxfImports"))
 
     def get_queryset(self):
         queryset = DxfImport.objects.filter(plan_id=self.plan.id)
