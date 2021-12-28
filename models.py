@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 from math import radians, sin, cos
+from geopy.geocoders import Nominatim
 #radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 
 from django.db import models, transaction
@@ -206,6 +207,12 @@ class Building(models.Model):
             self.location = Point( self.long, self.lat )
             self.long = None
             self.lat = None
+        if not self.address:
+            geolocator = Nominatim(user_agent=settings.DEFAULT_RECIPIENT)
+            loc = geolocator.reverse(str(self.location.coords[1])+","+
+                str(self.location.coords[0]))
+            if loc.address:
+                self.address = loc.address
         if not self.visitor:
             visitor_name = 'visitor-' + get_random_string(7)
             password = User.objects.make_random_password()
