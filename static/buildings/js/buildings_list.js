@@ -21,7 +21,6 @@ let app = new Vue({
       isCityChange : false,
       isBuildAdd : false,
       formErrors : false,
-      image : null,
       title : "",
       lat : null,
       long : null,
@@ -135,7 +134,6 @@ let app = new Vue({
       this.zoom = this.map.getZoom()
     },
     clearData : function () {
-      this.file = null
       this.title = ""
       this.lat = null
       this.long = null
