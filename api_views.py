@@ -9,12 +9,8 @@ from .models import Building, Plan, DxfImport, City
 from .serializers import *
 
 class BuildingsListApiView(generics.ListAPIView):
-
-    #bbox_filter_field = "location"
-    #filter_backends = (filters.InBBoxFilter,)
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
-    #bbox_filter_include_overlapping = True
 
 class BuildingCreateApiView(generics.CreateAPIView):
     queryset = Building.objects.all()
@@ -22,7 +18,6 @@ class BuildingCreateApiView(generics.CreateAPIView):
     serializer_class = BuildingLatLongSerializer
 
 class CityListApiView(generics.ListAPIView):
-
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
@@ -32,7 +27,6 @@ class CityCreateApiView(generics.CreateAPIView):
     serializer_class = CityLatLongSerializer
 
 class DxfImportsApiView(generics.ListAPIView):
-
     bbox_filter_field = "geom"
     filter_backends = (filters.InBBoxFilter,)
     queryset = DxfImport.objects.all()
@@ -40,17 +34,17 @@ class DxfImportsApiView(generics.ListAPIView):
     bbox_filter_include_overlapping = True
 
 class DxfImportsByPlanApiView(generics.ListAPIView):
-
-    #bbox_filter_field = "geom"
-    #filter_backends = (filters.InBBoxFilter,)
-    #queryset = DxfImport.objects.all()
     serializer_class = DxfImportSerializer
-    #bbox_filter_include_overlapping = True
 
     def setup(self, request, *args, **kwargs):
         super(DxfImportsByPlanApiView, self).setup(request, *args, **kwargs)
         self.plan = get_object_or_404( Plan, id = self.kwargs['pk'] )
-        if not self.request.user.has_perm('buildings.view_dxfimport'):
+        build = self.plan.build
+        user = self.request.user
+        if not user.has_perm('buildings.view_dxfimport'):
+            raise Http404(_("User can't view DxfImports"))
+        is_guest = user.groups.filter(name='Building Guest').exists()
+        if is_guest and user != build.visitor:
             raise Http404(_("User can't view DxfImports"))
 
     def get_queryset(self):
