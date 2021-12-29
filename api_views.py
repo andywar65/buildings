@@ -21,8 +21,8 @@ class ViewDjangoModelPermissions(permissions.DjangoModelPermissions):
 
 class IsBuildingVisitor(permissions.BasePermission):
     """
-    Allows access to users that are not in Building Guest group. If they are,
-    they must be Building visitor.
+    User test permission. If user is in 'Building Guest' permission group, he
+    must be Building visitor.
     """
     def has_permission(self, request, view):
         is_guest = request.user.groups.filter(name='Building Guest').exists()

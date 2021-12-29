@@ -86,6 +86,25 @@ class BuildingRedirectView( VisitorPermReqMix, RedirectView ):
         else:
             return build.get_full_path()
 
+class BuildingTemplateView( VisitorPermReqMix, VisitorPassTestMix,
+    TemplateView ):
+    template_name = 'buildings/building_detail.html'
+    permission_required = 'buildings.view_building'
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingTemplateView, self).setup(request, *args, **kwargs)
+        #control if building exists
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['slug'] )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['build'] = self.build
+        context['map_data'] = {
+            'mapbox_token': settings.MAPBOX_TOKEN,
+            }
+        return context
+
 class BuildingLoginView(LoginView):
     template_name = 'buildings/build_login.html'
     form_class = BuildingAuthenticationForm
