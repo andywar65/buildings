@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from rest_framework import generics, permissions
 from rest_framework_gis import filters
 
-from .models import Building, Plan, DxfImport, City
+from .models import Building, Plan, PlanSet, DxfImport, City
 from .serializers import *
 
 class ViewDjangoModelPermissions(permissions.DjangoModelPermissions):
@@ -34,6 +34,16 @@ class IsBuildingVisitor(permissions.BasePermission):
 class BuildingsListApiView(generics.ListAPIView):
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
+
+class PlanSetRetrieveApiView(generics.RetrieveAPIView):
+    queryset = PlanSet.objects.all()
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
+    serializer_class = PlanSetSerializer
+
+    def setup(self, request, *args, **kwargs):
+        super(PlanSetRetrieveApiView, self).setup(request, *args, **kwargs)
+        self.planset = get_object_or_404( PlanSet, id = self.kwargs['pk'] )
+        self.build = self.planset.build
 
 class BuildingRetrieveApiView(generics.RetrieveAPIView):
     queryset = Building.objects.all()

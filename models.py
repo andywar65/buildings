@@ -95,6 +95,10 @@ class Building(models.Model):
     def __str__(self):
         return self.title
 
+    def get_entry_planset_id(self):
+        planset = self.building_planset.get(active=True)
+        return planset.id
+
     def get_base_slug(self):
         return 'base_'+str(self.id)
 
@@ -307,7 +311,7 @@ class Plan(models.Model):
             gmd['popup'] = gm.popup
             geometry.append(gmd)
         return {'id': self.id, 'geometry': geometry,
-            'title': self.title, }
+            'title': self.title, 'elevation': self.elev, }
 
     @transaction.atomic
     def save_dxf_imports(self, shp_str):
@@ -499,6 +503,16 @@ class PlanSet(MP_Node):
                 plan_id=plan.id)
             plan_visibility[plan] = ( pv.id, pv.visibility )
         return plans, plan_visibility
+
+    def get_plans_to_serialize(self):
+        all_plans, plan_visibility = self.get_self_and_ancestor_plans()
+        plans = []
+        for plan in all_plans.reverse():
+            plan_temp = plan.map_dictionary()
+            visibility = plan_visibility[plan]
+            plan_temp['visible'] = visibility[1]
+            plans.append(plan_temp)
+        return plans
 
     def save(self, *args, **kwargs):
         if not self.slug:

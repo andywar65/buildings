@@ -14,6 +14,7 @@ let app = new Vue({
       mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       mb_id : 'mapbox/satellite-v9',
+      activePlans : [],
       alert : "",
       alertType : "",
       isAlertPanel : false,
@@ -84,11 +85,12 @@ let app = new Vue({
           this.map_data.city_zoom)
       }
     },
-    render_building : async function () {
+    renderBuilding : async function () {
       this.buildLayerGroup.clearLayers()
       let buildgeo = await this.load_building()
       markers = L.geoJSON(buildgeo,
-        { pointToLayer: this.buildingPointToLayer, onEachFeature: this.onEachBuildingFeature })
+        { pointToLayer: this.buildingPointToLayer,
+          onEachFeature: this.onEachBuildingFeature })
       markers.addTo(this.buildLayerGroup)
       try {
         this.map.setView([buildgeo.geometry.coordinates[1],
@@ -100,6 +102,11 @@ let app = new Vue({
           .on('locationfound', e => this.map.setView(e.latlng, 10))
           .on('locationerror', () => this.setCityView())
       }
+    },
+    getActivePlans : async function (set) {
+      let jsonset = await fetch(`/build-api/set/` + set + '/plans')
+      planset = await jsonset.json()
+      this.activePlans = planset.plans
     },
     handleImageUpload : function () {
       this.image = this.$refs.image.files[0]
@@ -175,7 +182,7 @@ let app = new Vue({
             this.isCityChange = false
             this.formValidated("add_c_form")
             this.clearData()
-            this.render_buildings()
+            this.renderBuildings()
           })
           .catch(error => {
               console.log(error)
@@ -207,7 +214,7 @@ let app = new Vue({
             this.isBuildAdd = false
             this.formValidated("add_b_form")
             this.clearData()
-            this.render_buildings()
+            this.renderBuildings()
           })
           .catch(error => {
               console.log(error)
@@ -224,6 +231,7 @@ let app = new Vue({
         iconColor: 'white',
       })
     this.setupLeafletMap()
-    this.render_building()
+    this.renderBuilding()
+    this.getActivePlans(this.map_data.entry_planset)
   }
 })

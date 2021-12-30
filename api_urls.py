@@ -7,6 +7,7 @@ urlpatterns = [
     path('all/', BuildingsListApiView.as_view(), ),
     path('add/', BuildingCreateApiView.as_view(), ),
     path('<pk>/', BuildingRetrieveApiView.as_view(), ),
+    path('set/<pk>/plans/', PlanSetRetrieveApiView.as_view(), ),
     path('city/all/', CityListApiView.as_view(), ),
     path('city/add/', CityCreateApiView.as_view(), ),
     path('dxf/', DxfImportsApiView.as_view(), ),

@@ -106,6 +106,7 @@ class BuildingTemplateView( VisitorPermReqMix, VisitorPassTestMix,
             'city_long': settings.CITY_LONG,
             'city_zoom': settings.CITY_ZOOM,
             'id': self.build.id,
+            'entry_planset': self.build.get_entry_planset_id(),
             }
         return context
 
