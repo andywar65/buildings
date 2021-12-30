@@ -102,6 +102,10 @@ class BuildingTemplateView( VisitorPermReqMix, VisitorPassTestMix,
         context['build'] = self.build
         context['map_data'] = {
             'mapbox_token': settings.MAPBOX_TOKEN,
+            'city_lat': settings.CITY_LAT,
+            'city_long': settings.CITY_LONG,
+            'city_zoom': settings.CITY_ZOOM,
+            'id': self.build.id,
             }
         return context
 
@@ -124,9 +128,6 @@ class BuildingLoginView(LoginView):
         context = super().get_context_data(**kwargs)
         context['build'] = self.build
         return context
-
-    def get_redirect_url(self, *args, **kwargs):
-        return self.build.get_full_path()
 
 class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
