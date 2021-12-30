@@ -17,7 +17,7 @@ class BuildingSerializer(gis_serializers.GeoFeatureModelSerializer):
     image_path = serializers.ReadOnlyField(source='image_medium_version_path')
 
     class Meta:
-        fields = ("id", "path", "title", "intro", "image_path", )
+        fields = ("id", "path", "title", "intro", "image_path", "zoom")
         geo_field = "location"
         model = Building
 

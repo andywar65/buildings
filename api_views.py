@@ -27,13 +27,22 @@ class IsBuildingVisitor(permissions.BasePermission):
     def has_permission(self, request, view):
         is_guest = request.user.groups.filter(name='Building Guest').exists()
         if is_guest:
-            return request.user == view.plan.build.visitor
+            return request.user == view.build.visitor
         else:
             return True
 
 class BuildingsListApiView(generics.ListAPIView):
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
+
+class BuildingRetrieveApiView(generics.RetrieveAPIView):
+    queryset = Building.objects.all()
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
+    serializer_class = BuildingSerializer
+
+    def setup(self, request, *args, **kwargs):
+        super(BuildingRetrieveApiView, self).setup(request, *args, **kwargs)
+        self.build = get_object_or_404( Building, id = self.kwargs['pk'] )
 
 class BuildingCreateApiView(generics.CreateAPIView):
     queryset = Building.objects.all()
@@ -63,6 +72,7 @@ class DxfImportsByPlanApiView(generics.ListAPIView):
     def setup(self, request, *args, **kwargs):
         super(DxfImportsByPlanApiView, self).setup(request, *args, **kwargs)
         self.plan = get_object_or_404( Plan, id = self.kwargs['pk'] )
+        self.build = self.plan.build
 
     def get_queryset(self):
         queryset = DxfImport.objects.filter(plan_id=self.plan.id)

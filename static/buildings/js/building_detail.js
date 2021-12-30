@@ -1,289 +1,229 @@
-const map_data = JSON.parse(document.getElementById("map_data").textContent);
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
-const copy = '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+let app = new Vue({
+  delimiters: ["[[", "]]"],
+  el: '#vue-app',
+  data : {
+      map_data : JSON.parse(document.getElementById("map_data").textContent),
+      map : Object,
+      buildLayerGroup : Object,
+      buildMarker : Object,
+      copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+      url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+      mb_id : 'mapbox/satellite-v9',
+      alert : "",
+      alertType : "",
+      isAlertPanel : false,
+      isBuildList : true,
+      isCityChange : false,
+      isBuildAdd : false,
+      formErrors : false,
+      title : "",
+      lat : null,
+      long : null,
+      zoom : null,
+      image : "",
+      intro : ""
+    },
+  methods: {
+    setupLeafletMap: function () {
 
-var base_map = L.tileLayer(url, {
-  attribution: copy,
-  maxZoom: 23,
-});
+      const base_map = L.tileLayer(this.url, {
+        attribution: this.copy,
+        maxZoom: 23,
+      }).addTo(this.map)
 
-var sat_map = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-  maxZoom: 23,
-  tileSize: 512,
-  zoomOffset: -1,
-  id: 'mapbox/satellite-v9',
-  accessToken: map_data.mapbox_token
-});
+      const sat_map = L.tileLayer(this.mb_url, {
+        attribution: this.mb_copy,
+        maxZoom: 23,
+        tileSize: 512,
+        zoomOffset: -1,
+        id: this.mb_id,
+        accessToken: this.map_data.mapbox_token
+      })
 
-const buildMarker = L.AwesomeMarkers.icon({
-    icon: 'fa-building',
-    prefix: 'fa',
-    markerColor: 'blue',
-    iconColor: 'white',
-  });
+      const baseMaps = {
+        "Base": base_map,
+        "Satellite": sat_map
+      }
 
-const statMarker = L.AwesomeMarkers.icon({
-    icon: 'fa-camera',
-    prefix: 'fa',
-    markerColor: 'red',
-    iconColor: 'white',
-  });
+      L.control.layers(baseMaps, ).addTo(this.map)
 
-const elemMarker = L.AwesomeMarkers.icon({
-    icon: 'fa-thumb-tack',
-    prefix: 'fa',
-    markerColor: 'green',
-    iconColor: 'white',
-  });
+      this.map.on('click', this.onMapClick)
 
-const locationMarker = L.AwesomeMarkers.icon({
-    icon: 'fa-street-view',
-    prefix: 'fa',
-    markerColor: 'orange',
-    iconColor: 'black',
-  });
+      this.map.on('zoomend', this.onMapZoomEnd)
 
-async function load_dxf(plan_id) {
-  let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
-  let geojson = await response.json();
-  return geojson;
-}
-
-function setDxfStyle(feature) {
-  switch ( feature.geometry.type ){
-    case 'LineString':
-      return {
-        color: feature.properties.color_field,
-      };
-      break;
-    case 'Polygon':
-      return {
-        fillColor: feature.properties.color_field,
-        color: feature.properties.color_field,
-        fillOpacity: 0.5,
-      };
-      break;
-  }
-}
-
-function onEachDxfFeature(feature, layer) {
-  layer.bindPopup(feature.properties.layer);
-}
-
-async function render_dxf(plan_id, layergroup) {
-  let dxfgeo = await load_dxf(plan_id);
-  L.geoJSON(dxfgeo, { style :setDxfStyle, onEachFeature: onEachDxfFeature }
-    ).addTo(layergroup)
-  return;
-}
-
-if (map_data.hasOwnProperty('plans')){
-  for (plan of map_data.plans){
-    window['plan_' + plan.id ] = L.layerGroup();
-    if (plan.geometry){
-      for (obj of plan.geometry){
-        switch ( obj.type ){
-          case 'polygon':
-            var object = L.polygon( obj.coords, {color: obj.color,
-              fillcolor: obj.color, fillOpacity: 0.5});
-            break;
-          case 'polyline':
-            var object = L.polyline( obj.coords, {color: obj.color});
-            break;
-          case 'circle':
-            var object = L.circle( obj.coords, {radius: obj.radius,
-              color: obj.color, fillcolor: obj.color, fillOpacity: 0.5});
-            break;
+    },
+    load_building : async function () {
+      let response = await fetch(`/build-api/` + this.map_data.id )
+      let geojson = await response.json()
+      return geojson
+    },
+    buildingPointToLayer : function (feature, latlng) {
+      return L.marker(latlng, {icon: this.buildMarker})
+    },
+    onEachBuildingFeature : function (feature, layer) {
+      let content = "<h5>" +
+        feature.properties.title +
+        "</h5><img src=\"" + feature.properties.image_path + "\"><br><small>" +
+        feature.properties.intro + "</small>"
+      layer.bindPopup(content, {minWidth: 300})
+    },
+    setCityView : async function () {
+      let response = await fetch(`/build-api/city/all/`)
+      let cityjson = await response.json()
+      try {
+        city = cityjson.features[0]
+        this.map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
+          city.properties.zoom)
+      } catch {
+        this.map.setView([this.map_data.city_lat, this.map_data.city_long],
+          this.map_data.city_zoom)
+      }
+    },
+    render_building : async function () {
+      this.buildLayerGroup.clearLayers()
+      let buildgeo = await this.load_building()
+      markers = L.geoJSON(buildgeo,
+        { pointToLayer: this.buildingPointToLayer, onEachFeature: this.onEachBuildingFeature })
+      markers.addTo(this.buildLayerGroup)
+      try {
+        this.map.setView([buildgeo.geometry.coordinates[1],
+          buildgeo.geometry.coordinates[0]],
+          buildgeo.properties.zoom)
+      }
+      catch {
+        this.map.locate()
+          .on('locationfound', e => this.map.setView(e.latlng, 10))
+          .on('locationerror', () => this.setCityView())
+      }
+    },
+    handleImageUpload : function () {
+      this.image = this.$refs.image.files[0]
+    },
+    onCityPanel : function () {
+      this.isAlertPanel = false
+      this.alert = ""
+      this.isBuildList = false
+      this.isCityChange = true
+    },
+    onBuildPanel : function () {
+      this.isAlertPanel = false
+      this.alert = ""
+      this.isBuildList = false
+      this.isBuildAdd = true
+    },
+    onCityDismiss : function () {
+      this.isBuildList = true
+      this.isCityChange = false
+      this.formErrors = false
+      this.clearData()
+    },
+    onBuildDismiss : function () {
+      this.isBuildList = true
+      this.isBuildAdd = false
+      this.formErrors = false
+      this.clearData()
+    },
+    onMapClick : function (e) {
+      this.lat = e.latlng.lat
+      this.long = e.latlng.lng
+    },
+    onMapZoomEnd : function () {
+      this.zoom = this.map.getZoom()
+    },
+    clearData : function () {
+      this.title = ""
+      this.lat = null
+      this.long = null
+      this.zoom = null
+      this.image = ""
+      this.intro = ""
+    },
+    formValidation : function (id) {
+      let form = document.getElementById(id)
+      if (form.checkValidity() === false) {
+          this.formErrors = true
         }
-        if (map_data.hasOwnProperty('no_plan_popup')){
-          object.addTo(window['plan_' + plan.id ]);
-        } else {
-          object.bindPopup(obj.popup).addTo(window['plan_' + plan.id ]);
-        }
+      form.classList.add('was-validated')
+    },
+    formValidated : function (id) {
+      let form = document.getElementById(id)
+      form.classList.remove('was-validated')
+    },
+    onCityAdd : function () {
+      this.formErrors = false
+      this.formValidation("add_c_form")
+      if (this.formErrors) { return }//prevent from sending form
+      let url = '/build-api/city/add/'
+      let data = {
+          "name": this.title,
+          "lat": this.lat,
+          "long": this.long,
+          "zoom": this.zoom
       }
-    }
-    render_dxf(plan.id, window['plan_' + plan.id ]);
+      axios
+          .post(url, data)
+          .then(response => {
+            this.isAlertPanel = true
+            this.alert = this.title
+            this.alertType = "fa fa-globe"
+            this.isBuildList = true
+            this.isCityChange = false
+            this.formValidated("add_c_form")
+            this.clearData()
+            this.render_buildings()
+          })
+          .catch(error => {
+              console.log(error)
+          })
+    },
+    onBuildAdd : function () {
+      this.formErrors = false
+      this.formValidation("add_b_form")
+      if (this.formErrors) { return }//prevent from sending form
+      let url = '/build-api/add/'
+      let data = new FormData()
+      data.append("image", this.image)
+      data.append("title", this.title)
+      data.append("intro", this.intro)
+      data.append("lat", this.lat)
+      data.append("long", this.long)
+      data.append("zoom", this.zoom)
+      axios
+          .post(url, data)
+          .then(response => {
+            this.isAlertPanel = true
+            if (this.title) {
+              this.alert = this.title
+            } else {
+              this.alert = "New building"
+            }
+            this.alertType = "fa fa-building"
+            this.isBuildList = true
+            this.isBuildAdd = false
+            this.formValidated("add_b_form")
+            this.clearData()
+            this.render_buildings()
+          })
+          .catch(error => {
+              console.log(error)
+          })
+    },
+  },
+  mounted() {
+    this.map = L.map('mapid')
+    this.buildLayerGroup = L.layerGroup().addTo(this.map)
+    this.buildMarker = L.AwesomeMarkers.icon({
+        icon: 'fa-building',
+        prefix: 'fa',
+        markerColor: 'blue',
+        iconColor: 'white',
+      })
+    this.setupLeafletMap()
+    this.render_building()
   }
-}
-
-if (map_data.hasOwnProperty('no_plan_status')){
-  if (map_data.no_plan_status){
-    var no_plan = L.layerGroup();
-  }
-}
-
-if (map_data.hasOwnProperty('stations')){
-  if (map_data.stations){
-    for (stat of map_data.stations){
-      if (stat.fb_path){
-        var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
-          "</a></h5><img src=\"" + stat.fb_path + "\"><br><small>" +
-            stat.intro + "</small>";
-      } else {
-        var content = "<h5><a href=\"" + stat.path + "\">" + stat.title +
-          "</a></h5><br><small>" + stat.intro + "</small>";
-      }
-      var marker = L.marker([stat.lat, stat.long ], {icon: statMarker})
-        .bindPopup( content, {minWidth: 300});
-      if (stat.plan_id){
-        marker.addTo(window['plan_' + stat.plan_id ]);
-      } else {
-        marker.addTo( no_plan );
-      }
-    }
-  }
-}
-
-if (map_data.hasOwnProperty('elements')){
-  if (map_data.elements){
-    for (elem of map_data.elements){
-      var sheet = ""
-      for (const [key, value] of Object.entries(elem.sheet)) {
-        sheet = sheet + "<li>" + key + " - " + value + "</li>"
-      }
-      if (elem.fb_path){
-        var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
-          "</a></h5><img src=\"" + elem.fb_path + "\"><br><small>" +
-            elem.intro + "<ul>" + sheet + "</ul></small>";
-      } else {
-        var content = "<h5><a href=\"" + elem.path + "\">" + elem.title +
-          "</a></h5><br><small>" + elem.intro +
-          "<ul>" + sheet + "</ul></small>";
-      }
-      var marker = L.marker([elem.lat, elem.long ], {icon: elemMarker})
-        .bindPopup( content, {minWidth: 300});
-      if (elem.plan_id){
-        marker.addTo(window['plan_' + elem.plan_id ]);
-      } else {
-        marker.addTo( no_plan );
-      }
-    }
-  }
-}
-
-var layers = [ base_map, ];
-
-if (map_data.hasOwnProperty('plans')){
-  for ( plan of map_data.plans ){
-    if ( plan.visible ){
-      layers.push( window[ 'plan_' + plan.id ]);
-    }
-  }
-}
-if (map_data.hasOwnProperty('no_plan_status')){
-  if (map_data.no_plan_status){
-    layers.push( no_plan )
-  }
-}
-
-if (map_data.hasOwnProperty('city_lat')){
-  var mymap = L.map('mapid', {
-    center: [ map_data.city_lat , map_data.city_long ],
-    zoom: map_data.city_zoom,
-    layers: layers
-  });
-} else {
-  var mymap = L.map('mapid', {
-    center: [ map_data.build.lat , map_data.build.long ],
-    zoom: map_data.build.zoom,
-    layers: layers
-  });
-}
-
-const locationGroup = L.layerGroup().addTo(mymap);
-
-if (map_data.hasOwnProperty('builds')){
-  for (build of map_data.builds ){
-    var content = "<h5><a href=\"" + build.path + "\">" + build.title
-      "</a></h5><img src=\"" + build.fb_path + "\"><br><small>" +
-        build.intro + "</small>"
-    L.marker([ build.lat , build.long ], {icon: buildMarker}).addTo(mymap)
-      .bindPopup(content, {minWidth: 300});
-  }
-}
-
-if (map_data.hasOwnProperty('build')){
-  var content = "<h5>" + map_data.build.title + "</h5><img src=\"" +
-    map_data.build.fb_path + "\">";
-  L.marker([ map_data.build.lat , map_data.build.long ], {icon: buildMarker})
-    .bindPopup(content, {minWidth: 300}).addTo(mymap);
-}
-
-if (map_data.hasOwnProperty('stat')){
-  if (map_data.stat.fb_path){
-    var content = "<h5>" + map_data.stat.title +
-      "</h5><img src=\"" + map_data.stat.fb_path + "\"><br><small>" +
-        map_data.stat.intro + "</small>";
-  } else {
-    var content = "<h5>" + map_data.stat.title +
-      "</h5><br><small>" + map_data.stat.intro + "</small>";
-  }
-  L.marker([map_data.stat.lat, map_data.stat.long ], {icon: statMarker})
-    .addTo(mymap).bindPopup( content, {minWidth: 300});
-}
-
-if (map_data.hasOwnProperty('elem')){
-  if (map_data.elem.fb_path){
-    var content = "<h5>" + map_data.elem.title +
-      "</h5><img src=\"" + map_data.elem.fb_path + "\"><br><small>" +
-        map_data.elem.intro + "</small>";
-  } else {
-    var content = "<h5>" + map_data.elem.title +
-      "</h5><br><small>" + map_data.elem.intro + "</small>";
-  }
-  L.marker([map_data.elem.lat, map_data.elem.long ], {icon: elemMarker})
-    .addTo(mymap).bindPopup( content, {minWidth: 300});
-}
-
-var baseMaps = {
-  "Base": base_map,
-  "Satellite": sat_map
-};
-
-var overlayMaps = {};
-if (map_data.hasOwnProperty('plans')){
-  for ( plan of map_data.plans ){
-    overlayMaps[ plan.title ] = window[ 'plan_' + plan.id ];
-  }
-}
-if (map_data.hasOwnProperty('no_plan_status')){
-  if (map_data.no_plan_status){
-    overlayMaps[ map_data.no_plan_trans ] = no_plan;
-  }
-}
-
-L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-
-if (map_data.hasOwnProperty('on_map_click')){
-  function onMapClick(e) {
-    var inputlat = document.getElementById("id_lat");
-    var inputlong = document.getElementById("id_long");
-    inputlat.setAttribute('value', e.latlng.lat);
-    inputlong.setAttribute('value', e.latlng.lng);
-    if (map_data.hasOwnProperty('on_map_zoom')){
-      var inputzoom = document.getElementById("id_zoom");
-      inputzoom.setAttribute('value', mymap.getZoom());
-    }
-  }
-
-  mymap.on('click', onMapClick);
-}
-
-function userFound(e) {
-  let content = "You are here (accuracy " + e.accuracy + " meters)!";
-  L.marker( e.latlng , {icon: locationMarker}).bindPopup(content).addTo(locationGroup);
-  L.circle(e.latlng, e.accuracy).addTo(locationGroup);
-  mymap.fitBounds([e.latlng, [map_data.build.lat , map_data.build.long]],
-    {padding: [50,50]});
-}
-
-function userNotFound(e) {
-    alert(e.message);
-}
-
-function locateUser() {
-  locationGroup.clearLayers();
-  mymap.locate().on('locationfound', userFound).on('locationerror', userNotFound);
-}
+})
