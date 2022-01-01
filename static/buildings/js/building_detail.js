@@ -14,7 +14,8 @@ let app = new Vue({
       mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       mb_id : 'mapbox/satellite-v9',
-      activePlans : [],
+      activePlans : {},
+      overlayMaps : {},
       alert : "",
       alertType : "",
       isAlertPanel : false,
@@ -46,12 +47,12 @@ let app = new Vue({
         accessToken: this.map_data.mapbox_token
       })
 
-      const baseMaps = {
+      let baseMaps = {
         "Base": base_map,
         "Satellite": sat_map
       }
 
-      L.control.layers(baseMaps, ).addTo(this.map)
+      L.control.layers(baseMaps, this.overlayMaps).addTo(this.map)
 
       this.map.on('click', this.onMapClick)
 
@@ -77,7 +78,7 @@ let app = new Vue({
       let response = await fetch(`/build-api/city/all/`)
       let cityjson = await response.json()
       try {
-        city = cityjson.features[0]
+        let city = cityjson.features[0]
         this.map.setView([city.geometry.coordinates[1], city.geometry.coordinates[0]],
           city.properties.zoom)
       } catch {
@@ -103,10 +104,23 @@ let app = new Vue({
           .on('locationerror', () => this.setCityView())
       }
     },
-    getActivePlans : async function (set) {
+    setPlanCollection : function (plan) {
+      let collection = {'title': plan.title,
+                  'visible': plan.visible,
+                  'elevation': plan.elevation,
+                  'layer': L.layerGroup()
+                  }
+      if (plan.visible) {
+        collection['layer'].addTo(this.map)
+      }
+      this.overlayMaps[plan.title] = collection['layer']
+      this.activePlans[plan.id] = collection
+    },
+    getPlansFromDB : async function (set) {
       let jsonset = await fetch(`/build-api/set/` + set + '/plans')
-      planset = await jsonset.json()
-      this.activePlans = planset.plans
+      let planset = await jsonset.json()
+      let plans = planset.plans
+      plans.forEach(this.setPlanCollection)
     },
     handleImageUpload : function () {
       this.image = this.$refs.image.files[0]
@@ -230,8 +244,8 @@ let app = new Vue({
         markerColor: 'blue',
         iconColor: 'white',
       })
+    this.getPlansFromDB(this.map_data.entry_planset)
     this.setupLeafletMap()
     this.renderBuilding()
-    this.getActivePlans(this.map_data.entry_planset)
   }
 })
