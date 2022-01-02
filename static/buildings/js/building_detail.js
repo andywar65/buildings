@@ -53,11 +53,7 @@ let app = new Vue({
         "Satellite": sat_map
       }
 
-      const control = L.control.layers(baseMaps, ).addTo(this.map)
-
-      for (var title in this.overlayMaps) {
-        control.addOverlay(this.overlayMaps[title], title)
-      }
+      L.control.layers(baseMaps, this.overlayMaps).addTo(this.map)
 
       this.map.on('click', this.onMapClick)
 
