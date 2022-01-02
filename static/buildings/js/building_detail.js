@@ -15,7 +15,7 @@ let app = new Vue({
       mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       mb_url : 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       mb_id : 'mapbox/satellite-v9',
-      activePlans : {},
+      activePlans : [],
       overlayMaps : {},
       alert : "",
       alertType : "",
@@ -128,18 +128,13 @@ let app = new Vue({
       markers.addTo(layergroup)
     },
     setPlanCollection : function (plan) {
-      let collection = {'title': plan.title,
-                  'visible': plan.visible,
-                  'elevation': plan.elevation,
-                  'layer': L.layerGroup()
-                  }
+      this.overlayMaps[plan.title] = L.layerGroup()
       if (plan.visible) {
-        collection['layer'].addTo(this.map)
+        this.overlayMaps[plan.title].addTo(this.map)
       }
-      this.overlayMaps[plan.title] = collection['layer']
-      this.activePlans[plan.id] = collection
-      this.renderDxf(plan.id, collection['layer'])
-      this.renderStation(plan.id, collection['layer'])
+      this.activePlans.push(plan)
+      this.renderDxf(plan.id, this.overlayMaps[plan.title])
+      this.renderStation(plan.id, this.overlayMaps[plan.title])
     },
     getPlansFromDB : async function (set) {
       let jsonset = await fetch(`/build-api/set/` + set + '/plans')
