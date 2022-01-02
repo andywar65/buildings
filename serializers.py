@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_gis import serializers as gis_serializers
 
-from .models import DxfImport, Building, City, Plan, PlanSet
+from .models import DxfImport, Building, City, Plan, PlanSet, PhotoStation
 
 class DxfImportSerializer(gis_serializers.GeoFeatureModelSerializer):
     """DxfImport GeoJSON serializer."""
@@ -20,6 +20,15 @@ class BuildingSerializer(gis_serializers.GeoFeatureModelSerializer):
         fields = ("id", "path", "title", "intro", "image_path", "zoom")
         geo_field = "location"
         model = Building
+
+class PhotoStationSerializer(gis_serializers.GeoFeatureModelSerializer):
+    """PhotoStation GeoJSON serializer."""
+    data = serializers.ReadOnlyField(source='map_dictionary')
+
+    class Meta:
+        fields = ("data", )
+        geo_field = "location"
+        model = PhotoStation
 
 class BuildingLatLongSerializer(serializers.ModelSerializer):
     class Meta:

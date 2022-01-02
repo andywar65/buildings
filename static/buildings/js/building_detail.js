@@ -9,6 +9,7 @@ let app = new Vue({
       map : Object,
       buildLayerGroup : Object,
       buildMarker : Object,
+      stationMarker : Object,
       copy : '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
       url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       mb_copy : 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -52,14 +53,18 @@ let app = new Vue({
         "Satellite": sat_map
       }
 
-      L.control.layers(baseMaps, this.overlayMaps).addTo(this.map)
+      const control = L.control.layers(baseMaps, ).addTo(this.map)
+
+      for (var title in this.overlayMaps) {
+        control.addOverlay(this.overlayMaps[title], title)
+      }
 
       this.map.on('click', this.onMapClick)
 
       this.map.on('zoomend', this.onMapZoomEnd)
 
     },
-    load_building : async function () {
+    loadBuilding : async function () {
       let response = await fetch(`/build-api/` + this.map_data.id )
       let geojson = await response.json()
       return geojson
@@ -88,7 +93,7 @@ let app = new Vue({
     },
     renderBuilding : async function () {
       this.buildLayerGroup.clearLayers()
-      let buildgeo = await this.load_building()
+      let buildgeo = await this.loadBuilding()
       markers = L.geoJSON(buildgeo,
         { pointToLayer: this.buildingPointToLayer,
           onEachFeature: this.onEachBuildingFeature })
@@ -104,6 +109,28 @@ let app = new Vue({
           .on('locationerror', () => this.setCityView())
       }
     },
+    loadStation : async function (plan_id) {
+      let response = await fetch(`/build-api/station/by-plan/` + plan_id)
+      let geojson = await response.json()
+      return geojson
+    },
+    stationPointToLayer : function (feature, latlng) {
+      return L.marker(latlng, {icon: this.stationMarker})
+    },
+    onEachStationFeature : function (feature, layer) {
+      let content = "<h5><a href=\"" + feature.properties.data.path + "\">" +
+        feature.properties.data.title +
+        "</a></h5><img src=\"" + feature.properties.data.fb_path + "\"><br><small>" +
+        feature.properties.data.intro + "</small>"
+      layer.bindPopup(content, {minWidth: 300})
+    },
+    renderStation : async function (plan_id, layergroup) {
+      let statgeo = await this.loadStation(plan_id)
+      markers = L.geoJSON(statgeo,
+        { pointToLayer: this.stationPointToLayer,
+          onEachFeature: this.onEachStationFeature })
+      markers.addTo(layergroup)
+    },
     setPlanCollection : function (plan) {
       let collection = {'title': plan.title,
                   'visible': plan.visible,
@@ -115,7 +142,8 @@ let app = new Vue({
       }
       this.overlayMaps[plan.title] = collection['layer']
       this.activePlans[plan.id] = collection
-      this.render_dxf(plan.id, collection['layer'])
+      this.renderDxf(plan.id, collection['layer'])
+      this.renderStation(plan.id, collection['layer'])
     },
     getPlansFromDB : async function (set) {
       let jsonset = await fetch(`/build-api/set/` + set + '/plans')
@@ -123,35 +151,34 @@ let app = new Vue({
       let plans = planset.plans
       plans.forEach(this.setPlanCollection)
     },
-    load_dxf: async function (plan_id) {
-      let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
-      let geojson = await response.json();
-      return geojson;
+    loadDxf: async function (plan_id) {
+      let response = await fetch(`/build-api/dxf/by-plan/` + plan_id)
+      let geojson = await response.json()
+      return geojson
     },
     setDxfStyle: function (feature) {
       switch ( feature.geometry.type ){
         case 'LineString':
           return {
             color: feature.properties.color_field,
-          };
-          break;
+          }
+          break
         case 'Polygon':
           return {
             fillColor: feature.properties.color_field,
             color: feature.properties.color_field,
             fillOpacity: 0.5,
-          };
-          break;
+          }
+          break
       }
     },
     onEachDxfFeature : function (feature, layer) {
-      layer.bindPopup(feature.properties.layer);
+      layer.bindPopup(feature.properties.layer)
     },
-    render_dxf : async function (plan_id, layergroup) {
-      let dxfgeo = await this.load_dxf(plan_id);
+    renderDxf : async function (plan_id, layergroup) {
+      let dxfgeo = await this.loadDxf(plan_id)
       L.geoJSON(dxfgeo, { style :this.setDxfStyle, onEachFeature: this.onEachDxfFeature }
         ).addTo(layergroup)
-      return;
     },
     handleImageUpload : function () {
       this.image = this.$refs.image.files[0]
@@ -273,6 +300,12 @@ let app = new Vue({
         icon: 'fa-building',
         prefix: 'fa',
         markerColor: 'blue',
+        iconColor: 'white',
+      })
+    this.stationMarker = L.AwesomeMarkers.icon({
+        icon: 'fa-camera',
+        prefix: 'fa',
+        markerColor: 'red',
         iconColor: 'white',
       })
     this.getPlansFromDB(this.map_data.entry_planset)

@@ -87,3 +87,16 @@ class DxfImportsByPlanApiView(generics.ListAPIView):
     def get_queryset(self):
         queryset = DxfImport.objects.filter(plan_id=self.plan.id)
         return queryset
+
+class StationsByPlanApiView(generics.ListAPIView):
+    serializer_class = PhotoStationSerializer
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
+
+    def setup(self, request, *args, **kwargs):
+        super(StationsByPlanApiView, self).setup(request, *args, **kwargs)
+        self.plan = get_object_or_404( Plan, id = self.kwargs['pk'] )
+        self.build = self.plan.build
+
+    def get_queryset(self):
+        queryset = PhotoStation.objects.filter(plan_id=self.plan.id)
+        return queryset
