@@ -47,7 +47,7 @@ let app = new Vue({
         accessToken: this.map_data.mapbox_token
       })
 
-      let baseMaps = {
+      const baseMaps = {
         "Base": base_map,
         "Satellite": sat_map
       }
@@ -115,12 +115,43 @@ let app = new Vue({
       }
       this.overlayMaps[plan.title] = collection['layer']
       this.activePlans[plan.id] = collection
+      this.render_dxf(plan.id, collection['layer'])
     },
     getPlansFromDB : async function (set) {
       let jsonset = await fetch(`/build-api/set/` + set + '/plans')
       let planset = await jsonset.json()
       let plans = planset.plans
       plans.forEach(this.setPlanCollection)
+    },
+    load_dxf: async function (plan_id) {
+      let response = await fetch(`/build-api/dxf/by-plan/` + plan_id);
+      let geojson = await response.json();
+      return geojson;
+    },
+    setDxfStyle: function (feature) {
+      switch ( feature.geometry.type ){
+        case 'LineString':
+          return {
+            color: feature.properties.color_field,
+          };
+          break;
+        case 'Polygon':
+          return {
+            fillColor: feature.properties.color_field,
+            color: feature.properties.color_field,
+            fillOpacity: 0.5,
+          };
+          break;
+      }
+    },
+    onEachDxfFeature : function (feature, layer) {
+      layer.bindPopup(feature.properties.layer);
+    },
+    render_dxf : async function (plan_id, layergroup) {
+      let dxfgeo = await this.load_dxf(plan_id);
+      L.geoJSON(dxfgeo, { style :this.setDxfStyle, onEachFeature: this.onEachDxfFeature }
+        ).addTo(layergroup)
+      return;
     },
     handleImageUpload : function () {
       this.image = this.$refs.image.files[0]
