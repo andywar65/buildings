@@ -130,6 +130,9 @@ class BuildingLoginView(LoginView):
         context['build'] = self.build
         return context
 
+    def get_redirect_url(self, *args, **kwargs):
+        return self.build.get_full_path()
+
 class BuildingCreateView( PermissionRequiredMixin, AlertMixin, CreateView ):
     model = Building
     permission_required = 'buildings.add_building'
@@ -191,6 +194,7 @@ class BuildingDetailView(PermissionRequiredMixin, UserPassesTestMixin,
     permission_required = 'buildings.view_building'
     context_object_name = 'build'
     slug_url_kwarg = 'build_slug'
+    template_name = 'buildings/building_detail_old.html'
 
     def setup(self, request, *args, **kwargs):
         super(BuildingDetailView, self).setup(request, *args, **kwargs)
