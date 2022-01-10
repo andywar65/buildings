@@ -256,6 +256,9 @@ class Building(models.Model):
         verbose_name = _('Building')
         verbose_name_plural = _('Buildings')
         ordering = ('-date', )
+        permissions = [
+            ("visit_other_buildings", _("Can visit other buildings")),
+        ]
 
 class Plan(models.Model):
 
