@@ -36,10 +36,10 @@ class VisitorPassTestMix(UserPassesTestMixin):
     def test_func(self):
         build = self.build
         user = self.request.user
-        is_guest = user.groups.filter(name='Building Guest').exists()
-        if is_guest and user != build.visitor:
-            return False
-        return True
+        if (user.has_perm('buildings.visit_other_buildings') or
+            user == build.visitor):
+            return True
+        return False
 
 class AlertMixin:
     def add_alerts_to_context(self, context):
@@ -79,12 +79,11 @@ class BuildingRedirectView( VisitorPermReqMix, RedirectView ):
     def get_redirect_url(self, *args, **kwargs):
         build = self.build
         user = self.request.user
-        is_guest = user.groups.filter(name='Building Guest').exists()
-        if is_guest and user != build.visitor:
-            return reverse('buildings:building_login',
-                kwargs={'slug': build.slug })
-        else:
+        if (user.has_perm('buildings.visit_other_buildings') or
+            user == build.visitor):
             return build.get_full_path()
+        return reverse('buildings:building_login',
+            kwargs={'slug': build.slug })
 
 class BuildingTemplateView( VisitorPermReqMix, VisitorPassTestMix,
     TemplateView ):
@@ -207,10 +206,10 @@ class BuildingDetailView(PermissionRequiredMixin, UserPassesTestMixin,
     def test_func(self):
         build = self.get_object()
         user = self.request.user
-        is_guest = user.groups.filter(name='Building Guest').exists()
-        if is_guest and user != build.visitor:
-            return False
-        return True
+        if (user.has_perm('buildings.visit_other_buildings') or
+            user == build.visitor):
+            return True
+        return False
 
     def get_login_url(self):
         return reverse('buildings:building_login',
@@ -303,10 +302,10 @@ class BuildingUpdateView(PermissionRequiredMixin, UserPassesTestMixin,
     def test_func(self):
         build = self.get_object()
         user = self.request.user
-        is_guest = user.groups.filter(name='Building Guest').exists()
-        if is_guest and user != build.visitor:
-            return False
-        return True
+        if (user.has_perm('buildings.visit_other_buildings') or
+            user == build.visitor):
+            return True
+        return False
 
     def get_login_url(self):
         return reverse('buildings:building_login',
