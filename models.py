@@ -882,6 +882,7 @@ class DxfImport(models.Model):
     geom = models.LineStringField(srid=4326)
     geometry = models.GeometryField( verbose_name = _('Geometry'),
         help_text=_("can be LineString or Polygon"), null=True)
+    geomjson = models.JSONField( null=True )
 
     class Meta:
         verbose_name = _('DXF Import')
