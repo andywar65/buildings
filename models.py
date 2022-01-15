@@ -1,8 +1,9 @@
 from pathlib import Path
 from datetime import datetime
 from math import radians, sin, cos
+#asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 from geopy.geocoders import Nominatim
-#radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
+import ezdxf
 
 from django.db import models, transaction
 from django.conf import settings
@@ -353,6 +354,51 @@ class Plan(models.Model):
             imp.plan = self
             imp.save()
 
+    def save_plan_geometries(self):
+        #clear plan geometries
+        self.plan_geometry.all().delete()
+        geometry, elements = workflow(self.file,
+            self.build.location.coords[1],
+            self.build.location.coords[0])
+        for gm in geometry:
+            if gm['type'] == 'polygon':
+                PlanGeometry.objects.create(plan_id=self.id,
+                    color=gm['color'],
+                    popup=gm['popup'],
+                    geometry=Polygon(gm['coords']),
+                    geomjson=gm['coordz'],)
+            elif gm['type'] == 'polyline' or gm['type'] == 'line':
+                PlanGeometry.objects.create(plan_id=self.id,
+                    color=gm['color'],
+                    popup=gm['popup'],
+                    geometry=LineString(gm['coords']),
+                    geomjson=gm['coordz'],)
+        base_family = Family.objects.get(slug=self.build.get_base_slug())
+        for element in elements:
+            try:
+                family = Family.objects.get(
+                    build_id=self.build.id,
+                    title=element['family']
+                    )
+            except:
+                family = base_family.add_child(
+                    build=self.build,
+                    title=element['family']
+                    )
+            elm, created = Element.objects.get_or_create(
+                build_id=self.build.id,
+                family_id=family.id,
+                plan_id=self.id,
+                defaults={'location': Point(element['coords'][1],
+                    element['coords'][0])},
+                )
+            if created:
+                elm.sheet = element['sheet']
+                elm.save()
+
+    def use_ezdxf(self):
+        return
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
@@ -362,46 +408,8 @@ class Plan(models.Model):
         #upload files
         super(Plan, self).save(*args, **kwargs)
         if refresh and self.file:
-            #clear plan geometries
-            self.plan_geometry.all().delete()
-            geometry, elements = workflow(self.file,
-                self.build.location.coords[1],
-                self.build.location.coords[0])
-            for gm in geometry:
-                if gm['type'] == 'polygon':
-                    PlanGeometry.objects.create(plan_id=self.id,
-                        color=gm['color'],
-                        popup=gm['popup'],
-                        geometry=Polygon(gm['coords']),
-                        geomjson=gm['coordz'],)
-                elif gm['type'] == 'polyline' or gm['type'] == 'line':
-                    PlanGeometry.objects.create(plan_id=self.id,
-                        color=gm['color'],
-                        popup=gm['popup'],
-                        geometry=LineString(gm['coords']),
-                        geomjson=gm['coordz'],)
-            base_family = Family.objects.get(slug=self.build.get_base_slug())
-            for element in elements:
-                try:
-                    family = Family.objects.get(
-                        build_id=self.build.id,
-                        title=element['family']
-                        )
-                except:
-                    family = base_family.add_child(
-                        build=self.build,
-                        title=element['family']
-                        )
-                elm, created = Element.objects.get_or_create(
-                    build_id=self.build.id,
-                    family_id=family.id,
-                    plan_id=self.id,
-                    defaults={'location': Point(element['coords'][1],
-                        element['coords'][0])},
-                    )
-                if created:
-                    elm.sheet = element['sheet']
-                    elm.save()
+            self.use_ezdxf()
+            #self.save_plan_geometries()
         if refresh and self.shp_file:
             #change all shape filenames to same random name
             random = get_random_string(7)
