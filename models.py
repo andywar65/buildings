@@ -416,6 +416,17 @@ class Plan(models.Model):
             transz.append((xr,yr,v[2]))
         return trans, transz
 
+    def get_linetype_and_color(self, e, layer_table):
+        if e.dxf.linetype == 'BYLAYER':
+            linetype = layer_table[e.dxf.layer]['linetype']
+        else:
+            linetype = e.dxf.linetype
+        if e.dxf.color == 256:
+            color = layer_table[e.dxf.layer]['color']
+        else:
+            color = cad2hex(e.dxf.color)
+        return linetype, color
+
     def use_ezdxf(self):
         doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
         msp = doc.modelspace()
@@ -441,22 +452,36 @@ class Plan(models.Model):
                 'linetype' : layer.dxf.linetype,
                 }
         #start parsing entities
+        for e in msp.query('LINE'):
+            points = [e.dxf.start , e.dxf.end]
+            vert, vertz = self.transform_vertices(geodata, points)
+            geometry = LineString(vert)
+            linetype, color = self.get_linetype_and_color(e, layer_table)
+            DxfImport.objects.create(
+                plan=self,
+                layer = e.dxf.layer,
+                olinetype = linetype,
+                color = e.dxf.color,
+                color_field = color,
+                width = 0,
+                thickness = e.dxf.thickness,
+                geom = None,
+                geometry = geometry,
+                geomjson = {'geodata': geodata, 'vert': vertz}
+            )
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
             if e.is_closed:
                 vert.append(vert[0])
-                geometry = Polygon(vert)
+                try:
+                    #polygon may be "not simple"
+                    geometry = Polygon(vert)
+                except:
+                    continue
             else:
                 geometry = LineString(vert)
             width = e.dxf.const_width if e.dxf.const_width else 0
-            if e.dxf.linetype == 'BYLAYER':
-                linetype = layer_table[e.dxf.layer]['linetype']
-            else:
-                linetype = e.dxf.linetype
-            if e.dxf.color == 256:
-                color = layer_table[e.dxf.layer]['color']
-            else:
-                color = cad2hex(e.dxf.color)
+            linetype, color = self.get_linetype_and_color(e, layer_table)
             DxfImport.objects.create(
                 plan=self,
                 layer = e.dxf.layer,
