@@ -410,7 +410,7 @@ class Plan(models.Model):
             yr = x*sin(geodata['rotation']) + y*cos(geodata['rotation'])
             #objects are very small with respect to earth, so our transformation
             #from CAD x,y coords to latlong is approximate
-            long = geodata['long'] + degrees(xr*gx)
+            long = geodata['long'] - degrees(xr*gx)
             lat = geodata['lat'] - degrees(yr*gy)
             trans.append((long,lat))
             transz.append((xr,yr,v[2]))
@@ -420,6 +420,8 @@ class Plan(models.Model):
         doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
         msp = doc.modelspace()
         try:
+            #first we look for geodata block
+            #(see 'static/buildings/dxf/simple_geodata.dxf')
             blk = msp.query('INSERT[name=="simple_geodata"]').first
             geodata = {
                 'lat' : float(blk.get_attrib('LAT').dxf.text),
@@ -431,6 +433,11 @@ class Plan(models.Model):
         except:
             #no geodata found, unable to work on this File
             return
+        #prepare layer table
+        layer_table = {}
+        for layer in doc.layers:
+            layer_table[layer.dxf.name] = cad2hex(layer.color)
+        #start parsing entities
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
             if e.is_closed:
@@ -440,12 +447,16 @@ class Plan(models.Model):
                 geometry = LineString(vert)
             width = e.dxf.const_width if e.dxf.const_width else 0
             linetype = e.dxf.linetype if not 'BYLAYER' else 'Continuous'
+            if e.dxf.color == 256:
+                color = layer_table[e.dxf.layer]
+            else:
+                color = cad2hex(e.dxf.color)
             DxfImport.objects.create(
                 plan=self,
                 layer = e.dxf.layer,
                 olinetype = linetype,
                 color = e.dxf.color,
-                color_field = ColorField(cad2hex(e.dxf.color)),
+                color_field = color,
                 width = width,
                 thickness = e.dxf.thickness,
                 geom = None,
