@@ -436,7 +436,10 @@ class Plan(models.Model):
         #prepare layer table
         layer_table = {}
         for layer in doc.layers:
-            layer_table[layer.dxf.name] = cad2hex(layer.color)
+            layer_table[layer.dxf.name] = {
+                'color' : cad2hex(layer.color),
+                'linetype' : layer.dxf.linetype,
+                }
         #start parsing entities
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
@@ -446,9 +449,12 @@ class Plan(models.Model):
             else:
                 geometry = LineString(vert)
             width = e.dxf.const_width if e.dxf.const_width else 0
-            linetype = e.dxf.linetype if not 'BYLAYER' else 'Continuous'
+            if e.dxf.linetype == 'BYLAYER':
+                linetype = layer_table[e.dxf.layer]['linetype']
+            else:
+                linetype = e.dxf.linetype
             if e.dxf.color == 256:
-                color = layer_table[e.dxf.layer]
+                color = layer_table[e.dxf.layer]['color']
             else:
                 color = cad2hex(e.dxf.color)
             DxfImport.objects.create(
