@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import datetime
-from math import radians, sin, cos
+from math import radians, sin, cos, fabs, degrees
 #asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 from geopy.geocoders import Nominatim
 import ezdxf
@@ -396,7 +396,47 @@ class Plan(models.Model):
                 elm.sheet = element['sheet']
                 elm.save()
 
+    def transform_vertices(self, geodata, vert):
+        trans = []
+        gy = 1 / (6371*1000)
+        gx = 1 / (6371*1000*fabs(cos(radians(geodata['lat']))))
+        for v in vert:
+            #normalize to geodata block
+            x = geodata['xpos'] - v[0]
+            y = geodata['ypos'] - v[1]
+            #get true north
+            xr = x*cos(geodata['rotation']) - y*sin(geodata['rotation'])
+            yr = x*sin(geodata['rotation']) + y*cos(geodata['rotation'])
+            #objects are very small with respect to earth, so our transformation
+            #from CAD x,y coords to latlong is approximate
+            long = geodata['long'] + degrees(xr*gx)
+            lat = geodata['lat'] - degrees(yr*gy)
+            trans.append((long,lat))
+        return trans
+
     def use_ezdxf(self):
+        doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
+        msp = doc.modelspace()
+        try:
+            blk = msp.query('INSERT[name=="simple_geodata"]').first
+            geodata = {
+                'lat' : float(blk.get_attrib('LAT').dxf.text),
+                'long' : float(blk.get_attrib('LONG').dxf.text),
+                'xpos' : blk.dxf.insert[0],
+                'ypos' : blk.dxf.insert[1],
+                'rotation' : -radians(blk.dxf.rotation)
+            }
+        except:
+            #no geodata found, unable to work on this File
+            return
+        for e in msp.query('LWPOLYLINE'):
+            vert = self.transform_vertices(geodata, e.vertices_in_wcs())
+            if e.dxf.is_closed:
+                vert.append(vert[0])
+                geometry = Polygon(vert)
+            else:
+                geometry = LineString(vert)
+        assert False
         return
 
     def save(self, *args, **kwargs):
@@ -887,7 +927,7 @@ class DxfImport(models.Model):
     color_field = ColorField(default='#FF0000')
     width = models.FloatField()
     thickness = models.FloatField()
-    geom = models.LineStringField(srid=4326)
+    geom = models.LineStringField(srid=4326, null=True)
     geometry = models.GeometryField( verbose_name = _('Geometry'),
         help_text=_("can be LineString or Polygon"), null=True)
     geomjson = models.JSONField( null=True )
