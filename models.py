@@ -28,7 +28,7 @@ from treebeard.mp_tree import MP_Node
 from colorfield.fields import ColorField
 from taggit.managers import TaggableManager
 
-from .map_utils import workflow
+from .map_utils import workflow, cad2hex
 #from users.models import User
 
 User = get_user_model()
@@ -398,6 +398,7 @@ class Plan(models.Model):
 
     def transform_vertices(self, geodata, vert):
         trans = []
+        transz = []
         gy = 1 / (6371*1000)
         gx = 1 / (6371*1000*fabs(cos(radians(geodata['lat']))))
         for v in vert:
@@ -412,7 +413,8 @@ class Plan(models.Model):
             long = geodata['long'] + degrees(xr*gx)
             lat = geodata['lat'] - degrees(yr*gy)
             trans.append((long,lat))
-        return trans
+            transz.append((xr,yr,v[2]))
+        return trans, transz
 
     def use_ezdxf(self):
         doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
@@ -430,13 +432,26 @@ class Plan(models.Model):
             #no geodata found, unable to work on this File
             return
         for e in msp.query('LWPOLYLINE'):
-            vert = self.transform_vertices(geodata, e.vertices_in_wcs())
-            if e.dxf.is_closed:
+            vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
+            if e.is_closed:
                 vert.append(vert[0])
                 geometry = Polygon(vert)
             else:
                 geometry = LineString(vert)
-        assert False
+            width = e.dxf.const_width if e.dxf.const_width else 0
+            linetype = e.dxf.linetype if not 'BYLAYER' else 'Continuous'
+            DxfImport.objects.create(
+                plan=self,
+                layer = e.dxf.layer,
+                olinetype = linetype,
+                color = e.dxf.color,
+                color_field = ColorField(cad2hex(e.dxf.color)),
+                width = width,
+                thickness = e.dxf.thickness,
+                geom = None,
+                geometry = geometry,
+                geomjson = {'geodata': geodata, 'vert': vertz}
+            )
         return
 
     def save(self, *args, **kwargs):
