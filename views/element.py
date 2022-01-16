@@ -202,7 +202,7 @@ class ElementUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
     pk_url_kwarg = 'pk'
 
     def setup(self, request, *args, **kwargs):
-        super(ElementCreateView, self).setup(request, *args, **kwargs)
+        super(ElementUpdateView, self).setup(request, *args, **kwargs)
         elem = self.get_object()
         self.build = get_object_or_404( Building,
             slug = self.kwargs['slug'] )
