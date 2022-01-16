@@ -452,6 +452,33 @@ class Plan(models.Model):
                 'linetype' : layer.dxf.linetype,
                 }
         #start parsing entities
+        base_family = Family.objects.get(slug=self.build.get_base_slug())
+        for e in msp.query('INSERT'):
+            if e.dxf.name == 'simple_geodata':
+                continue
+            vert, vertz = self.transform_vertices(geodata, [e.dxf.insert])
+            sheet = {}
+            for at in e.attribs:
+                sheet[at.dxf.tag] = at.dxf.text
+            try:
+                family = Family.objects.get(
+                    build_id=self.build.id,
+                    title=e.dxf.name
+                    )
+            except:
+                family = base_family.add_child(
+                    build=self.build,
+                    title=e.dxf.name
+                    )
+            elm, created = Element.objects.get_or_create(
+                build_id=self.build.id,
+                family_id=family.id,
+                plan_id=self.id,
+                defaults={'location': Point(vert[0])},
+                )
+            if created:
+                elm.sheet = sheet
+                elm.save()
         for e in msp.query('LINE'):
             points = [e.dxf.start , e.dxf.end]
             vert, vertz = self.transform_vertices(geodata, points)
