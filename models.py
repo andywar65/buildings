@@ -494,7 +494,7 @@ class Plan(models.Model):
                 thickness = e.dxf.thickness,
                 geom = None,
                 geometry = geometry,
-                geomjson = {'geodata': geodata, 'vert': vertz}
+                geomjson = {'geodata': geodata, 'vert': vertz, 'type': 'line'}
             )
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
@@ -503,10 +503,12 @@ class Plan(models.Model):
                 try:
                     #polygon may be "not simple"
                     geometry = Polygon(vert)
+                    type = 'polygon'
                 except:
                     continue
             else:
                 geometry = LineString(vert)
+                type = 'polyline'
             width = e.dxf.const_width if e.dxf.const_width else 0
             linetype, color = self.get_linetype_and_color(e, layer_table)
             DxfImport.objects.create(
@@ -519,7 +521,7 @@ class Plan(models.Model):
                 thickness = e.dxf.thickness,
                 geom = None,
                 geometry = geometry,
-                geomjson = {'geodata': geodata, 'vert': vertz}
+                geomjson = {'geodata': geodata, 'vert': vertz, 'type': type}
             )
         return
 
