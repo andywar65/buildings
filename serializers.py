@@ -5,9 +5,10 @@ from .models import DxfImport, Building, City, Plan, PlanSet, PhotoStation
 
 class DxfImportSerializer(gis_serializers.GeoFeatureModelSerializer):
     """DxfImport GeoJSON serializer."""
+    data = serializers.ReadOnlyField(source='get_area_or_length')
 
     class Meta:
-        fields = ("id", "layer", "color_field", )
+        fields = ("id", "layer", "color_field", "data", )
         geo_field = "geometry"
         model = DxfImport
 

@@ -1018,6 +1018,17 @@ class DxfImport(models.Model):
         help_text=_("can be LineString or Polygon"), null=True)
     geomjson = models.JSONField( null=True )
 
+    def get_area_or_length(self):
+        type = self.geometry.geom_typeid
+        if type == 1:#it's a LineString
+            return (_(' Length = %(length)d mt') %
+                {'length': self.geometry.length})
+        elif type == 3:#it's a Polygon
+            return (_(' Area = %(area)d mt') %
+                {'area': self.geometry.area})
+        else:
+            return ''
+
     class Meta:
         verbose_name = _('DXF Import')
         verbose_name_plural = _('DXF Imports')
