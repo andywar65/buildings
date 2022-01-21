@@ -498,6 +498,7 @@ class Plan(models.Model):
             )
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
+            area = ezdxf.math.area(vertz)
             if e.is_closed:
                 vert.append(vert[0])
                 try:
@@ -521,7 +522,8 @@ class Plan(models.Model):
                 thickness = e.dxf.thickness,
                 geom = None,
                 geometry = geometry,
-                geomjson = {'geodata': geodata, 'vert': vertz, 'type': type}
+                geomjson = {'geodata': geodata, 'vert': vertz, 'type': type,
+                    'area': area}
             )
         return
 
@@ -1019,14 +1021,11 @@ class DxfImport(models.Model):
     geomjson = models.JSONField( null=True )
 
     def get_area_or_length(self):
-        type = self.geometry.geom_typeid
-        if type == 1:#it's a LineString
-            return (_(' Length = %(length)d mt') %
-                {'length': self.geometry.length})
-        elif type == 3:#it's a Polygon
-            return (_(' Area = %(area)d mt') %
-                {'area': self.geometry.area})
-        else:
+        try:
+            area = self.geomjson['area']
+            return (_(' Area = %(area)d sqmt') %
+                {'area': area})
+        except:
             return ''
 
     class Meta:

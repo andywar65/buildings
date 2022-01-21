@@ -85,7 +85,7 @@ class DxfImportAdmin(OSMGeoAdmin):
     fieldsets = (
         (None, {
             'fields': ('plan', 'layer', 'color_field', 'olinetype',
-                'width', 'thickness', ),
+                'width', 'thickness', 'geomjson', ),
         }),
         (_('Geometry'), {
             'fields': ('geometry', ),
