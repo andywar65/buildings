@@ -80,11 +80,15 @@ class PhotoStationUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
     #we have two slugs, so we need to override next attribute
     slug_url_kwarg = 'stat_slug'
 
+    def setup(self, request, *args, **kwargs):
+        super(PhotoStationUpdateView, self).setup(request, *args, **kwargs)
+        #here we get the building by the slug
+        self.build = get_object_or_404( Building,
+            slug = self.kwargs['build_slug'] )
+
     def get_object(self, queryset=None):
         #elsewhere we get the parent in setup, but here we also need object
         stat = super(PhotoStationUpdateView, self).get_object(queryset=None)
-        self.build = get_object_or_404( Building,
-            slug = self.kwargs['build_slug'] )
         if not self.build == stat.build:
             raise Http404(_("Station does not belong to Building"))
         return stat
@@ -188,6 +192,7 @@ class PhotoStation3dView( VisitorPermReqMix, VisitorPassTestMix, TemplateView ):
         context = super().get_context_data(**kwargs)
         context['stat'] = self.stat
         context['map_data'] = {}
+        context['map_data']['stat_id'] = self.stat.id
         context['map_data']['camera'] = self.stat.camera_position()
         context['map_data']['geom'] = self.build.get_3d_geometries()
         context['map_data']['floor'] = self.build.get_floor_elevation()
