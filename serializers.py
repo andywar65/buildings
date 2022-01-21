@@ -31,6 +31,13 @@ class PhotoStationSerializer(gis_serializers.GeoFeatureModelSerializer):
         geo_field = "location"
         model = PhotoStation
 
+class CameraSerializer(serializers.ModelSerializer):
+    camera_position = serializers.ReadOnlyField()
+    floor = serializers.ReadOnlyField(source='get_floor_elevation')
+    class Meta:
+        model = PhotoStation
+        fields = ("camera_position", "floor" )
+
 class BuildingLatLongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Building
@@ -54,3 +61,8 @@ class CityLatLongSerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = ("name", "lat", "long", "zoom")
+
+class DxfImportStationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DxfImport
+        fields = ("id", "color_field", "thickness", "geomjson")

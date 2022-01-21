@@ -27,13 +27,20 @@ animate();
 
 function init() {
 	//camera plane
-	const elev = (map_data.camera[1]-1.6)*6.25;
+	async function load_all_data(stat_id) {
+	  let response = await fetch(`/build-api/station/` + stat_id + `/camera/`);
+	  let all_data = await response.json();
+	  return all_data;
+	}
+
+	const all_data = load_all_data(map_data.stat_id)
+	const elev = (all_data.camera_position[1]-1.6)*6.25;
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
-	camera.position.x = map_data.camera[0]*6.25;
-	camera.position.y = map_data.camera[1]*6.25-elev;
-	camera.position.z = map_data.camera[2]*6.25;
+	//camera.position.x = map_data.camera[0]*6.25;
+	camera.position.y = all_data.camera_position[1]*6.25-elev;
+	//camera.position.z = map_data.camera[2]*6.25;
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xffffff );
@@ -43,12 +50,8 @@ function init() {
 	light.position.set( 0.5, 1-elev, 0.75 );
 	scene.add( light );
 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	dirLight.position.set( -50 + map_data.camera[0]*6.25,
-		100-elev,
-		50 + map_data.camera[2]*6.25 );
-	dirLight.target.position.set( map_data.camera[0]*6.25,
-		0-elev,
-		map_data.camera[2]*6.25 )
+	dirLight.position.set( -50, 100-elev, 50 );
+	dirLight.target.position.set( 0, 0-elev, 0 )
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.left = -100;
 	dirLight.shadow.camera.right = 100;
@@ -162,34 +165,43 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
-	floor.position.set( 0, map_data.floor-.01-elev, 0 )
+	floor.position.set( 0, all_data.floor-.01-elev, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
 
 	let position = geometry.attributes.position;
 
 	// objects
+	async function load_all_geometries(stat_id) {
+	  let response = await fetch(`/build-api/station/` + stat_id + `/dxf/`);
+	  let all_geom = await response.json();
+	  return all_geom;
+	}
+
+	const geom_data = load_all_geometries(map_data.stat_id)
+
 	let gm;
-	for (gm of map_data.geom){
-		switch ( gm.type ){
+	for (gm of geom_data){
+		if (gm.geomjson == null) { continue; }
+		switch ( gm.geomjson.type ){
 			case 'polygon':
 				let contour = [];
 				let i;
-				for( i of gm.coords ){
-					contour.push( new THREE.Vector2( i[0],  i[1] ) );
+				for( i of gm.geomjson.vert ){
+					contour.push( new THREE.Vector3( i[0], i[2], -i[1] ) );
 				}
 				let objshape = new THREE.Shape( contour );
 				let objgeometry, material;
-				if (gm.depth){
-					let extrudeSettings = { amount: gm.depth, bevelEnabled: false };
+				if (gm.thickness){
+					let extrudeSettings = { amount: gm.thickness, bevelEnabled: false };
 					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
 					material = new THREE.MeshStandardMaterial( {
-						color: gm.color
+						color: gm.color_field
 					 } );
 				} else {
 					objgeometry = new THREE.ShapeGeometry( objshape )
 					material = new THREE.MeshStandardMaterial( {
-						color: gm.color,
+						color: gm.color_field,
 						side: THREE.DoubleSide
 					 } );
 				}
@@ -197,11 +209,11 @@ function init() {
 				mesh.rotateX( - Math.PI / 2 );
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
-				let pos = gm.position
-				mesh.position.set( pos[0], pos[1]-elev, pos[2], );
-				mesh.rotateZ( gm.rotation[2] );
-				mesh.rotateX( gm.rotation[0] );
-				mesh.rotateY( gm.rotation[1] );
+				//let pos = gm.position
+				//mesh.position.set( pos[0], pos[1]-elev, pos[2], );
+				//mesh.rotateZ( gm.rotation[2] );
+				//mesh.rotateX( gm.rotation[0] );
+				//.rotateY( gm.rotation[1] );
 				scene.add(mesh)
 				break;
 			case 'polyline':

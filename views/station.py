@@ -193,9 +193,9 @@ class PhotoStation3dView( VisitorPermReqMix, VisitorPassTestMix, TemplateView ):
         context['stat'] = self.stat
         context['map_data'] = {}
         context['map_data']['stat_id'] = self.stat.id
-        context['map_data']['camera'] = self.stat.camera_position()
-        context['map_data']['geom'] = self.build.get_3d_geometries()
-        context['map_data']['floor'] = self.build.get_floor_elevation()
+        #context['map_data']['camera'] = self.stat.camera_position()
+        #context['map_data']['geom'] = self.build.get_3d_geometries()
+        #context['map_data']['floor'] = self.build.get_floor_elevation()
         return context
 
 class StationImageListCreateView( VisitorPermReqMix, VisitorPassTestMix,
