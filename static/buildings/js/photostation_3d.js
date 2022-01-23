@@ -46,13 +46,11 @@ workflow();
 function init(cam_data, geom_data) {
 	//camera plane
 
-	const elev = (cam_data.camera_position[1]-1.6)*6.25;
+	const elev = (cam_data.camera_position.z-1.6)*6.25;
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
-	//camera.position.x = map_data.camera[0]*6.25;
-	camera.position.y = cam_data.camera_position[1]*6.25-elev;
-	//camera.position.z = map_data.camera[2]*6.25;
+	camera.position.y = cam_data.camera_position.z*6.25-elev;
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xffffff );
@@ -186,6 +184,8 @@ function init(cam_data, geom_data) {
 	// objects
 
 	let gm;
+	let slat = cam_data.camera_position.lat
+	let slong = cam_data.camera_position.long
 	for (gm of geom_data){
 		if (gm.geomjson == null) { continue; }
 		switch ( gm.geomjson.type ){
@@ -213,13 +213,10 @@ function init(cam_data, geom_data) {
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				mesh.scale.set(6.25,6.25,6.25)
+				let olat = gm.geomjson.geodata.lat
+				let olong = gm.geomjson.geodata.long
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
-				//let pos = gm.position
-				//mesh.position.set( pos[0], pos[1]-elev, pos[2], );
-				//mesh.rotateZ( gm.rotation[2] );
-				//mesh.rotateX( gm.rotation[0] );
-				//.rotateY( gm.rotation[1] );
 				scene.add(mesh)
 				break;
 			case 'polyline':
