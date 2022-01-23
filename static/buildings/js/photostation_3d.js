@@ -22,24 +22,36 @@ const direction = new THREE.Vector3();
 const vertex = new THREE.Vector3();
 const color = new THREE.Color();
 
-init();
-animate();
+async function load_camera_data(stat_id) {
+	let response = await fetch(`/build-api/station/` + stat_id + `/camera/`);
+	let cam_data = await response.json();
+	return cam_data;
+}
 
-function init() {
+async function load_all_geometries(stat_id) {
+	let response = await fetch(`/build-api/station/` + stat_id + `/dxf/`);
+	let all_geom = await response.json();
+	return all_geom;
+}
+
+async function workflow() {
+	let cam_data = await load_camera_data(map_data.stat_id)
+	let geom_data = await load_all_geometries(map_data.stat_id)
+	init(cam_data, geom_data);
+	animate();
+}
+
+workflow();
+
+function init(cam_data, geom_data) {
 	//camera plane
-	async function load_all_data(stat_id) {
-	  let response = await fetch(`/build-api/station/` + stat_id + `/camera/`);
-	  let all_data = await response.json();
-	  return all_data;
-	}
 
-	const all_data = load_all_data(map_data.stat_id)
-	const elev = (all_data.camera_position[1]-1.6)*6.25;
+	const elev = (cam_data.camera_position[1]-1.6)*6.25;
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
 	//camera.position.x = map_data.camera[0]*6.25;
-	camera.position.y = all_data.camera_position[1]*6.25-elev;
+	camera.position.y = cam_data.camera_position[1]*6.25-elev;
 	//camera.position.z = map_data.camera[2]*6.25;
 
 	scene = new THREE.Scene();
@@ -165,20 +177,13 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
-	floor.position.set( 0, all_data.floor-.01-elev, 0 )
+	floor.position.set( 0, cam_data.floor-.01-elev, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
 
 	let position = geometry.attributes.position;
 
 	// objects
-	async function load_all_geometries(stat_id) {
-	  let response = await fetch(`/build-api/station/` + stat_id + `/dxf/`);
-	  let all_geom = await response.json();
-	  return all_geom;
-	}
-
-	const geom_data = load_all_geometries(map_data.stat_id)
 
 	let gm;
 	for (gm of geom_data){
@@ -188,12 +193,12 @@ function init() {
 				let contour = [];
 				let i;
 				for( i of gm.geomjson.vert ){
-					contour.push( new THREE.Vector3( i[0], i[2], -i[1] ) );
+					contour.push( new THREE.Vector3( i[0], i[1], i[2] ) );
 				}
 				let objshape = new THREE.Shape( contour );
 				let objgeometry, material;
 				if (gm.thickness){
-					let extrudeSettings = { amount: gm.thickness, bevelEnabled: false };
+					let extrudeSettings = { depth: gm.thickness, bevelEnabled: false };
 					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
 					material = new THREE.MeshStandardMaterial( {
 						color: gm.color_field
@@ -207,6 +212,7 @@ function init() {
 				}
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
+				mesh.scale.set(6.25,6.25,6.25)
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
 				//let pos = gm.position
