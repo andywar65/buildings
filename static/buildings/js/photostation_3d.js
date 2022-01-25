@@ -190,6 +190,10 @@ function init(cam_data, geom_data) {
 	let correct = Math.abs(Math.cos(slat*Math.PI/180))
 	for (gm of geom_data){
 		if (gm.geomjson == null) { continue; }
+		let olat = gm.geomjson.geodata.lat
+		let olong = gm.geomjson.geodata.long
+		let deltay = (slat-olat)*arc
+		let deltax = (slong-olong)*arc*correct
 		switch ( gm.geomjson.type ){
 			case 'polygon':
 				let contour = [];
@@ -215,10 +219,6 @@ function init(cam_data, geom_data) {
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				mesh.scale.set(6.25,6.25,6.25)
-				let olat = gm.geomjson.geodata.lat
-				let olong = gm.geomjson.geodata.long
-				let deltay = (slat-olat)*arc
-				let deltax = (slong-olong)*arc*correct
 				mesh.position.set(deltax*6.25, -elev, -deltay*6.25)
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
@@ -227,33 +227,31 @@ function init(cam_data, geom_data) {
 			case 'polyline':
 				let points = [];
 				let p;
-				for( p of gm.coords ){
-					points.push( new THREE.Vector2( p[0],  p[1] ) );
+				for( p of gm.geomjson.vert ){
+					points.push( new THREE.Vector3( p[0],  p[1], p[2] ) );
 				}
 				let geometry = new THREE.BufferGeometry().setFromPoints( points );
 				let pmaterial = new THREE.LineBasicMaterial( {
-					color: gm.color,
+					color: gm.color_field,
 				 } );
 				let line = new THREE.Line( geometry, pmaterial );
 				line.rotateX( - Math.PI / 2 );
-				let ppos = gm.position
-				line.position.set( ppos[0], ppos[1]-elev, ppos[2], );
-				line.rotateZ( gm.rotation[2] );
-				line.rotateX( gm.rotation[0] );
-				line.rotateY( gm.rotation[1] );
+				line.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(line)
 				break;
 			case 'line':
 			let lpoints = [];
 			let l;
-				for( l of gm.coords ){
-					lpoints.push( new THREE.Vector3( l[0],  l[2]-elev,  l[1] ) );
+				for( l of gm.geomjson.vert ){
+					lpoints.push( new THREE.Vector3( p[0],  p[1], p[2] ) );
 				}
 				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
 				let lmaterial = new THREE.LineBasicMaterial( {
-					color: gm.color,
+					color: gm.color_field,
 				 } );
 				let lline = new THREE.Line( lgeometry, lmaterial );
+				lline.rotateX( - Math.PI / 2 );
+				lline.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(lline)
 				break;
 		}
