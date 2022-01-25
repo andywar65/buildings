@@ -55,7 +55,7 @@ class DxfImportInline(admin.TabularInline):
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('title', 'build', 'elev', 'file')
-    inlines = [ PlanGeometryInline, DxfImportInline, ]
+    inlines = [  DxfImportInline, ]#PlanGeometryInline,
 
     fieldsets = (
         (None, {
