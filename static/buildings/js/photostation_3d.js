@@ -186,6 +186,8 @@ function init(cam_data, geom_data) {
 	let gm;
 	let slat = cam_data.camera_position.lat
 	let slong = cam_data.camera_position.long
+	let arc = 6315*1000*Math.PI/180
+	let correct = Math.abs(Math.cos(slat*Math.PI/180))
 	for (gm of geom_data){
 		if (gm.geomjson == null) { continue; }
 		switch ( gm.geomjson.type ){
@@ -215,6 +217,9 @@ function init(cam_data, geom_data) {
 				mesh.scale.set(6.25,6.25,6.25)
 				let olat = gm.geomjson.geodata.lat
 				let olong = gm.geomjson.geodata.long
+				let deltay = (slat-olat)*arc
+				let deltax = (slong-olong)*arc*correct
+				mesh.position.set(deltax*6.25, -elev, -deltay*6.25)
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
 				scene.add(mesh)
