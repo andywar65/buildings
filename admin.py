@@ -49,7 +49,7 @@ class DxfImportInline(admin.TabularInline):
     fields = ( 'id', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
     extra = 0
     formfield_overrides = {
-        models.LineStringField: {"widget": OSMWidget},
+        models.GeometryField: {"widget": OSMWidget},
     }
 
 @admin.register(Plan)
