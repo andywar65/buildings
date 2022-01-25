@@ -236,6 +236,7 @@ function init(cam_data, geom_data) {
 				 } );
 				let line = new THREE.Line( geometry, pmaterial );
 				line.rotateX( - Math.PI / 2 );
+				line.scale.set(6.25,6.25,6.25)
 				line.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(line)
 				break;
@@ -243,7 +244,7 @@ function init(cam_data, geom_data) {
 			let lpoints = [];
 			let l;
 				for( l of gm.geomjson.vert ){
-					lpoints.push( new THREE.Vector3( p[0],  p[1], p[2] ) );
+					lpoints.push( new THREE.Vector3( l[0],  l[1], l[2] ) );
 				}
 				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
 				let lmaterial = new THREE.LineBasicMaterial( {
@@ -251,6 +252,7 @@ function init(cam_data, geom_data) {
 				 } );
 				let lline = new THREE.Line( lgeometry, lmaterial );
 				lline.rotateX( - Math.PI / 2 );
+				lline.scale.set(6.25,6.25,6.25)
 				lline.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(lline)
 				break;
