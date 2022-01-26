@@ -188,6 +188,7 @@ function init(cam_data, geom_data) {
 	let slong = cam_data.camera_position.long
 	let arc = 6315*1000*Math.PI/180
 	let correct = Math.abs(Math.cos(slat*Math.PI/180))
+	let normalz = new THREE.Vector3(0,0,1)
 	for (gm of geom_data){
 		if (gm.geomjson == null) { continue; }
 		let olat = gm.geomjson.geodata.lat
@@ -197,10 +198,17 @@ function init(cam_data, geom_data) {
 		switch ( gm.geomjson.type ){
 			case 'polygon':
 				let contour = [];
+				let normal = new THREE.Vector3(gm.geomjson.normal[0],
+					gm.geomjson.normal[1],gm.geomjson.normal[2])
+				let quaternion = new THREE.Quaternion().setFromUnitVectors(normal, normalz);
+				let quaternionBack = new THREE.Quaternion().setFromUnitVectors(normalz, normal);
 				let i;
 				for( i of gm.geomjson.vert ){
 					contour.push( new THREE.Vector3( i[0], i[1], i[2] ) );
 				}
+				//contour.forEach(p => {
+				  //p.applyQuaternion(quaternion)
+				//});
 				let objshape = new THREE.Shape( contour );
 				let objgeometry, material;
 				if (gm.thickness){
@@ -216,6 +224,10 @@ function init(cam_data, geom_data) {
 						side: THREE.DoubleSide
 					 } );
 				}
+				//contour.forEach(p => {
+				  //p.applyQuaternion(quaternionBack)
+				//});
+				//objgeometry.vertices = contour
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				mesh.scale.set(6.25,6.25,6.25)
