@@ -4,6 +4,7 @@ from math import radians, sin, cos, fabs, degrees
 #asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 from geopy.geocoders import Nominatim
 import ezdxf
+from ezdxf.math import Vec3
 
 from django.db import models, transaction
 from django.conf import settings
@@ -505,11 +506,14 @@ class Plan(models.Model):
                     #polygon may be "not simple"
                     geometry = Polygon(vert)
                     type = 'polygon'
+                    normal = ezdxf.math.normal_vector_3p(Vec3(vertz[0]),
+                        Vec3(vertz[1]), Vec3(vertz[2]))
                 except:
                     continue
             else:
                 geometry = LineString(vert)
                 type = 'polyline'
+                normal = (0,0,1)
             width = e.dxf.const_width if e.dxf.const_width else 0
             linetype, color = self.get_linetype_and_color(e, layer_table)
             DxfImport.objects.create(
@@ -523,7 +527,7 @@ class Plan(models.Model):
                 geom = None,
                 geometry = geometry,
                 geomjson = {'geodata': geodata, 'vert': vertz, 'type': type,
-                    'area': area}
+                    'area': area, 'normal': (normal[0],normal[1],normal[2])}
             )
         return
 
