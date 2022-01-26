@@ -206,9 +206,9 @@ function init(cam_data, geom_data) {
 				for( i of gm.geomjson.vert ){
 					contour.push( new THREE.Vector3( i[0], i[1], i[2] ) );
 				}
-				//contour.forEach(p => {
-				  //p.applyQuaternion(quaternion)
-				//});
+				contour.forEach(p => {
+				  p.applyQuaternion(quaternion)
+				});
 				let objshape = new THREE.Shape( contour );
 				let objgeometry, material;
 				if (gm.thickness){
@@ -224,10 +224,10 @@ function init(cam_data, geom_data) {
 						side: THREE.DoubleSide
 					 } );
 				}
-				//contour.forEach(p => {
-				  //p.applyQuaternion(quaternionBack)
-				//});
-				//objgeometry.vertices = contour
+				contour.forEach(p => {
+				  p.applyQuaternion(quaternionBack)
+				});
+				objgeometry.vertices = contour
 				let mesh = new THREE.Mesh( objgeometry, material );
 				mesh.rotateX( - Math.PI / 2 );
 				mesh.scale.set(6.25,6.25,6.25)
