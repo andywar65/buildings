@@ -29,8 +29,7 @@ from treebeard.mp_tree import MP_Node
 from colorfield.fields import ColorField
 from taggit.managers import TaggableManager
 
-from .map_utils import workflow, cad2hex
-#from users.models import User
+from .map_utils import cad2hex
 
 User = get_user_model()
 
