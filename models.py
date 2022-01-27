@@ -140,59 +140,6 @@ class Building(models.Model):
         parent = self.building_family.get(slug=self.get_base_slug())
         return Family.get_annotated_list(parent=parent)
 
-    def get_3d_geometries(self):
-        #scale factor
-        sc = 6.25
-        #building location
-        bx = self.location.coords[0]
-        bcos = cos( radians( self.location.coords[1] ) )
-        bz = self.location.coords[1]
-        geom = []
-        for plan in self.building_plan.all():
-            for gm in plan.plan_geometry.all():
-                gmd = {}
-                gmd['coords'] = []
-                gmd['id'] = 'geom_' + str(gm.id)
-                gmd['color'] = gm.color
-                gmd['position'] = (0,0,0)
-                gmd['rotation'] = (0,0,0)
-                if gm.geomjson:
-                    if gm.geomjson['type'] == 'line':
-                        for crd in gm.geomjson['coords']:
-                            gmd['coords'].append( ( crd[0]*sc, crd[1]*sc , crd[2]*sc) )
-                    else:
-                        for crd in gm.geomjson['coords']:
-                            gmd['coords'].append( ( crd[0]*sc, crd[1]*sc ) )
-                    gmd['type'] = gm.geomjson['type']
-                    if 'position' in gm.geomjson:
-                        gmd['position'] = (
-                            gm.geomjson['position'][0]*sc,
-                            gm.geomjson['position'][2]*sc,
-                            gm.geomjson['position'][1]*sc
-                            )
-                    if 'rotation' in gm.geomjson:
-                        gmd['rotation'] = (
-                            radians(gm.geomjson['rotation'][0]),
-                            radians(gm.geomjson['rotation'][1]),
-                            radians(gm.geomjson['rotation'][2])
-                            )
-                    if 'depth' in gm.geomjson:
-                        gmd['depth'] = gm.geomjson['depth']*sc
-                else:
-                    if gm.geometry.geom_typeid == 1:
-                        gmd['type'] = 'polyline'
-                        gmc = gm.geometry.coords
-                    else:
-                        gmd['type'] = 'polygon'
-                        gmc=gm.geometry.coords[0]
-                    gmd['position'] = ( 0, plan.elev*sc, 0 )
-                    for crd in gmc:
-                        x = ( - 6371000 * ( radians( bx - crd[0] ) ) * bcos )
-                        z = ( 6371000 * ( radians( crd[1] - bz ) ) )
-                        gmd['coords'].append( ( x*sc, z*sc ) )
-                geom.append(gmd)
-        return geom
-
     def get_floor_elevation(self):
         #scale factor
         sc = 6.25
@@ -309,20 +256,6 @@ class Plan(models.Model):
 
     def map_dictionary(self):
         geometry = []
-        for gm in self.plan_geometry.all():
-            gmd = {}
-            if gm.geometry.geom_typeid == 1:
-                gmd['type'] = 'polyline'
-                gmc=gm.geometry.coords
-            else:
-                gmd['type'] = 'polygon'
-                gmc=gm.geometry.coords[0]
-            gmd['coords'] = []
-            for crd in gmc:
-                gmd['coords'].append([crd[1], crd[0]])
-            gmd['color'] = gm.color
-            gmd['popup'] = gm.popup
-            geometry.append(gmd)
         return {'id': self.id, 'geometry': geometry,
             'title': self.title, 'elevation': self.elev, }
 
@@ -354,48 +287,6 @@ class Plan(models.Model):
                 int(rgb[1]), int(rgb[2]) )
             imp.plan = self
             imp.save()
-
-    def save_plan_geometries(self):
-        #clear plan geometries
-        self.plan_geometry.all().delete()
-        geometry, elements = workflow(self.file,
-            self.build.location.coords[1],
-            self.build.location.coords[0])
-        for gm in geometry:
-            if gm['type'] == 'polygon':
-                PlanGeometry.objects.create(plan_id=self.id,
-                    color=gm['color'],
-                    popup=gm['popup'],
-                    geometry=Polygon(gm['coords']),
-                    geomjson=gm['coordz'],)
-            elif gm['type'] == 'polyline' or gm['type'] == 'line':
-                PlanGeometry.objects.create(plan_id=self.id,
-                    color=gm['color'],
-                    popup=gm['popup'],
-                    geometry=LineString(gm['coords']),
-                    geomjson=gm['coordz'],)
-        base_family = Family.objects.get(slug=self.build.get_base_slug())
-        for element in elements:
-            try:
-                family = Family.objects.get(
-                    build_id=self.build.id,
-                    title=element['family']
-                    )
-            except:
-                family = base_family.add_child(
-                    build=self.build,
-                    title=element['family']
-                    )
-            elm, created = Element.objects.get_or_create(
-                build_id=self.build.id,
-                family_id=family.id,
-                plan_id=self.id,
-                defaults={'location': Point(element['coords'][1],
-                    element['coords'][0])},
-                )
-            if created:
-                elm.sheet = element['sheet']
-                elm.save()
 
     def transform_vertices(self, geodata, vert):
         trans = []
@@ -547,7 +438,6 @@ class Plan(models.Model):
         super(Plan, self).save(*args, **kwargs)
         if refresh and self.file:
             self.use_ezdxf()
-            #self.save_plan_geometries()
         if refresh and self.shp_file:
             #change all shape filenames to same random name
             random = get_random_string(7)
