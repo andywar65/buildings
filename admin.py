@@ -91,6 +91,14 @@ class DxfImportAdmin(OSMGeoAdmin):
             'fields': ('geometry', ),
         }),
         )
+    actions = [ 'reverse_normal', ]
+
+    def reverse_normal(self, request, queryset):
+        for dxf in queryset:
+            if not dxf.geomjson:
+                return
+        return
+    reverse_normal.short_description = _('Reverse normal')
 
 class StationImageInline(admin.TabularInline):
     model = StationImage
