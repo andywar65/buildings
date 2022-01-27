@@ -13,4 +13,6 @@ urlpatterns = [
     path('dxf/', DxfImportsApiView.as_view(), ),
     path('dxf/by-plan/<pk>/', DxfImportsByPlanApiView.as_view(), ),
     path('station/by-plan/<pk>/', StationsByPlanApiView.as_view(), ),
+    path('station/<pk>/camera/', CameraApiView.as_view(), ),
+    path('station/<pk>/dxf/', DxfImportsByStationApiView.as_view(), ),
 ]

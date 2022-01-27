@@ -49,13 +49,13 @@ class DxfImportInline(admin.TabularInline):
     fields = ( 'id', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
     extra = 0
     formfield_overrides = {
-        models.LineStringField: {"widget": OSMWidget},
+        models.GeometryField: {"widget": OSMWidget},
     }
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('title', 'build', 'elev', 'file')
-    inlines = [ PlanGeometryInline, DxfImportInline, ]
+    inlines = [  DxfImportInline, ]#PlanGeometryInline,
 
     fieldsets = (
         (None, {
@@ -85,12 +85,24 @@ class DxfImportAdmin(OSMGeoAdmin):
     fieldsets = (
         (None, {
             'fields': ('plan', 'layer', 'color_field', 'olinetype',
-                'width', 'thickness', ),
+                'width', 'thickness', 'geomjson', ),
         }),
         (_('Geometry'), {
             'fields': ('geometry', ),
         }),
         )
+    actions = [ 'reverse_normal', ]
+
+    def reverse_normal(self, request, queryset):
+        for dxf in queryset:
+            if not dxf.geomjson:
+                continue
+            dxf.geomjson['normal'][0] = -dxf.geomjson['normal'][0]
+            dxf.geomjson['normal'][1] = -dxf.geomjson['normal'][1]
+            dxf.geomjson['normal'][2] = -dxf.geomjson['normal'][2]
+            dxf.save()
+
+    reverse_normal.short_description = _('Reverse normal')
 
 class StationImageInline(admin.TabularInline):
     model = StationImage

@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from rest_framework import generics, permissions
 from rest_framework_gis import filters
 
-from .models import Building, Plan, PlanSet, DxfImport, City
+from .models import Building, Plan, PlanSet, DxfImport, City, PhotoStation
 from .serializers import *
 
 class ViewDjangoModelPermissions(permissions.DjangoModelPermissions):
@@ -88,6 +88,20 @@ class DxfImportsByPlanApiView(generics.ListAPIView):
         queryset = DxfImport.objects.filter(plan_id=self.plan.id)
         return queryset
 
+class DxfImportsByStationApiView(generics.ListAPIView):
+    serializer_class = DxfImportStationSerializer
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
+
+    def setup(self, request, *args, **kwargs):
+        super(DxfImportsByStationApiView, self).setup(request, *args, **kwargs)
+        self.stat = get_object_or_404( PhotoStation, id = self.kwargs['pk'] )
+        self.build = self.stat.build
+
+    def get_queryset(self):
+        plans = self.build.building_plan.all().values_list('id', flat=True)
+        queryset = DxfImport.objects.filter(plan_id__in=plans)
+        return queryset
+
 class StationsByPlanApiView(generics.ListAPIView):
     serializer_class = PhotoStationSerializer
     permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
@@ -100,3 +114,13 @@ class StationsByPlanApiView(generics.ListAPIView):
     def get_queryset(self):
         queryset = PhotoStation.objects.filter(plan_id=self.plan.id)
         return queryset
+
+class CameraApiView(generics.RetrieveAPIView):
+    queryset = PhotoStation.objects.all()
+    serializer_class = CameraSerializer
+    permission_classes = [ViewDjangoModelPermissions, IsBuildingVisitor]
+
+    def setup(self, request, *args, **kwargs):
+        super(CameraApiView, self).setup(request, *args, **kwargs)
+        self.stat = get_object_or_404( PhotoStation, id = self.kwargs['pk'] )
+        self.build = self.stat.build

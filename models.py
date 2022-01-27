@@ -1,8 +1,10 @@
 from pathlib import Path
 from datetime import datetime
-from math import radians, sin, cos
+from math import radians, sin, cos, fabs, degrees
+#asin, acos, degrees, pi, sqrt, pow, fabs, atan2
 from geopy.geocoders import Nominatim
-#radians, sin, cos, asin, acos, degrees, pi, sqrt, pow, fabs, atan2
+import ezdxf
+from ezdxf.math import Vec3
 
 from django.db import models, transaction
 from django.conf import settings
@@ -27,7 +29,7 @@ from treebeard.mp_tree import MP_Node
 from colorfield.fields import ColorField
 from taggit.managers import TaggableManager
 
-from .map_utils import workflow
+from .map_utils import workflow, cad2hex
 #from users.models import User
 
 User = get_user_model()
@@ -353,6 +355,188 @@ class Plan(models.Model):
             imp.plan = self
             imp.save()
 
+    def save_plan_geometries(self):
+        #clear plan geometries
+        self.plan_geometry.all().delete()
+        geometry, elements = workflow(self.file,
+            self.build.location.coords[1],
+            self.build.location.coords[0])
+        for gm in geometry:
+            if gm['type'] == 'polygon':
+                PlanGeometry.objects.create(plan_id=self.id,
+                    color=gm['color'],
+                    popup=gm['popup'],
+                    geometry=Polygon(gm['coords']),
+                    geomjson=gm['coordz'],)
+            elif gm['type'] == 'polyline' or gm['type'] == 'line':
+                PlanGeometry.objects.create(plan_id=self.id,
+                    color=gm['color'],
+                    popup=gm['popup'],
+                    geometry=LineString(gm['coords']),
+                    geomjson=gm['coordz'],)
+        base_family = Family.objects.get(slug=self.build.get_base_slug())
+        for element in elements:
+            try:
+                family = Family.objects.get(
+                    build_id=self.build.id,
+                    title=element['family']
+                    )
+            except:
+                family = base_family.add_child(
+                    build=self.build,
+                    title=element['family']
+                    )
+            elm, created = Element.objects.get_or_create(
+                build_id=self.build.id,
+                family_id=family.id,
+                plan_id=self.id,
+                defaults={'location': Point(element['coords'][1],
+                    element['coords'][0])},
+                )
+            if created:
+                elm.sheet = element['sheet']
+                elm.save()
+
+    def transform_vertices(self, geodata, vert):
+        trans = []
+        transz = []
+        gy = 1 / (6371*1000)
+        gx = 1 / (6371*1000*fabs(cos(radians(geodata['lat']))))
+        for v in vert:
+            #normalize to geodata block
+            x = geodata['xpos'] - v[0]
+            y = geodata['ypos'] - v[1]
+            #get true north
+            xr = x*cos(geodata['rotation']) - y*sin(geodata['rotation'])
+            yr = x*sin(geodata['rotation']) + y*cos(geodata['rotation'])
+            #objects are very small with respect to earth, so our transformation
+            #from CAD x,y coords to latlong is approximate
+            long = geodata['long'] - degrees(xr*gx)
+            lat = geodata['lat'] - degrees(yr*gy)
+            trans.append((long,lat))
+            transz.append((xr,yr,v[2]))
+        return trans, transz
+
+    def get_linetype_and_color(self, e, layer_table):
+        if e.dxf.linetype == 'BYLAYER':
+            linetype = layer_table[e.dxf.layer]['linetype']
+        else:
+            linetype = e.dxf.linetype
+        if e.dxf.color == 256:
+            color = layer_table[e.dxf.layer]['color']
+        else:
+            color = cad2hex(e.dxf.color)
+        return linetype, color
+
+    def use_ezdxf(self):
+        doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
+        msp = doc.modelspace()
+        try:
+            #first we look for geodata block
+            #(see 'static/buildings/dxf/simple_geodata.dxf')
+            blk = msp.query('INSERT[name=="simple_geodata"]').first
+            geodata = {
+                'lat' : float(blk.get_attrib('LAT').dxf.text),
+                'long' : float(blk.get_attrib('LONG').dxf.text),
+                'xpos' : blk.dxf.insert[0],
+                'ypos' : blk.dxf.insert[1],
+                'rotation' : -radians(blk.dxf.rotation)
+            }
+        except:
+            #no geodata found, unable to work on this File
+            return
+        #prepare layer table
+        layer_table = {}
+        for layer in doc.layers:
+            layer_table[layer.dxf.name] = {
+                'color' : cad2hex(layer.color),
+                'linetype' : layer.dxf.linetype,
+                }
+        #start parsing entities
+        base_family = Family.objects.get(slug=self.build.get_base_slug())
+        for e in msp.query('INSERT'):
+            if e.dxf.name == 'simple_geodata':
+                continue
+            vert, vertz = self.transform_vertices(geodata, [e.dxf.insert])
+            sheet = {}
+            for at in e.attribs:
+                sheet[at.dxf.tag] = at.dxf.text
+            try:
+                family = Family.objects.get(
+                    build_id=self.build.id,
+                    title=e.dxf.name
+                    )
+            except:
+                family = base_family.add_child(
+                    build=self.build,
+                    title=e.dxf.name
+                    )
+            elm, created = Element.objects.get_or_create(
+                build_id=self.build.id,
+                family_id=family.id,
+                plan_id=self.id,
+                defaults={'location': Point(vert[0])},
+                )
+            if created:
+                elm.sheet = sheet
+                elm.save()
+        for e in msp.query('LINE'):
+            points = [e.dxf.start , e.dxf.end]
+            vert, vertz = self.transform_vertices(geodata, points)
+            geometry = LineString(vert)
+            linetype, color = self.get_linetype_and_color(e, layer_table)
+            DxfImport.objects.create(
+                plan=self,
+                layer = e.dxf.layer,
+                olinetype = linetype,
+                color = e.dxf.color,
+                color_field = color,
+                width = 0,
+                thickness = e.dxf.thickness,
+                geom = None,
+                geometry = geometry,
+                geomjson = {'geodata': geodata, 'vert': vertz, 'type': 'line'}
+            )
+        for e in msp.query('LWPOLYLINE'):
+            vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
+            area = ezdxf.math.area(vertz)
+            normal=e.ocs().uz
+            if not normal[2] == 1:
+                try:
+                    #first three points may be on same line
+                    normal = ezdxf.math.normal_vector_3p(Vec3(vertz[0]),
+                        Vec3(vertz[1]), Vec3(vertz[2]))
+                except:
+                    continue
+            if e.is_closed:
+                vert.append(vert[0])
+                try:
+                    #polygon may be "not simple"
+                    geometry = Polygon(vert)
+                    type = 'polygon'
+                except:
+                    continue
+            else:
+                geometry = LineString(vert)
+                type = 'polyline'
+            width = e.dxf.const_width if e.dxf.const_width else 0
+            linetype, color = self.get_linetype_and_color(e, layer_table)
+            DxfImport.objects.create(
+                plan=self,
+                layer = e.dxf.layer,
+                olinetype = linetype,
+                color = e.dxf.color,
+                color_field = color,
+                width = width,
+                thickness = e.dxf.thickness,
+                geom = None,
+                geometry = geometry,
+                geomjson = {'geodata': geodata, 'vert': vertz, 'type': type,
+                    'area': area,
+                    'normal': (normal[0],normal[1],normal[2])}
+            )
+        return
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Plan,
@@ -362,46 +546,8 @@ class Plan(models.Model):
         #upload files
         super(Plan, self).save(*args, **kwargs)
         if refresh and self.file:
-            #clear plan geometries
-            self.plan_geometry.all().delete()
-            geometry, elements = workflow(self.file,
-                self.build.location.coords[1],
-                self.build.location.coords[0])
-            for gm in geometry:
-                if gm['type'] == 'polygon':
-                    PlanGeometry.objects.create(plan_id=self.id,
-                        color=gm['color'],
-                        popup=gm['popup'],
-                        geometry=Polygon(gm['coords']),
-                        geomjson=gm['coordz'],)
-                elif gm['type'] == 'polyline' or gm['type'] == 'line':
-                    PlanGeometry.objects.create(plan_id=self.id,
-                        color=gm['color'],
-                        popup=gm['popup'],
-                        geometry=LineString(gm['coords']),
-                        geomjson=gm['coordz'],)
-            base_family = Family.objects.get(slug=self.build.get_base_slug())
-            for element in elements:
-                try:
-                    family = Family.objects.get(
-                        build_id=self.build.id,
-                        title=element['family']
-                        )
-                except:
-                    family = base_family.add_child(
-                        build=self.build,
-                        title=element['family']
-                        )
-                elm, created = Element.objects.get_or_create(
-                    build_id=self.build.id,
-                    family_id=family.id,
-                    plan_id=self.id,
-                    defaults={'location': Point(element['coords'][1],
-                        element['coords'][0])},
-                    )
-                if created:
-                    elm.sheet = element['sheet']
-                    elm.save()
+            self.use_ezdxf()
+            #self.save_plan_geometries()
         if refresh and self.shp_file:
             #change all shape filenames to same random name
             random = get_random_string(7)
@@ -592,15 +738,16 @@ class PhotoStation(models.Model):
             'intro': self.intro, 'plan_id': self.plan_id}
 
     def camera_position(self):
-        x = ( - 6371000 * ( radians( self.build.location.coords[0] -
-            self.location.coords[0] ) ) *
-            cos( radians( self.build.location.coords[1] ) ) )
-        y = self.plan.elev if self.plan else 0
-        z = ( 6371000 * ( radians( self.build.location.coords[1] -
-            self.location.coords[1] ) ) )
-        #Remember: in threejs Z=Y and Y=-Z
-        #add eye height
-        return ( x, y+1.6, z )
+        z = self.plan.elev if self.plan else 0
+        data = {
+            'lat': self.location.coords[1],
+            'long': self.location.coords[0],
+            'z': z+1.6 #add eye height
+        }
+        return data
+
+    def get_floor_elevation(self):
+        return self.build.get_floor_elevation()
 
     def get_building_redirection(self):
         if self.plan:
@@ -879,10 +1026,18 @@ class DxfImport(models.Model):
     color_field = ColorField(default='#FF0000')
     width = models.FloatField()
     thickness = models.FloatField()
-    geom = models.LineStringField(srid=4326)
+    geom = models.LineStringField(srid=4326, null=True)
     geometry = models.GeometryField( verbose_name = _('Geometry'),
         help_text=_("can be LineString or Polygon"), null=True)
     geomjson = models.JSONField( null=True )
+
+    def get_area_or_length(self):
+        try:
+            area = self.geomjson['area']
+            return (_(' Area = %(area)d sqmt') %
+                {'area': area})
+        except:
+            return ''
 
     class Meta:
         verbose_name = _('DXF Import')

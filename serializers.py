@@ -5,9 +5,10 @@ from .models import DxfImport, Building, City, Plan, PlanSet, PhotoStation
 
 class DxfImportSerializer(gis_serializers.GeoFeatureModelSerializer):
     """DxfImport GeoJSON serializer."""
+    data = serializers.ReadOnlyField(source='get_area_or_length')
 
     class Meta:
-        fields = ("id", "layer", "color_field", )
+        fields = ("id", "layer", "color_field", "data", )
         geo_field = "geometry"
         model = DxfImport
 
@@ -29,6 +30,13 @@ class PhotoStationSerializer(gis_serializers.GeoFeatureModelSerializer):
         fields = ("data", )
         geo_field = "location"
         model = PhotoStation
+
+class CameraSerializer(serializers.ModelSerializer):
+    camera_position = serializers.ReadOnlyField()
+    floor = serializers.ReadOnlyField(source='get_floor_elevation')
+    class Meta:
+        model = PhotoStation
+        fields = ("camera_position", "floor" )
 
 class BuildingLatLongSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,3 +61,8 @@ class CityLatLongSerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = ("name", "lat", "long", "zoom")
+
+class DxfImportStationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DxfImport
+        fields = ("id", "color_field", "thickness", "geomjson")

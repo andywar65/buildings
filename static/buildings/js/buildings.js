@@ -69,7 +69,7 @@ function setDxfStyle(feature) {
 }
 
 function onEachDxfFeature(feature, layer) {
-  layer.bindPopup(feature.properties.layer);
+  layer.bindPopup( feature.properties.layer + feature.properties.data );
 }
 
 async function render_dxf(plan_id, layergroup) {

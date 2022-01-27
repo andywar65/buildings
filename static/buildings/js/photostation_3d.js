@@ -22,18 +22,35 @@ const direction = new THREE.Vector3();
 const vertex = new THREE.Vector3();
 const color = new THREE.Color();
 
-init();
-animate();
+async function load_camera_data(stat_id) {
+	let response = await fetch(`/build-api/station/` + stat_id + `/camera/`);
+	let cam_data = await response.json();
+	return cam_data;
+}
 
-function init() {
+async function load_all_geometries(stat_id) {
+	let response = await fetch(`/build-api/station/` + stat_id + `/dxf/`);
+	let all_geom = await response.json();
+	return all_geom;
+}
+
+async function workflow() {
+	let cam_data = await load_camera_data(map_data.stat_id)
+	let geom_data = await load_all_geometries(map_data.stat_id)
+	init(cam_data, geom_data);
+	animate();
+}
+
+workflow();
+
+function init(cam_data, geom_data) {
 	//camera plane
-	const elev = (map_data.camera[1]-1.6)*6.25;
+
+	const elev = (cam_data.camera_position.z-1.6)*6.25;
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
-	camera.position.x = map_data.camera[0]*6.25;
-	camera.position.y = map_data.camera[1]*6.25-elev;
-	camera.position.z = map_data.camera[2]*6.25;
+	camera.position.y = cam_data.camera_position.z*6.25-elev;
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xffffff );
@@ -43,12 +60,8 @@ function init() {
 	light.position.set( 0.5, 1-elev, 0.75 );
 	scene.add( light );
 	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	dirLight.position.set( -50 + map_data.camera[0]*6.25,
-		100-elev,
-		50 + map_data.camera[2]*6.25 );
-	dirLight.target.position.set( map_data.camera[0]*6.25,
-		0-elev,
-		map_data.camera[2]*6.25 )
+	dirLight.position.set( -50, 100-elev, 50 );
+	dirLight.target.position.set( 0, 0-elev, 0 )
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.left = -100;
 	dirLight.shadow.camera.right = 100;
@@ -162,78 +175,109 @@ function init() {
 	geometry.rotateX( - Math.PI / 2 );
 	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
 	const floor = new THREE.Mesh( geometry, material );
-	floor.position.set( 0, map_data.floor-.01-elev, 0 )
+	floor.position.set( 0, cam_data.floor-.01-elev, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
 
 	let position = geometry.attributes.position;
 
 	// objects
+
 	let gm;
-	for (gm of map_data.geom){
-		switch ( gm.type ){
+	let slat = cam_data.camera_position.lat
+	let slong = cam_data.camera_position.long
+	let arc = 6315*1000*Math.PI/180
+	let correct = Math.abs(Math.cos(slat*Math.PI/180))
+	let normalz = new THREE.Vector3(0,0,1)
+	for (gm of geom_data){
+		if (gm.geomjson == null) { continue; }
+		let olat = gm.geomjson.geodata.lat
+		let olong = gm.geomjson.geodata.long
+		let deltay = (slat-olat)*arc
+		let deltax = (slong-olong)*arc*correct
+		switch ( gm.geomjson.type ){
 			case 'polygon':
 				let contour = [];
+				let normal = new THREE.Vector3(gm.geomjson.normal[0],
+					gm.geomjson.normal[1],gm.geomjson.normal[2])
+				let quaternion = new THREE.Quaternion().setFromUnitVectors(normal, normalz);
+				let quaternionBack = new THREE.Quaternion().setFromUnitVectors(normalz, normal);
 				let i;
-				for( i of gm.coords ){
-					contour.push( new THREE.Vector2( i[0],  i[1] ) );
+				for( i of gm.geomjson.vert ){
+					if (normal['z']==1) {
+						contour.push( new THREE.Vector3( i[0], i[1], i[2] ) );
+					} else {
+						contour.push( new THREE.Vector3( i[0]-gm.geomjson.vert[0][0],
+							i[1]- gm.geomjson.vert[0][1],
+							i[2]-gm.geomjson.vert[0][2] ).applyQuaternion(quaternion) );
+					}
 				}
 				let objshape = new THREE.Shape( contour );
 				let objgeometry, material;
-				if (gm.depth){
-					let extrudeSettings = { amount: gm.depth, bevelEnabled: false };
+				if (gm.thickness){
+					let extrudeSettings = { depth: gm.thickness, bevelEnabled: false };
 					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
 					material = new THREE.MeshStandardMaterial( {
-						color: gm.color
+						color: gm.color_field
 					 } );
 				} else {
 					objgeometry = new THREE.ShapeGeometry( objshape )
 					material = new THREE.MeshStandardMaterial( {
-						color: gm.color,
+						color: gm.color_field,
 						side: THREE.DoubleSide
 					 } );
 				}
 				let mesh = new THREE.Mesh( objgeometry, material );
-				mesh.rotateX( - Math.PI / 2 );
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
-				let pos = gm.position
-				mesh.position.set( pos[0], pos[1]-elev, pos[2], );
-				mesh.rotateZ( gm.rotation[2] );
-				mesh.rotateX( gm.rotation[0] );
-				mesh.rotateY( gm.rotation[1] );
-				scene.add(mesh)
-				break;
+				if (normal['z'] ==1) {
+					mesh.rotateX( - Math.PI / 2 );
+					mesh.scale.set(6.25,6.25,6.25)
+					mesh.position.set(deltax*6.25, -elev, -deltay*6.25)
+					scene.add(mesh)
+					break;
+				} else {
+					mesh.applyQuaternion(quaternionBack)
+					mesh.position.set(gm.geomjson.vert[0][0], gm.geomjson.vert[0][1],
+						gm.geomjson.vert[0][2])
+					let help = new THREE.Object3D()
+					help.add(mesh)
+					help.rotateX( - Math.PI / 2 );
+					help.scale.set(6.25,6.25,6.25)
+					help.position.set(deltax*6.25, -elev, -deltay*6.25)
+					scene.add(help)
+					break;
+				}
 			case 'polyline':
 				let points = [];
 				let p;
-				for( p of gm.coords ){
-					points.push( new THREE.Vector2( p[0],  p[1] ) );
+				for( p of gm.geomjson.vert ){
+					points.push( new THREE.Vector3( p[0],  p[1], p[2] ) );
 				}
 				let geometry = new THREE.BufferGeometry().setFromPoints( points );
 				let pmaterial = new THREE.LineBasicMaterial( {
-					color: gm.color,
+					color: gm.color_field,
 				 } );
 				let line = new THREE.Line( geometry, pmaterial );
 				line.rotateX( - Math.PI / 2 );
-				let ppos = gm.position
-				line.position.set( ppos[0], ppos[1]-elev, ppos[2], );
-				line.rotateZ( gm.rotation[2] );
-				line.rotateX( gm.rotation[0] );
-				line.rotateY( gm.rotation[1] );
+				line.scale.set(6.25,6.25,6.25)
+				line.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(line)
 				break;
 			case 'line':
 			let lpoints = [];
 			let l;
-				for( l of gm.coords ){
-					lpoints.push( new THREE.Vector3( l[0],  l[2]-elev,  l[1] ) );
+				for( l of gm.geomjson.vert ){
+					lpoints.push( new THREE.Vector3( l[0],  l[1], l[2] ) );
 				}
 				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
 				let lmaterial = new THREE.LineBasicMaterial( {
-					color: gm.color,
+					color: gm.color_field,
 				 } );
 				let lline = new THREE.Line( lgeometry, lmaterial );
+				lline.rotateX( - Math.PI / 2 );
+				lline.scale.set(6.25,6.25,6.25)
+				lline.position.set(deltax*6.25, -elev, -deltay*6.25)
 				scene.add(lline)
 				break;
 		}
