@@ -228,17 +228,26 @@ function init(cam_data, geom_data) {
 					 } );
 				}
 				let mesh = new THREE.Mesh( objgeometry, material );
-				if (normal['z'] !=1) {
-					mesh.applyQuaternion(quaternionBack)
-					mesh.position.set(gm.geomjson.vert[0])
-				}
-				mesh.rotateX( - Math.PI / 2 );
-				mesh.scale.set(6.25,6.25,6.25)
-				mesh.position.set(deltax*6.25, -elev, -deltay*6.25)
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
-				scene.add(mesh)
-				break;
+				if (normal['z'] ==1) {
+					mesh.rotateX( - Math.PI / 2 );
+					mesh.scale.set(6.25,6.25,6.25)
+					mesh.position.set(deltax*6.25, -elev, -deltay*6.25)
+					scene.add(mesh)
+					break;
+				} else {
+					mesh.applyQuaternion(quaternionBack)
+					mesh.position.set(gm.geomjson.vert[0][0], gm.geomjson.vert[0][1],
+						gm.geomjson.vert[0][2])
+					let help = new THREE.Object3D()
+					help.add(mesh)
+					help.rotateX( - Math.PI / 2 );
+					help.scale.set(6.25,6.25,6.25)
+					help.position.set(deltax*6.25, -elev, -deltay*6.25)
+					scene.add(help)
+					break;
+				}
 			case 'polyline':
 				let points = [];
 				let p;
