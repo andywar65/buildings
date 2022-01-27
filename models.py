@@ -500,21 +500,25 @@ class Plan(models.Model):
         for e in msp.query('LWPOLYLINE'):
             vert, vertz = self.transform_vertices(geodata, e.vertices_in_wcs())
             area = ezdxf.math.area(vertz)
-            normal=e.ocs()
+            normal=e.ocs().uz
+            if not normal[2] == 1:
+                try:
+                    #first three points may be on same line
+                    normal = ezdxf.math.normal_vector_3p(Vec3(vertz[0]),
+                        Vec3(vertz[1]), Vec3(vertz[2]))
+                except:
+                    continue
             if e.is_closed:
                 vert.append(vert[0])
                 try:
                     #polygon may be "not simple"
                     geometry = Polygon(vert)
                     type = 'polygon'
-                    #normal = ezdxf.math.normal_vector_3p(Vec3(vertz[0]),
-                        #Vec3(vertz[1]), Vec3(vertz[2]))
                 except:
                     continue
             else:
                 geometry = LineString(vert)
                 type = 'polyline'
-                #normal = (0,0,1)
             width = e.dxf.const_width if e.dxf.const_width else 0
             linetype, color = self.get_linetype_and_color(e, layer_table)
             DxfImport.objects.create(
@@ -529,7 +533,7 @@ class Plan(models.Model):
                 geometry = geometry,
                 geomjson = {'geodata': geodata, 'vert': vertz, 'type': type,
                     'area': area,
-                    'normal': (normal.uz[0],normal.uz[1],normal.uz[2])}
+                    'normal': (normal[0],normal[1],normal[2])}
             )
         return
 
