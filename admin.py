@@ -8,7 +8,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from .models import (Building, Plan, PhotoStation, StationImage,
-    PlanSet, Family, Element, City, PlanGeometry, Journal, DxfImport, )
+    PlanSet, Family, Element, City, Journal, DxfImport, )
 
 class PlanInline(admin.TabularInline):
     model = Plan
@@ -36,14 +36,6 @@ class BuildingAdmin(admin.ModelAdmin):
         }),
         )
 
-class PlanGeometryInline(admin.TabularInline):
-    model = PlanGeometry
-    fields = ('id', 'color', 'popup', )
-    extra = 0
-    formfield_overrides = {
-        models.GeometryField: {"widget": OSMWidget},
-    }
-
 class DxfImportInline(admin.TabularInline):
     model = DxfImport
     fields = ( 'id', 'layer', 'color_field', 'olinetype', 'width', 'thickness', )
@@ -55,7 +47,7 @@ class DxfImportInline(admin.TabularInline):
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('title', 'build', 'elev', 'file')
-    inlines = [  DxfImportInline, ]#PlanGeometryInline,
+    inlines = [  DxfImportInline, ]
 
     fieldsets = (
         (None, {
@@ -64,18 +56,6 @@ class PlanAdmin(admin.ModelAdmin):
         (_('File'), {
             'fields': ('file', 'cpg_file', 'dbf_file', 'prj_file', 'shp_file',
                 'shx_file', 'refresh', ),
-        }),
-        )
-
-@admin.register(PlanGeometry)
-class PlanGeometryAdmin(OSMGeoAdmin):
-    list_display = ('id', 'plan', )
-    fieldsets = (
-        (None, {
-            'fields': ('plan', 'color', 'popup', ),
-        }),
-        (_('Geometry'), {
-            'fields': ('geometry', ),
         }),
         )
 

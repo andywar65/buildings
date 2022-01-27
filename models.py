@@ -590,30 +590,6 @@ class Plan(models.Model):
         verbose_name_plural = _('Building plans')
         ordering = ('-elev', )
 
-class PlanGeometry(models.Model):
-    plan = models.ForeignKey(Plan, on_delete = models.CASCADE,
-        related_name='plan_geometry', verbose_name = _('Plan geometry'),)
-    color = ColorField(default='#FF0000')
-    popup = models.CharField(_('Popup'),
-        help_text=_("Geometry description in popup"), max_length = 100, )
-    geometry = models.GeometryField( verbose_name = _('Geometry'),
-        help_text=_("can be LineString or Polygon"))
-    geomjson = models.JSONField( null=True )
-    is3d = models.BooleanField(_("Is 3D"), default=False,
-        help_text=_("Use third dimension in camera view"))
-
-    def __str__(self):
-        return self.plan.title + '-' + str(self.id)
-
-    def save(self, *args, **kwargs):
-        if not self.geomjson:
-            self.is3d = False
-        super(PlanGeometry, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = _('Plan geometry')
-        verbose_name_plural = _('Plan geometries')
-
 class PlanSet(MP_Node):
     build = models.ForeignKey(Building, on_delete = models.CASCADE,
         related_name='building_planset', verbose_name = _('Building'))
