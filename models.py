@@ -429,7 +429,7 @@ class Plan(models.Model):
         return linetype, color
 
     def use_ezdxf(self):
-        doc = ezdxf.readfile(Path(settings.MEDIA_ROOT / str(self.file)))
+        doc = ezdxf.readfile(Path(settings.MEDIA_ROOT).joinpath(str(self.file)))
         msp = doc.modelspace()
         try:
             #first we look for geodata block
