@@ -1,4 +1,8 @@
-import * as THREE from '../node_modules/three/build/three.module.js';
+import { Vector3, Color, PerspectiveCamera, Scene, Fog, HemisphereLight,
+	DirectionalLight, Raycaster, PlaneGeometry, MeshStandardMaterial, Mesh,
+	Quaternion, ExtrudeGeometry, Shape, ShapeGeometry, DoubleSide, Object3D,
+	BufferGeometry, LineBasicMaterial, Line, WebGLRenderer, PCFSoftShadowMap
+ 	} from '../node_modules/three/build/three.module.js';
 
 import { PointerLockControls } from '../node_modules/three/examples/jsm/controls/PointerLockControls.js';
 
@@ -17,10 +21,10 @@ let moveRight = false;
 let canJump = false;
 
 let prevTime = performance.now();
-const velocity = new THREE.Vector3();
-const direction = new THREE.Vector3();
-const vertex = new THREE.Vector3();
-const color = new THREE.Color();
+const velocity = new Vector3();
+const direction = new Vector3();
+const vertex = new Vector3();
+const color = new Color();
 
 async function load_camera_data(stat_id) {
 	let response = await fetch(`/build-api/station/` + stat_id + `/camera/`);
@@ -48,18 +52,18 @@ function init(cam_data, geom_data) {
 
 	const elev = (cam_data.camera_position.z-1.6)*6.25;
 
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+	camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 	//scale eye height to 10
 	camera.position.y = cam_data.camera_position.z*6.25-elev;
 
-	scene = new THREE.Scene();
-	scene.background = new THREE.Color( 0xffffff );
-	scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
+	scene = new Scene();
+	scene.background = new Color( 0xffffff );
+	scene.fog = new Fog( 0xffffff, 0, 750 );
 
-	const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
+	const light = new HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
 	light.position.set( 0.5, 1-elev, 0.75 );
 	scene.add( light );
-	const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+	const dirLight = new DirectionalLight( 0xffffff, 0.5 );
 	dirLight.position.set( -50, 100-elev, 50 );
 	dirLight.target.position.set( 0, 0-elev, 0 )
 	dirLight.castShadow = true;
@@ -73,7 +77,7 @@ function init(cam_data, geom_data) {
 	dirLight.shadow.camera.far = 500; // default
 	scene.add( dirLight );
 	scene.add( dirLight.target );
-	//const cameraHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+	//const cameraHelper = new CameraHelper(dirLight.shadow.camera);
 	//scene.add(cameraHelper);
 
 	controls = new PointerLockControls( camera, document.body );
@@ -167,14 +171,14 @@ function init(cam_data, geom_data) {
 	document.addEventListener( 'keydown', onKeyDown );
 	document.addEventListener( 'keyup', onKeyUp );
 
-	raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+	raycaster = new Raycaster( new Vector3(), new Vector3( 0, - 1, 0 ), 0, 10 );
 
 	// floor
 
-	const geometry = new THREE.PlaneGeometry( 2000, 2000, 32 );
+	const geometry = new PlaneGeometry( 2000, 2000, 32 );
 	geometry.rotateX( - Math.PI / 2 );
-	const material = new THREE.MeshStandardMaterial( {color: 0xcccccc, side: THREE.DoubleSide} );
-	const floor = new THREE.Mesh( geometry, material );
+	const material = new MeshStandardMaterial( {color: 0xcccccc, side: DoubleSide} );
+	const floor = new Mesh( geometry, material );
 	floor.position.set( 0, cam_data.floor-.01-elev, 0 )
 	floor.receiveShadow = true;
 	scene.add( floor );
@@ -188,7 +192,7 @@ function init(cam_data, geom_data) {
 	let slong = cam_data.camera_position.long
 	let arc = 6315*1000*Math.PI/180
 	let correct = Math.abs(Math.cos(slat*Math.PI/180))
-	let normalz = new THREE.Vector3(0,0,1)
+	let normalz = new Vector3(0,0,1)
 	for (gm of geom_data){
 		if (gm.geomjson == null) { continue; }
 		let olat = gm.geomjson.geodata.lat
@@ -198,36 +202,36 @@ function init(cam_data, geom_data) {
 		switch ( gm.geomjson.type ){
 			case 'polygon':
 				let contour = [];
-				let normal = new THREE.Vector3(gm.geomjson.normal[0],
+				let normal = new Vector3(gm.geomjson.normal[0],
 					gm.geomjson.normal[1],gm.geomjson.normal[2])
-				let quaternion = new THREE.Quaternion().setFromUnitVectors(normal, normalz);
-				let quaternionBack = new THREE.Quaternion().setFromUnitVectors(normalz, normal);
+				let quaternion = new Quaternion().setFromUnitVectors(normal, normalz);
+				let quaternionBack = new Quaternion().setFromUnitVectors(normalz, normal);
 				let i;
 				for( i of gm.geomjson.vert ){
 					if (normal['z']==1) {
-						contour.push( new THREE.Vector3( i[0], i[1], i[2] ) );
+						contour.push( new Vector3( i[0], i[1], i[2] ) );
 					} else {
-						contour.push( new THREE.Vector3( i[0]-gm.geomjson.vert[0][0],
+						contour.push( new Vector3( i[0]-gm.geomjson.vert[0][0],
 							i[1]- gm.geomjson.vert[0][1],
 							i[2]-gm.geomjson.vert[0][2] ).applyQuaternion(quaternion) );
 					}
 				}
-				let objshape = new THREE.Shape( contour );
+				let objshape = new Shape( contour );
 				let objgeometry, material;
 				if (gm.thickness){
 					let extrudeSettings = { depth: gm.thickness, bevelEnabled: false };
-					objgeometry = new THREE.ExtrudeGeometry( objshape, extrudeSettings );
-					material = new THREE.MeshStandardMaterial( {
+					objgeometry = new ExtrudeGeometry( objshape, extrudeSettings );
+					material = new MeshStandardMaterial( {
 						color: gm.color_field
 					 } );
 				} else {
-					objgeometry = new THREE.ShapeGeometry( objshape )
-					material = new THREE.MeshStandardMaterial( {
+					objgeometry = new ShapeGeometry( objshape )
+					material = new MeshStandardMaterial( {
 						color: gm.color_field,
-						side: THREE.DoubleSide
+						side: DoubleSide
 					 } );
 				}
-				let mesh = new THREE.Mesh( objgeometry, material );
+				let mesh = new Mesh( objgeometry, material );
 				mesh.receiveShadow = true;
 				mesh.castShadow = true;
 				if (normal['z'] ==1) {
@@ -240,7 +244,7 @@ function init(cam_data, geom_data) {
 					mesh.applyQuaternion(quaternionBack)
 					mesh.position.set(gm.geomjson.vert[0][0], gm.geomjson.vert[0][1],
 						gm.geomjson.vert[0][2])
-					let help = new THREE.Object3D()
+					let help = new Object3D()
 					help.add(mesh)
 					help.rotateX( - Math.PI / 2 );
 					help.scale.set(6.25,6.25,6.25)
@@ -252,13 +256,13 @@ function init(cam_data, geom_data) {
 				let points = [];
 				let p;
 				for( p of gm.geomjson.vert ){
-					points.push( new THREE.Vector3( p[0],  p[1], p[2] ) );
+					points.push( new Vector3( p[0],  p[1], p[2] ) );
 				}
-				let geometry = new THREE.BufferGeometry().setFromPoints( points );
-				let pmaterial = new THREE.LineBasicMaterial( {
+				let geometry = new BufferGeometry().setFromPoints( points );
+				let pmaterial = new LineBasicMaterial( {
 					color: gm.color_field,
 				 } );
-				let line = new THREE.Line( geometry, pmaterial );
+				let line = new Line( geometry, pmaterial );
 				line.rotateX( - Math.PI / 2 );
 				line.scale.set(6.25,6.25,6.25)
 				line.position.set(deltax*6.25, -elev, -deltay*6.25)
@@ -268,13 +272,13 @@ function init(cam_data, geom_data) {
 			let lpoints = [];
 			let l;
 				for( l of gm.geomjson.vert ){
-					lpoints.push( new THREE.Vector3( l[0],  l[1], l[2] ) );
+					lpoints.push( new Vector3( l[0],  l[1], l[2] ) );
 				}
-				let lgeometry = new THREE.BufferGeometry().setFromPoints( lpoints );
-				let lmaterial = new THREE.LineBasicMaterial( {
+				let lgeometry = new BufferGeometry().setFromPoints( lpoints );
+				let lmaterial = new LineBasicMaterial( {
 					color: gm.color_field,
 				 } );
-				let lline = new THREE.Line( lgeometry, lmaterial );
+				let lline = new Line( lgeometry, lmaterial );
 				lline.rotateX( - Math.PI / 2 );
 				lline.scale.set(6.25,6.25,6.25)
 				lline.position.set(deltax*6.25, -elev, -deltay*6.25)
@@ -285,11 +289,11 @@ function init(cam_data, geom_data) {
 
 	//
 
-	renderer = new THREE.WebGLRenderer( { antialias: true } );
+	renderer = new WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	renderer.shadowMap.type = PCFSoftShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 	//
