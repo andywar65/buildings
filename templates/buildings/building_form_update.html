@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load fb_versions %}
 {% load i18n %}
 {% load static %}
@@ -65,7 +65,7 @@
                 alt="{{ object.intro }}">
             </a>
           </div></div>
-          {{ form|crispy }}
+          {{ bootstrap_form form }}
           <hr class="mb-4">
           {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}

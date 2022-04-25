@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load i18n %}
 
 {% block title %}{{ website.acro }} | {% translate "Add building plan" %}{% endblock title %}
@@ -17,7 +17,7 @@
         {% if perms.buildings.add_plan %}
         <form action="" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
           {% include "buildings/includes/form_errors.html" %}
-            {{ form|crispy }}
+            {{ bootstrap_form form }}
             <hr class="mb-4">
               {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}

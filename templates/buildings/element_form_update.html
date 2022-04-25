@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load i18n %}
 
 {% block title %}{{ website.acro }} | {% translate "Modify element" %}{% endblock title %}
@@ -64,7 +64,7 @@
             {% include "buildings/includes/add_buttons_icons.html" %}
           </div>
           {% include "buildings/includes/form_errors.html" %}
-          {{ form|crispy }}
+          {{ bootstrap_form form }}
           <hr class="mb-4">
           {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}

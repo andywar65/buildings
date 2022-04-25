@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 
 {% block title %}{{ build.title }} | {% trans 'Login' %}{%endblock title %}
 
@@ -34,7 +34,7 @@
         <form action="" method="post" novalidate>
                   <div class="row">
                     <div class="col">
-                      {{ form.password|as_crispy_field }}
+                      {{ bootstrap_from form.password }}
                     </div>
                   </div>
                   <hr class="mb-4">
