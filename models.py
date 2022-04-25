@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _g
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.hashers import make_password
 from django.core.mail import EmailMessage
 from django.urls import reverse
@@ -176,20 +176,14 @@ class Building(models.Model):
                 email=settings.DEFAULT_RECIPIENT)
             group = Group.objects.get(name='Building Guest')
             self.visitor.groups.add(group)
+            perm = Permission.objects.get(codename="can_change_profile")
+            self.visitor.user_permissions.remove(perm)
             #send message
             subject = _('Building visitor credentials: ') + self.title
             body = _('Password: ') + password
             mailto = [ self.visitor.email, ]
             email = EmailMessage(subject, body, settings.SERVER_EMAIL, mailto)
             email.send()
-            #try to make visitor profile immutable (if exists)
-            try:
-                profile = self.visitor.profile
-                profile.immutable = True
-                profile.save()
-            except:
-                #probably this user model lacks profile
-                pass
         super(Building, self).save(*args, **kwargs)
         if self.image:
             #this is a sloppy workaround to make working test
