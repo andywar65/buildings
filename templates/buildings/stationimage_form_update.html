@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'base_menu.html' %}
 {% load fb_versions %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load i18n %}
 
 {% block title %}{{ website.acro }} | {% translate "Modify image" %}{% endblock title %}
@@ -29,7 +29,7 @@
               <a href="{{ object.fb_image.url }}"><img src="{% version object.fb_image 'small' %}"
                 alt="{{ object.caption }}"></a>
           </div></div>
-            {{ form|crispy }}
+            {% bootstrap_form form %}
           <hr class="mb-4">
             {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}

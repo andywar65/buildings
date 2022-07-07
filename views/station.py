@@ -201,8 +201,7 @@ class PhotoStation3dView( VisitorPermReqMix, VisitorPassTestMix, TemplateView ):
 class StationImageListCreateView( VisitorPermReqMix, VisitorPassTestMix,
     AlertMixin, CreateView ):
     model = StationImage
-    permission_required = ('buildings.view_photostation',
-        'buildings.add_stationimage')
+    permission_required = ('buildings.view_photostation',)
     form_class = StationImageCreateForm
     template_name = 'buildings/stationimage_list_create.html'
 

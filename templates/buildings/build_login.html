@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'base_menu.html' %}
 {% load i18n %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 
 {% block title %}{{ build.title }} | {% trans 'Login' %}{%endblock title %}
 
@@ -13,7 +13,7 @@
     {% if user.is_authenticated %}
       <p class="alert alert-warning" role="alert">
       {% trans 'You are logged in as:' %} <strong>{{ user.get_full_name }}</strong>.
-      <a href="{% url 'front_logout' %}">{% trans 'You must logout to watch this building!' %}</a>
+      <a href="{% url 'account_logout' %}">{% trans 'You must logout to watch this building!' %}</a>
       </p>
       <hr class="mb-4">
     {% else %}
@@ -34,7 +34,10 @@
         <form action="" method="post" novalidate>
                   <div class="row">
                     <div class="col">
-                      {{ form.password|as_crispy_field }}
+                      <div class="mb-3">
+                        <label class="form-label" for="id_password">Password</label>
+                        <input type="password" name="password" autocomplete="current-password" class="form-control" placeholder="Password" title="" required id="id_password">
+                      </div>
                     </div>
                   </div>
                   <hr class="mb-4">

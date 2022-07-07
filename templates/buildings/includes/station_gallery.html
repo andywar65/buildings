@@ -4,20 +4,20 @@
 <div class="row">
   <div id="gallery-{{ main_gal_slug }}" class="carousel slide" data-ride="carousel">
     {% if images|length > 1 %}
-      <ol class="carousel-indicators">
-      {% for image in images %}
-        <li data-target="#gallery-{{ main_gal_slug }}" data-slide-to="{{ forloop.counter0 }}"
-        {% if forloop.first %}class="active"{% endif %}></li>
-      {% endfor %}
-      </ol>
-      <a class="carousel-control-prev" href="#gallery-{{ main_gal_slug }}" role="button" data-slide="prev">
+      <div class="carousel-indicators">
+        {% for image in images %}
+          <button type="button" data-bs-target="#gallery-{{ main_gal_slug }}" data-bs-slide-to="{{ forloop.counter0 }}"
+            {% if forloop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}">></button>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" data-bs-target="#gallery-{{ main_gal_slug }}" type="button" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">{% translate 'Previous' %}</span>
-      </a>
-      <a class="carousel-control-next" href="#gallery-{{ main_gal_slug }}" role="button" data-slide="next">
+        <span class="visually-hidden">{% translate 'Previous' %}</span>
+      </button>
+      <button class="carousel-control-next" data-bs-target="#gallery-{{ main_gal_slug }}" type="button" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">{% translate 'Next' %}</span>
-      </a>
+        <span class="visually-hidden">{% translate 'Next' %}</span>
+      </button>
     {% endif %}
     <div class="carousel-inner">
       {% for image in images %}

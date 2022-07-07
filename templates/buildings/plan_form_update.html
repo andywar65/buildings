@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'base_menu.html' %}
 {% load fb_versions %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load i18n %}
 
 {% block title %}{{ website.acro }} | {% translate "Modify building plan" %}{% endblock title %}
@@ -25,7 +25,7 @@
             </div>
           </div>
           {% include "buildings/includes/form_errors.html" %}
-            {{ form|crispy }}
+            {% bootstrap_form form %}
             <hr class="mb-4">
               {% include "buildings/includes/add_buttons.html" %}
           {% csrf_token %}
