@@ -258,15 +258,18 @@ class StationImageUpdateView( VisitorPermReqMix, VisitorPassTestMix, AlertMixin,
     form_class = StationImageUpdateForm
     template_name = 'buildings/stationimage_form_update.html'
 
-    def get_object(self, queryset=None):
-        #elsewhere we get the parent in setup, but here we also need object
-        img = super(StationImageUpdateView, self).get_object(queryset=None)
+    def setup(self, request, *args, **kwargs):
+        super(StationImageUpdateView, self).setup(request, *args, **kwargs)
+        #here we get the project by the slug
         self.build = get_object_or_404( Building,
             slug = self.kwargs['build_slug'] )
         self.stat = get_object_or_404( PhotoStation,
             slug = self.kwargs['stat_slug'] )
         if not self.stat.build == self.build:
             raise Http404(_("Station does not belong to Building"))
+
+    def get_object(self, queryset=None):
+        img = super(StationImageUpdateView, self).get_object(queryset=None)
         if not self.stat == img.stat:
             raise Http404(_("Image does not belong to Photo Station"))
         return img
