@@ -9,6 +9,7 @@ from ezdxf.math import Vec3
 from django.db import models, transaction
 from django.conf import settings
 from django.utils.timezone import now
+from django.contrib.sites.models import Site
 from django.utils.text import slugify
 from django.utils.translation import gettext as _g
 from django.utils.translation import gettext_lazy as _
@@ -33,6 +34,13 @@ from .map_utils import cad2hex
 
 User = get_user_model()
 
+def get_current_site_name():
+    try:
+        current_site = Site.objects.get_current()
+        return current_site.name
+    except Site.DoesNotExist:
+        return _("this site")
+
 def generate_unique_slug(klass, field):
     """
     return unique slug if origin slug exists.
@@ -55,7 +63,7 @@ def generate_unique_slug(klass, field):
 
 def building_default_intro():
     return (_('Another Building by %(website)s!') %
-        {'website': settings.WEBSITE_NAME})
+        {'website': get_current_site_name()})
 
 def building_default_location():
     city = City.objects.first()
@@ -558,7 +566,7 @@ class PlanVisibility(models.Model):
 
 def photo_station_default_intro():
     return (_('Another photo station by %(sitename)s!') %
-        {'sitename': settings.WEBSITE_NAME})
+        {'sitename': get_current_site_name()})
 
 class PhotoStation(models.Model):
 
@@ -814,7 +822,7 @@ class City(models.Model):
 
 def default_intro():
     return (_('Another building log entry by %(name)s!') %
-        {'name': settings.WEBSITE_NAME})
+        {'name': get_current_site_name()})
 
 class Journal(models.Model):
     build = models.ForeignKey(Building, on_delete=models.CASCADE,
